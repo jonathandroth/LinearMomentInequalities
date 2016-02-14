@@ -1,8 +1,8 @@
 
 
 %% Set the parameter values
-global theta_0;
-theta_0 = 129.73;
+global theta_c;
+theta_c = 129.73;
 
 global lambda;
 lambda = 0.386; %should this be negative? Should this be one-over this?
@@ -13,65 +13,107 @@ theta_g = 21.38;
 
 
 global T;
-T = 10000;
+T = 30;
 
 global G;
 G = 10;
 
-%% Simulate the J distribution
+global F;
+F = 9;
 
-Jft = NaN(T+1, G);
+f_names = {'Chrysler'; 'Ford' ;'Daimler'; 'GM'; 'Hino'; 'International'; 'Isuzu'; ...
+    'Paccar'; 'Volvo'} ;
 
-p_o = .5;
+f_share = [5.56; 12.5; 12.5+4.17 + 1.39; 6.94; 4.17; 16.67; 6.94; 6.94+11.11; 2.78...
+    + 4.17+4.17]/100; 
+
+global p_d;
 p_d = .25;
 
-Jf0 =  rand(1, G) <( (p_o / (p_o + p_d)) );
+total_avg_products = 37;
 
-Jft(1, :) = Jf0;
-for t= 1:T
+% The number of products offered on average by each firm is G * p_o / (p_o
+% + p_d). We this required that G * p_o / (p_o
+% + p_d) = share * total_avg_products
 
-    Jft(t+1,:) = next_Jft( Jft(t,:) , p_o, p_d );
+% This implies p_o = share * total_avg_products * p_d / (G - share *
+% total_avg_products) 
 
+global p_o_f;
+p_o_f = (f_share * total_avg_products * p_d) ./ (G - f_share * total_avg_products); 
+
+
+global gamma;
+gamma = [1;1;1;0;0;0];
+
+%% Simulate the J distribution
+
+
+%%Loop over all the firms and combine the simulated data for each firm (by appending the vectors);
+
+
+
+[t,f, g, in_t , in_tminus1] = sim_offerings_firmf(1, p_o_f(1), p_d);
+
+for firm = 2:F
+    
+    
+    [t_f,f_f, g_f, in_t_f , in_tminus1_f] = sim_offerings_firmf(firm, p_o_f(firm), p_d); 
+    
+    t = [t;t_f];
+    f = [f;f_f];
+    g = [g;g_f];
+    in_t = [in_t; in_t_f];
+    in_tminus1 = [in_tminus1; in_tminus1_f];
+    
 end
+    
+        
+%% Create C_ift
 
-%%%%% Reshape data %%%%%%%
-% The following block of code reshapes the data into a "long format." That
-% is, I will have one column indicating the period t, one column indicating
-% hte weight class g. There will then be columns in_t and in_tminus1,
-% indicating whether the truck with weight g was in in period t and whether
-% it was in in period t-1
+C_mat = NaN( size(t,1) , 6);
 
-
-%Create two matrices, one with all the observations from period t=1 through
-%T, and one with all the observations from period t=0 through t-1
-
-%These will be reshaped into vectors in_t and in_tminus1
-
-Jft_thisperiod = Jft( 2:(T+1), :);
-Jft_lastperiod = Jft( 1:T, :);
-
-%Create a matrix indicating the year of each observation in Jft_thisperiod
-t_mat = repmat( (1:T)', 1, G); 
-%Create a matrix indicating the g of each observation in Jft_thisperiod
-g_mat = repmat( (1:G), T, 1);
-
-%Reshape all of the above matrices into vectors
-in_t = Jft_thisperiod(:);
-in_tminus1 = Jft_lastperiod(:);
-
-t = t_mat(:);
-g = g_mat(:);
+C_mat(:,1) = (in_t == 1 & in_tminus1 == 1);
+C_mat(:,2) = (in_t == 0 & in_tminus1 == 1);
+C_mat(:,3) = (in_t == 1 & in_tminus1 == 0);
+C_mat(:,4) = (in_t == 0 & in_tminus1 == 0);
+C_mat(:,5) = (in_t == 1 & in_tminus1 == 0);
+C_mat(:,6) = (in_t == 1 & in_tminus1 == 0);
 
 
-%% Test this
-mean( in_t) 
-mean( in_t( in_tminus1 == 1) )
-mean( in_t( in_tminus1 == 0) )
+
+%Check the fraction of years that have at least one of each type of
+%conditioning set
+%mean( grpstats( C_mat, t, {'mean'}) > 0 )
+% [mean, grps] = grpstats( C_mat, {t, g} , {'mean'})
+
 
 %% Draw Delta_Pi | J
+errors = mvnrnd(gamma , eye(6) , size(C_mat,1) );
+
+Delta_pi_mat = NaN( size(errors) );
+
+Delta_pi_mat(:,1) = errors(:,1) + lambda * theta_c + lambda * theta_g * g;
+Delta_pi_mat(:,2) = errors(:,2) - lambda * theta_c -  lambda * theta_g * g;
+Delta_pi_mat(:,3) = errors(:,3) + theta_c +  theta_g * g;
+Delta_pi_mat(:,4) = errors(:,4) - theta_c -  theta_g * g;
+Delta_pi_mat(:,5) = errors(:,5) + theta_g;
+Delta_pi_mat(:,6) = errors(:,6) - theta_g;
+
+%set delta pi's to NaN where the correspond C_i = 0
+Delta_pi_mat( C_mat == 0) = NaN;
+
+
+
+
+
 
 
 
 
 
 %% Construct the sample moments
+
+
+moments = sample_moments(Delta_pi_mat,t, g, lambda, theta_c, theta_g);
+
