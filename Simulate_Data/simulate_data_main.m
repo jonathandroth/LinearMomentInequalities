@@ -15,9 +15,9 @@ theta_g = 21.38;
 global T;
 T = 30;
 
-global G;
-G = 10;
-
+global J;
+J = 10;
+ 
 global F;
 F = 9;
 
@@ -27,93 +27,80 @@ f_names = {'Chrysler'; 'Ford' ;'Daimler'; 'GM'; 'Hino'; 'International'; 'Isuzu'
 f_share = [5.56; 12.5; 12.5+4.17 + 1.39; 6.94; 4.17; 16.67; 6.94; 6.94+11.11; 2.78...
     + 4.17+4.17]/100; 
 
-global p_d;
-p_d = .25;
-
-total_avg_products = 37;
-
-% The number of products offered on average by each firm is G * p_o / (p_o
-% + p_d). We this required that G * p_o / (p_o
-% + p_d) = share * total_avg_products
-
-% This implies p_o = share * total_avg_products * p_d / (G - share *
-% total_avg_products) 
-
-global p_o_f;
-p_o_f = (f_share * total_avg_products * p_d) ./ (G - f_share * total_avg_products); 
 
 
-global gamma;
-gamma = [1;1;1;0;0;0];
+mu_f_vec = repmat(150,F,1);
 
-%% Simulate the J distribution
+%% Make covariate arrays
 
+%Make arrays corresponding to the covariates for the products in the shocks
+%arrays. Again, the arrays are F x J x T
 
-%%Loop over all the firms and combine the simulated data for each firm (by appending the vectors);
+F_array = repmat( (1:F)',1, J, T);
+G_array = repmat( (1:J),F,1,T);
 
 
 
-[t,f, g, in_t , in_tminus1] = sim_offerings_firmf(1, p_o_f(1), p_d);
 
-for firm = 2:F
+
+%% Draw the shocks
+
+%The shocks will be stored in a three dimensional array of size F X J x T
+% The first dimension (rows) will represent different firms, the second
+% dimension (columns) will represent the different products, and the third
+% dimension (depth) will represent different time periods
+
+%I will take the draws of the shocks from standard normals. To go from
+% Eta_shocks to the Eta_draws, I will multiply by sigma_eta. Likewise, to
+% go from the Epsilon_shocks to the Epsilon_draws,  I will multiply by sigma_f
+% and then add mu_f to each row. I start with the standard shocks so that
+% we can use the same draws regardless of the parameters
+
+
+Eta_shocks_array = NaN(F,J,T);
+Epsilon_shocks_array = NaN(F,J,T);
+Zetaj_shocks_array = NaN(F,J,T);
+Zetajft_shocks_array = NaN(F,J,T);
+
+rng(1234);
+for t= 1:T
+    %For eta, take one draw for each j for period t
+    %Right now, assuming that the shocks are uncorrelated across J. Could
+    %relax this (change away from eye(J) )
+    eta_shocks_t = mvnrnd( zeros(1,J), eye(J) ); 
     
+    %Do the same for zeta_j
+    zetaj_shocks_t = mvnrnd( zeros(1,J), eye(J) );
     
-    [t_f,f_f, g_f, in_t_f , in_tminus1_f] = sim_offerings_firmf(firm, p_o_f(firm), p_d); 
+    %Create and store the eta draw matrix for period t.
+    %The eta draw is the same for product j for each firm, so the eta_shocks
+    %matrix for period t has constant columns (this is done in the repmat)
+    Eta_shocks_array(:,:,t) = repmat( eta_shocks_t, F, 1);
+   
+    %Do the same for zeta_j
+    Zetaj_shocks_array(:,:,t) = repmat( zetaj_shocks_t, F, 1);
     
-    t = [t;t_f];
-    f = [f;f_f];
-    g = [g;g_f];
-    in_t = [in_t; in_t_f];
-    in_tminus1 = [in_tminus1; in_tminus1_f];
+    %Draw the epsilon_tfj. These are assumed to be independent across all
+    %draws
+    Epsilon_shocks_array(:,:,t) = randn(F,J);
     
+    %Do the same for zeta_jft
+    Zetajft_shocks_array(:,:,t) = randn(F,J);
+   
 end
-    
-        
-%% Create C_ift
-
-C_mat = NaN( size(t,1) , 6);
-
-C_mat(:,1) = (in_t == 1 & in_tminus1 == 1);
-C_mat(:,2) = (in_t == 0 & in_tminus1 == 1);
-C_mat(:,3) = (in_t == 1 & in_tminus1 == 0);
-C_mat(:,4) = (in_t == 0 & in_tminus1 == 0);
-C_mat(:,5) = (in_t == 1 & in_tminus1 == 0);
-C_mat(:,6) = (in_t == 1 & in_tminus1 == 0);
 
 
-
-%Check the fraction of years that have at least one of each type of
-%conditioning set
-%mean( grpstats( C_mat, t, {'mean'}) > 0 )
-% [mean, grps] = grpstats( C_mat, {t, g} , {'mean'})
+Mu_f_array = repmat(mu_f_vec, 1,J,T);
 
 
-%% Draw Delta_Pi | J
-errors = mvnrnd(gamma , eye(6) , size(C_mat,1) );
+%% Draw data
+sigma_nu = 100;
+sigma_epsilon = 100;
 
-Delta_pi_mat = NaN( size(errors) );
 
-Delta_pi_mat(:,1) = errors(:,1) + lambda * theta_c + lambda * theta_g * g;
-Delta_pi_mat(:,2) = errors(:,2) - lambda * theta_c -  lambda * theta_g * g;
-Delta_pi_mat(:,3) = errors(:,3) + theta_c +  theta_g * g;
-Delta_pi_mat(:,4) = errors(:,4) - theta_c -  theta_g * g;
-Delta_pi_mat(:,5) = errors(:,5) + theta_g;
-Delta_pi_mat(:,6) = errors(:,6) - theta_g;
-
-%set delta pi's to NaN where the correspond C_i = 0
-Delta_pi_mat( C_mat == 0) = NaN;
+calculate_offerings( sigma_nu, ...
+    sigma_epsilon, ones(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, Mu_f_array, G_array, F_array )
 
 
 
-
-
-
-
-
-
-
-%% Construct the sample moments
-
-
-moments = sample_moments(Delta_pi_mat,t, g, lambda, theta_c, theta_g);
 
