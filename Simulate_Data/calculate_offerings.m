@@ -9,6 +9,8 @@ global lambda;
 global theta_c;
 global theta_g;
 
+global gamma;
+
 
 %For now ,we assume that sigma_zetaj = sigma_nu, sigma_zetajft =
 %sigma_epsilon
@@ -17,7 +19,7 @@ sigma_zetajft = sigma_epsilon;
 
 %Calculate the Nu draws and Epsilon draws using the shocks and then given
 %means and covariances
-Nu_draws_array =  Mu_f_array + sigma_nu * Eta_shocks_array;
+Nu_draws_array =  Mu_f_array + gamma* theta_g * G_array + sigma_nu * Eta_shocks_array;
 Epsilon_draws_array = sigma_epsilon * Epsilon_shocks_array;
 
 Pi_star_array = Nu_draws_array + Epsilon_draws_array;

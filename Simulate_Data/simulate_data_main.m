@@ -11,15 +11,22 @@ global theta_g;
 theta_g = 21.38;
 
 
+global burnout;
+burnout = 500;
+
 
 global T;
-T = 30;
+T = 27 + burnout;
 
 global J;
 J = 10;
  
 global F;
 F = 9;
+
+
+global gamma;
+gamma = .75; 
 
 f_names = {'Chrysler'; 'Ford' ;'Daimler'; 'GM'; 'Hino'; 'International'; 'Isuzu'; ...
     'Paccar'; 'Volvo'} ;
@@ -29,7 +36,7 @@ f_share = [5.56; 12.5; 12.5+4.17 + 1.39; 6.94; 4.17; 16.67; 6.94; 6.94+11.11; 2.
 
 
 
-mu_f_vec = repmat(150,F,1);
+mu_f_vec = repmat(50,F,1);
 
 %% Make covariate arrays
 
@@ -44,6 +51,7 @@ G_array = repmat( (1:J),F,1,T);
 
 
 %% Draw the shocks
+
 
 %The shocks will be stored in a three dimensional array of size F X J x T
 % The first dimension (rows) will represent different firms, the second
@@ -62,7 +70,7 @@ Epsilon_shocks_array = NaN(F,J,T);
 Zetaj_shocks_array = NaN(F,J,T);
 Zetajft_shocks_array = NaN(F,J,T);
 
-rng(1234);
+%rng(1234);
 for t= 1:T
     %For eta, take one draw for each j for period t
     %Right now, assuming that the shocks are uncorrelated across J. Could
@@ -95,12 +103,31 @@ Mu_f_array = repmat(mu_f_vec, 1,J,T);
 
 %% Draw data
 sigma_nu = 100;
-sigma_epsilon = 100;
+sigma_epsilon = 25;
 
 
-calculate_offerings( sigma_nu, ...
-    sigma_epsilon, ones(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, Mu_f_array, G_array, F_array )
+J_t_startat1 = calculate_offerings( sigma_nu, ...
+    sigma_epsilon, ones(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, Mu_f_array, G_array, F_array );
+
+J_t_startat0 = calculate_offerings( sigma_nu, ...
+    sigma_epsilon, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, Mu_f_array, G_array, F_array );
 
 
+mean(J_t_startat1(:))
+mean(J_t_startat0(:))
 
 
+meanyrt = @(J,t) mean( mean(J(:,:,t)) );
+
+meanyr_J0 = @(t) meanyrt(J_t_startat0, t);
+meanyr_J1 = @(t) meanyrt(J_t_startat1, t);
+
+J0_means = arrayfun( meanyr_J0 , (1:T)' );
+J1_means = arrayfun( meanyr_J1 , (1:T)' );
+
+plot( [(1:T)', (1:T)'], [J0_means, J1_means] )
+
+%plot( [(1:T)'], [J0_means] )
+
+
+mean( mean(J_t_startat0, 3), 1  ) 
