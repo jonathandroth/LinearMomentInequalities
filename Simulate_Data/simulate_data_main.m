@@ -5,7 +5,8 @@ global theta_c;
 theta_c = 129.73;
 
 global lambda;
-lambda = 0.386; %should this be negative? Should this be one-over this?
+%lambda = 0.386; %should this be negative? Should this be one-over this?
+lambda = 1;
 
 global theta_g;
 theta_g = 21.38;
@@ -26,8 +27,8 @@ F = 9;
 
 
 global gamma;
-gamma = .75; 
-
+%gamma = .75; 
+gamma =1 ;
 f_names = {'Chrysler'; 'Ford' ;'Daimler'; 'GM'; 'Hino'; 'International'; 'Isuzu'; ...
     'Paccar'; 'Volvo'} ;
 

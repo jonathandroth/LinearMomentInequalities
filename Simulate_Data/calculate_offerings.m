@@ -51,7 +51,7 @@ for t=1:T
 end
 
 
-Pi_array = Pi_star_array + sigma_zetaj * Zetaj_shocks_array + sigma_zetajft * Zetajft_shocks_array;
+Pi_array = Pi_star_array .* (1 + sigma_zetaj * Zetaj_shocks_array + sigma_zetajft * Zetajft_shocks_array);
 
 
 
