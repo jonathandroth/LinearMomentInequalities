@@ -16,7 +16,7 @@ burnout = 1000;
 
 
 global T;
-T = 27 + burnout;
+T = 27*100 + burnout;
 
 global J;
 J = 10;
@@ -33,8 +33,13 @@ f_share = [5.56; 12.5; 12.5+4.17 + 1.39; 6.94; 4.17; 16.67; 6.94; 6.94+11.11; 2.
 
 
 
-mu_f_vec = repmat(100,F,1);
+mu_f_vec = [repmat(100,F-1,1); 50];
 
+
+global avg_total_yearly_products;
+avg_total_yearly_products = 38;
+
+avg_products_per_firm = f_share * avg_total_yearly_products;
 %% Make covariate arrays
 
 %Make arrays corresponding to the covariates for the products in the shocks
@@ -95,45 +100,26 @@ for t= 1:T
 end
 
 
-Mu_f_array = repmat(mu_f_vec, 1,J,T);
 
 
 %% Draw data
 sigma_nu = 50;
 sigma_epsilon = 50;
+% 
+% tic;
+% [J_t_startat1, J_tm1_startat1] = calculate_offerings( sigma_nu, ...
+%     sigma_epsilon, ones(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, mu_f_vec, G_array, F_array );
+% toc;
+% 
+% 
+% [J_t_startat0, J_tm1_startat0] = calculate_offerings( sigma_nu, ...
+%     sigma_epsilon, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, mu_f_vec, G_array, F_array );
+% 
 
 
-[J_t_startat1, J_tm1_startat1] = calculate_offerings( sigma_nu, ...
-    sigma_epsilon, ones(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, Mu_f_array, G_array, F_array );
-
-[J_t_startat0, J_tm1_startat0] = calculate_offerings( sigma_nu, ...
-    sigma_epsilon, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, Mu_f_array, G_array, F_array );
-
-
-mean(J_t_startat1(:))
-mean(J_t_startat0(:))
-
-
-meanyrt = @(J,t) mean( mean(J(:,:,t)) );
-
-meanyr_J0 = @(t) meanyrt(J_t_startat0, t);
-meanyr_J1 = @(t) meanyrt(J_t_startat1, t);
-
-meanyr_J0_tm1 = @(t) meanyrt(J_tm1_startat0, t);
-meanyr_J1_tm1 = @(t) meanyrt(J_tm1_startat1, t);
-
-
-J0_means = arrayfun( meanyr_J0 , (1:T)' );
-J1_means = arrayfun( meanyr_J1 , (1:T)' );
-
-J0_means_tm1 = arrayfun( meanyr_J0_tm1 , (1:T)' );
-J1_means_tm1 = arrayfun( meanyr_J1_tm1 , (1:T)' );
-
-
-plot( [(1:T)', (1:T)'], [J0_means, J1_means] )
-
-[J0_means_tm1, J1_means_tm1]
-%plot( [(1:T)'], [J0_means] )
-
-
-mean( mean(J_t_startat0, 3), 1  ) 
+tic;
+mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu, ...
+    sigma_epsilon, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,... 
+    Zetajft_shocks_array, G_array, F_array)
+toc;
+ 

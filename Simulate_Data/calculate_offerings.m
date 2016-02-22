@@ -1,5 +1,5 @@
 function [J_t_array, J_tminus1_array, Pi_array] = calculate_offerings( sigma_nu, ...
-    sigma_epsilon, J_0 , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, Mu_f_array, G_array, F_array )
+    sigma_epsilon, J_0 , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, mu_f_vec, G_array, F_array )
 
 global T;
 global J;
@@ -9,6 +9,8 @@ global lambda;
 global theta_c;
 global theta_g;
 
+
+Mu_f_array = repmat(mu_f_vec, 1,J,T);
 
 
 %For now ,we assume that sigma_zetaj = sigma_nu, sigma_zetajft =
