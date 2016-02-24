@@ -4,6 +4,7 @@ function [mu_f,mean_f] = mu_f_optimal( avg_products_per_firm, mu_f_guess, sigma_
 
 global burnout;
 global F;
+global theta_c;
 
 %Create a function that computes the J_array for a given value of mu_f,
 %holding constant all the other parameters
@@ -30,11 +31,12 @@ mean_by_firm_muf = @(mu_f) mean_products_byfirm( J_array_muf(mu_f) , burnout );
 
 mu_f = NaN(F,1);
 
+theta_c_local = theta_c;
 parfor f = 1:F
    
     obj_f = @(mu_f) mean_products_firm_f( f, mu_f, mean_by_firm_muf ) - avg_products_per_firm(f);
     myopts = optimset('TolX', 10^(-4), 'TolFun', 10^(-4) );
-    mu_f(f) = fzero( obj_f, [0;200],myopts );
+    mu_f(f) = fzero( obj_f, [theta_c_local - 4*sigma_nu ;theta_c_local + 4*sigma_nu],myopts );
     
 end
 
