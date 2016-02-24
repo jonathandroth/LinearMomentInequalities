@@ -40,4 +40,6 @@ threeperiod_variances = accumarray( threeperiod_index, nineyear_means, [], @var 
 
 %Compute the mean of these variances
 mean_threeperiod_variance = mean(threeperiod_variances);
+
+
 end

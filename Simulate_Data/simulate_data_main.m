@@ -123,15 +123,24 @@ sigma_zetaj = 50;
 
 sigma_nu_vec = [30;40;50;60];
 var_vec = NaN(size(sigma_nu_vec) );
+p_e = NaN(size(sigma_nu_vec));
+p_d = NaN(size(sigma_nu_vec));
 
 for s = 1:length(sigma_nu_vec)
 
-[mu_f, J_array] = mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu_vec(s), ...
+[mu_f, J_t, J_tm1] = mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu_vec(s), ...
     sigma_zetaj, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,... 
     Zetajft_shocks_array, G_array, F_array);
 
-var_vec(s) = nineyr_variance(J_array,burnout);
+var_vec(s) = nineyr_variance(J_t,burnout);
+
+p_e(s) = mean( mean( mean( J_t(J_tm1 == 0),3 ), 2), 1 );
+p_d(s) = 1 - mean( mean( mean( J_t(J_tm1 == 1),3 ), 2), 1 );
 
 end
  
 var_vec
+
+[p_e, p_d ]
+
+p_e ./ (p_e + p_d)

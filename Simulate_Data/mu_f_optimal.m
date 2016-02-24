@@ -1,4 +1,4 @@
-function [mu_f,J] = mu_f_optimal( avg_products_per_firm, mu_f_guess, sigma_nu, ...
+function [mu_f,J,J_tminus1] = mu_f_optimal( avg_products_per_firm, mu_f_guess, sigma_nu, ...
     sigma_zetaj, J_0 , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,... 
     Zetajft_shocks_array, G_array, F_array)
 
@@ -40,7 +40,7 @@ parfor f = 1:F
     
 end
 
-J = J_array_muf(mu_f);
+[J, J_tminus1] = J_array_muf(mu_f);
 
 end
 
