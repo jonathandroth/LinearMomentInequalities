@@ -123,8 +123,12 @@ sigma_zetaj = 50;
 
 
 tic;
-mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu, ...
+[mu_f, J_array] = mu_f_optimal( avg_products_per_firm, mu_f_vec, 40, ...
     sigma_zetaj, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,... 
-    Zetajft_shocks_array, G_array, F_array)
+    Zetajft_shocks_array, G_array, F_array);
+toc;
+
+tic;
+var = nineyr_variance(J_array,burnout);
 toc;
  

@@ -1,3 +1,17 @@
+%This function takes a F x J x T array of product offerings (J_t) and an
+%integer burnout. It removes the first burnout year. The remaining number
+%of years is ASSUMED to be a multiple of 27.
+
+%The function then does the following: 1) It computes the mean number of
+%products offered in each year. 2) It aggregates the mean number of
+%products up to 9-year intervals. 3) It computes the variance of the 9-year
+%means for each 27-year period (i.e. 3 consecutive 9-year periods). 4) It
+%takes the average of these variances across all of the 27-year periods in
+%J_t
+
+%This average variance will be fitted to the observed variance in the
+%9-year total offerings in Tom's table.
+
 function [mean_threeperiod_variance] = nineyr_variance( J_t, burnout )
     
 %Take the array of product offerings excluding the burnout
