@@ -109,7 +109,7 @@ end
 
 %% Draw data
 sigma_nu = 50;
-sigma_epsilon = 50;
+sigma_zetaj = 50;
 % 
 % tic;
 % [J_t_startat1, J_tm1_startat1] = calculate_offerings( sigma_nu, ...
@@ -124,7 +124,7 @@ sigma_epsilon = 50;
 
 tic;
 mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu, ...
-    sigma_epsilon, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,... 
+    sigma_zetaj, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,... 
     Zetajft_shocks_array, G_array, F_array)
 toc;
  
