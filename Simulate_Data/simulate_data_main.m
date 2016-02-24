@@ -5,10 +5,10 @@ global theta_c;
 theta_c = 129.73;
 
 global lambda;
-lambda = 0.386; %should this be negative? Should this be one-over this?
+lambda = 0.386; %should this be negative? Should this be one-over this? %Think we are good.
 
 global theta_g;
-theta_g = 21.38;
+theta_g = -21.38;
 
 
 global burnout;
@@ -18,8 +18,12 @@ burnout = 1000;
 global T;
 T = 27*100 + burnout;
 
+%g_vec = [31.818; 12.7; 21.495; 31.494; 43.462; 51.616; 54.277];
+g_vec = linspace(12.7, 54.277, 12)';
+
+
 global J;
-J = 10;
+J = size(g_vec,1);
  
 global F;
 F = 9;
@@ -33,11 +37,12 @@ f_share = [5.56; 12.5; 12.5+4.17 + 1.39; 6.94; 4.17; 16.67; 6.94; 6.94+11.11; 2.
 
 
 
+
 mu_f_vec = [repmat(100,F-1,1); 50];
 
 
 global avg_total_yearly_products;
-avg_total_yearly_products = 38;
+avg_total_yearly_products = 48;
 
 avg_products_per_firm = f_share * avg_total_yearly_products;
 %% Make covariate arrays
@@ -46,7 +51,7 @@ avg_products_per_firm = f_share * avg_total_yearly_products;
 %arrays. Again, the arrays are F x J x T
 
 F_array = repmat( (1:F)',1, J, T);
-G_array = repmat( (1:J),F,1,T);
+G_array = repmat( g_vec',F,1,T);
 
 
 
