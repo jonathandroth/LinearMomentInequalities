@@ -121,14 +121,17 @@ sigma_zetaj = 50;
 %     sigma_epsilon, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, mu_f_vec, G_array, F_array );
 % 
 
+sigma_nu_vec = [30;40;50;60];
+var_vec = NaN(size(sigma_nu_vec) );
 
-tic;
-[mu_f, J_array] = mu_f_optimal( avg_products_per_firm, mu_f_vec, 40, ...
+for s = 1:length(sigma_nu_vec)
+
+[mu_f, J_array] = mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu_vec(s), ...
     sigma_zetaj, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,... 
     Zetajft_shocks_array, G_array, F_array);
-toc;
 
-tic;
-var = nineyr_variance(J_array,burnout);
-toc;
+var_vec(s) = nineyr_variance(J_array,burnout);
+
+end
  
+var_vec
