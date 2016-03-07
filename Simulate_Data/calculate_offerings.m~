@@ -44,9 +44,8 @@ for t=1:T
     %variances
     %Right now, eta has mean mu_f + theta_g g if j is not in J_tminus1; eta
     %has mean mu_f +(lambda * theta_g g) if j is in J_tminus1
-   
-    Eta_t = ( J_tminus1 * lambda + (1 - J_tminus1) ) .* Mu_f_array(:,:,t) + ( J_tminus1 * lambda + (1 - J_tminus1) ) .* (  theta_g * G_array(:, :, t) ) + sigma_nu * Eta_shocks_array(:,:,t) ;
-    %Eta_t = Mu_f_array(:,:,t) + ( J_tminus1 * lambda + (1 - J_tminus1) ) .* (  theta_g * G_array(:, :, t) ) + sigma_nu * Eta_shocks_array(:,:,t) ;
+    %Eta_t = ( J_tminus1 * lambda + (1 - J_tminus1) ) .* Mu_f_array(:,:,t) + ( J_tminus1 * lambda + (1 - J_tminus1) ) .* (  theta_g * G_array(:, :, t) ) + sigma_nu * Eta_shocks_array(:,:,t) ;
+    Eta_t =  Mu_f_array(:,:,t) + ( J_tminus1 * lambda + (1 - J_tminus1) ) .* (  theta_g * G_array(:, :, t) ) + sigma_nu * Eta_shocks_array(:,:,t) ;
     Epsilon_t = sigma_epsilon * Epsilon_shocks_array(:,:,t);
     
     Pi_star_t = Eta_t + Epsilon_t;

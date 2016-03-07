@@ -1,0 +1,13 @@
+function x0 = binary_search( f, xrange )
+
+tol = 10^(-6)
+maxiters = 10^5;
+
+lb = xrange(1);
+ub = xrange(2);
+
+if( sign( f(lb) ) == sign( f(ub) )   )
+    error( 'Sign at ub is same as sign at lb');
+end
+
+

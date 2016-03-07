@@ -6,6 +6,7 @@ theta_c = 129.73;
 
 global lambda;
 lambda = 0.386; %should this be negative? Should this be one-over this? %Think we are good.
+%lambda = 1;
 
 global theta_g;
 theta_g = -21.38;
@@ -45,6 +46,9 @@ global avg_total_yearly_products;
 avg_total_yearly_products = 48;
 
 avg_products_per_firm = f_share * avg_total_yearly_products;
+
+observed_9yr_totals = [8 + 21.3 + 8.3; 7.9 + 24.8 + 10.8; 8.3 + 27.1 + 9.6];
+observed_threepd_variance = var( observed_9yr_totals);
 %% Make covariate arrays
 
 %Make arrays corresponding to the covariates for the products in the shocks
@@ -121,26 +125,29 @@ sigma_zetaj = 50;
 %     sigma_epsilon, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, mu_f_vec, G_array, F_array );
 % 
 
-sigma_nu_vec = [30;40;50;60];
+sigma_nu_vec = [100;500;1000;3000;5000];
+sigma_eps_vec = sigma_nu_vec;
+%sigma_eps_vec = [100;500;1000];
 var_vec = NaN(size(sigma_nu_vec) );
-p_e = NaN(size(sigma_nu_vec));
-p_d = NaN(size(sigma_nu_vec));
+p_e = NaN(size(sigma_nu_vec,1), size(sigma_eps_vec,1));
+p_d = NaN(size(p_e));
 
 for s = 1:length(sigma_nu_vec)
+for sprime = 1:length(sigma_eps_vec)
 
 [mu_f, J_t, J_tm1] = mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu_vec(s), ...
-    sigma_zetaj, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,... 
+    sigma_eps_vec(sprime), zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,... 
     Zetajft_shocks_array, G_array, F_array);
 
-var_vec(s) = nineyr_variance(J_t,burnout);
+var_vec(s,sprime) = nineyr_variance(J_t,burnout);
 
-p_e(s) = mean( mean( mean( J_t(J_tm1 == 0),3 ), 2), 1 );
-p_d(s) = 1 - mean( mean( mean( J_t(J_tm1 == 1),3 ), 2), 1 );
+p_e(s,sprime) = mean( mean( mean( J_t(J_tm1 == 0),3 ), 2), 1 );
+p_d(s, sprime) = 1 - mean( mean( mean( J_t(J_tm1 == 1),3 ), 2), 1 );
 
 end
- 
+end
 var_vec
 
-[p_e, p_d ]
+%[p_e, p_d ]
 
-p_e ./ (p_e + p_d)
+%p_e ./ (p_e + p_d)
