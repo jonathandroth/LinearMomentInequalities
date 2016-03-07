@@ -2,7 +2,7 @@
 %integer burnout. It removes the first burnout year. The remaining number
 %of years is ASSUMED to be a multiple of 27.
 
-%The function then does the following: 1) It computes the mean number of
+%The function then does the following: 1) It computes the total number of
 %products offered in each year. 2) It aggregates the mean number of
 %products up to 9-year intervals. 3) It computes the variance of the 9-year
 %means for each 27-year period (i.e. 3 consecutive 9-year periods). 4) It

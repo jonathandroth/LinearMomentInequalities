@@ -49,6 +49,10 @@ avg_products_per_firm = f_share * avg_total_yearly_products;
 
 observed_9yr_totals = [8 + 21.3 + 8.3; 7.9 + 24.8 + 10.8; 8.3 + 27.1 + 9.6];
 observed_threepd_variance = var( observed_9yr_totals);
+
+markup = .35;
+avg_price = mean( [64510, 68012, 67644]);
+observed_variance_quantity = var( [467; 502; 494]/1000);%divide by 1000 to get in millions
 %% Make covariate arrays
 
 %Make arrays corresponding to the covariates for the products in the shocks
@@ -156,8 +160,24 @@ var_vec
 [~,sigma_eps_ind] = min( min( abs(var_vec - observed_threepd_variance),[], 1) ) ;
 
 sigma_nu = sigma_nu_vec(sigma_nu_ind);
-sigma_eps_ = sigma_eps_vec(sigma_eps_ind);
+sigma_eps = sigma_eps_vec(sigma_eps_ind);
 
 
 
 %%
+[mu_f, J_t, J_tm1, Pi_star_array] = mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu, ...
+    sigma_eps, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, G_array);
+
+%This function returns the pi_star array as a function of sigma_z. It sets
+%sigma_zetaj= sigma_zetajft, and uses the shocks and the pi_star already
+%calculated
+pi_star_sigma_fn = @(sigma_z) pi_array_fn( Pi_star_array, Zetaj_shocks_array, Zetajft_shocks_array, sigma_z, sigma_z);
+
+%This function takes the 9-year variance of the sum of the pi-stars for the
+%products that were in the market
+pi_star_variance_fn = @(sigma_z) nineyr_variance( J_t .* pi_star_sigma_fn(sigma_z) , burnout )  ;
+
+target_variance_pi = markup^2 * avg_price^2 * observed_variance_quantity;
+
+nineyr_variance( Pi_star_array .* J_t, burnout)
+
