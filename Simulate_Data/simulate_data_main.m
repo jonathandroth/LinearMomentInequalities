@@ -136,8 +136,7 @@ for s = 1:length(sigma_nu_vec)
 for sprime = 1:length(sigma_eps_vec)
 
 [mu_f, J_t, J_tm1] = mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu_vec(s), ...
-    sigma_eps_vec(sprime), zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,... 
-    Zetajft_shocks_array, G_array, F_array);
+    sigma_eps_vec(sprime), zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, G_array);
 
 var_vec(s,sprime) = nineyr_variance(J_t,burnout);
 

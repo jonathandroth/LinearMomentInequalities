@@ -1,6 +1,5 @@
-function [mu_f,J,J_tminus1] = mu_f_optimal( avg_products_per_firm, mu_f_guess, sigma_nu, ...
-    sigma_epsilon, J_0 , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,... 
-    Zetajft_shocks_array, G_array, F_array)
+function [mu_f,J,J_tminus1, Pi_star] = mu_f_optimal( avg_products_per_firm, mu_f_guess, sigma_nu, ...
+    sigma_epsilon, J_0 , Epsilon_shocks_array, Eta_shocks_array,  G_array)
 
 global burnout;
 global F;
@@ -9,7 +8,7 @@ global theta_c;
 %Create a function that computes the J_array for a given value of mu_f,
 %holding constant all the other parameters
 J_array_muf = @(mu_f) calculate_offerings( sigma_nu, ...
-    sigma_epsilon, J_0 , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, mu_f, G_array, F_array );
+    sigma_epsilon, J_0 , Epsilon_shocks_array, Eta_shocks_array,  mu_f, G_array);
 
 %Create a function that computes the mean products by firm using the output
 %from the J_array_muf function
@@ -40,7 +39,7 @@ parfor f = 1:F
     
 end
 
-[J, J_tminus1] = J_array_muf(mu_f);
+[J, J_tminus1, Pi_star] = J_array_muf(mu_f);
 
 end
 

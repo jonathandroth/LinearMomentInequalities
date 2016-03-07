@@ -1,5 +1,5 @@
-function [J_t_array, J_tminus1_array, Pi_array] = calculate_offerings( sigma_nu, ...
-    sigma_epsilon, J_0 , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, mu_f_vec, G_array, F_array )
+function [J_t_array, J_tminus1_array, Pi_star_array] = calculate_offerings( sigma_nu, ...
+    sigma_epsilon, J_0 , Epsilon_shocks_array, Eta_shocks_array, mu_f_vec, G_array )
 
 global T;
 global J;
@@ -68,7 +68,7 @@ end
 
 
 %Add shocks to pi_star to generate pi
-Pi_array = Pi_star_array .* (1 + sigma_zetaj * Zetaj_shocks_array + sigma_zetajft * Zetajft_shocks_array);
+%Pi_array = Pi_star_array .* (1 + sigma_zetaj * Zetaj_shocks_array + sigma_zetajft * Zetajft_shocks_array);
 
 
 
