@@ -125,8 +125,8 @@ sigma_zetaj = 50;
 %     sigma_epsilon, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, mu_f_vec, G_array, F_array );
 % 
 
-sigma_nu_vec = [100;500;1000;3000;5000];
-sigma_eps_vec = sigma_nu_vec;
+sigma_nu_vec = [100;250;500;750;1000];
+sigma_eps_vec = [100;200;300];
 %sigma_eps_vec = [100;500;1000];
 var_vec = NaN(size(sigma_nu_vec) );
 p_e = NaN(size(sigma_nu_vec,1), size(sigma_eps_vec,1));
@@ -147,7 +147,18 @@ p_d(s, sprime) = 1 - mean( mean( mean( J_t(J_tm1 == 1),3 ), 2), 1 );
 end
 end
 var_vec
-
 %[p_e, p_d ]
-
 %p_e ./ (p_e + p_d)
+
+%Choose the parameters that make the variance closest to
+%observed_3pd_variance
+
+[~,sigma_nu_ind] = min( min( abs(var_vec - observed_threepd_variance),[], 2) ) ;
+[~,sigma_eps_ind] = min( min( abs(var_vec - observed_threepd_variance),[], 1) ) ;
+
+sigma_nu = sigma_nu_vec(sigma_nu_ind);
+sigma_eps_ = sigma_eps_vec(sigma_eps_ind);
+
+
+
+%%
