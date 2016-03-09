@@ -19,9 +19,8 @@ burnout = 1000;
 global T;
 T = 27*100 + burnout;
 
-%g_vec = [31.818; 12.7; 21.495; 31.494; 43.462; 51.616; 54.277];
-g_vec = linspace(12.7, 54.277, 12)';
-
+%g_vec = [31.818; 12.7; 21.495; 31.494; 43.462; 51.616; 54.277]/10;
+g_vec = linspace(12.7, 54.277, 12)'/10; %Divide by 10 to put into 10k lb units
 
 global J;
 J = size(g_vec,1);
@@ -85,7 +84,7 @@ Epsilon_shocks_array = NaN(F,J,T);
 Zetaj_shocks_array = NaN(F,J,T);
 Zetajft_shocks_array = NaN(F,J,T);
 
-%rng(1234);
+rng(1234);
 for t= 1:T
     %For eta, take one draw for each j for period t
     %Right now, assuming that the shocks are uncorrelated across J. Could
@@ -116,8 +115,8 @@ end
 
 
 %% Draw data
-sigma_nu = 50;
-sigma_zetaj = 50;
+% sigma_nu = 50;
+% sigma_zetaj = 50;
 % 
 % tic;
 % [J_t_startat1, J_tm1_startat1] = calculate_offerings( sigma_nu, ...
@@ -129,9 +128,16 @@ sigma_zetaj = 50;
 %     sigma_epsilon, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, mu_f_vec, G_array, F_array );
 % 
 
-sigma_nu_vec = [100;250;500;750;1000];
-sigma_eps_vec = [100;200;300];
-%sigma_eps_vec = [100;500;1000];
+%sigma_nu_vec = [100;500;1000;3000];
+%sigma_eps_vec = sigma_nu_vec;
+
+sigma_nu_vec = 16;
+sigma_eps_vec = 10;
+%sigma_nu_vec =  [10; 50;100;250;500;750;1000];
+%sigma_eps_vec = [0; 0.001; .01; 1; 10; 20];
+
+%sigma_nu_vec = [0.01; 0.1; 0.5; 0.7; 1];
+%sigma_eps_vec = [.001];
 var_vec = NaN(size(sigma_nu_vec) );
 p_e = NaN(size(sigma_nu_vec,1), size(sigma_eps_vec,1));
 p_d = NaN(size(p_e));
