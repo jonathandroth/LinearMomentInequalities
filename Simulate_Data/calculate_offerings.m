@@ -13,12 +13,6 @@ global theta_g;
 Mu_f_array = repmat(mu_f_vec, 1,J,T);
 
 
-%For now ,we assume that sigma_epsilon = sigma_nu, sigma_zetajft =
-%sigma_zetaj
-
-sigma_zetaj = sigma_nu;
-sigma_zetajft = sigma_epsilon;
-
 %Calculate the Nu draws and Epsilon draws using the shocks and then given
 %means and covariances
 
@@ -65,11 +59,6 @@ for t=1:T
     J_tminus1_array(:,:, t+1) = J_t;
     end
 end
-
-
-%Add shocks to pi_star to generate pi
-%Pi_array = Pi_star_array .* (1 + sigma_zetaj * Zetaj_shocks_array + sigma_zetajft * Zetajft_shocks_array);
-
 
 
 end
