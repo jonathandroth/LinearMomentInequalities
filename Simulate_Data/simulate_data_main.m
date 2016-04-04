@@ -215,7 +215,6 @@ T = 27 + burnout;
 
 numdatasets = 500;
 
-
 for ds = 1:numdatasets
    
     %Reset F and G
@@ -263,7 +262,7 @@ for ds = 1:numdatasets
     
     % Construct pi from pi_star
         Pi_array = pi_array_fn( Pi_star_array, Zetaj_shocks_array, Zetajft_shocks_array, sigma_zeta, sigma_zeta);
-        
+    
     %Take burnout
         take_burnout_fn = @(X) X(:,:,(burnout+1):(size(X,3)) );
         
