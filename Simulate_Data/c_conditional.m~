@@ -1,0 +1,20 @@
+
+
+function c_cond = c_conditional(g_T, Sigma, alpha, Z_draws)
+
+
+h_T = g_T ./ sqrt( diag(Sigma) );
+
+max_g = max(g_T);
+is_max = (g_T == max_g);
+
+%Select h_T for the non-max entries
+h_Tj = h_T( is_max == 0);
+
+%Compute the diag of sigma
+sigma_diag = diag(Sigma); 
+
+omega_vec = Sigma( is_max == 0, is_max == 1) ./  ( sqrt( sigma_diag( is_max == 0) ) .* sqrt( sigma_diag(is_max == 1) ) );
+
+v_lo = max( 
+end
