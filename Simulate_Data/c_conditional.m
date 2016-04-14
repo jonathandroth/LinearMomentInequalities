@@ -24,7 +24,7 @@ t_i = h_Ti;
 l_i = v_lo ./ sqrt( sigma_diag(is_max == 1) );
 u_i = inf;
 
-T_bound = (  (sqrt( 4 + l_i^2) + l_i)^(-1) -  (sqrt( 2 + t_i^2) + t_i)^(-1) * exp(-0.5 *(t_i^2 - l_i^2) ) ) ...
+T_bound = 1- (  (sqrt( 4 + l_i^2) + l_i)^(-1) -  (sqrt( 2 + t_i^2) + t_i)^(-1) * exp(-0.5 *(t_i^2 - l_i^2) ) ) ...
     / ( ( sqrt( 2 + l_i^2) + l_i)^(-1) - (sqrt( 4 + u_i^2) + u_i)^(-1) * exp(-0.5 * (u_i^2 - l_i^2)) );
 
 T_bound( min(T_bound, h_Ti) < 0 ) = 1;
