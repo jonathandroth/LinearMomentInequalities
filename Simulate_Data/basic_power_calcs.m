@@ -53,9 +53,11 @@ for mu1_index = 1:grid_length
         test_rsw = ( R_gt > cutoff_RSW ) .* max( mu_tilde == 0) ;
         
         %Do the conditional test
-        cutoff_conditional = c_conditional(g_T, Sigma, alpha);
-        test_conditional = (R_gt > cutoff_conditional);
+        %cutoff_conditional = c_conditional(g_T, Sigma, alpha);
+        %test_conditional = (R_gt > cutoff_conditional);
         
+        T_conditional = c_conditional(g_T, Sigma, alpha);
+        test_conditional = T_conditional < alpha;
         
         rejection_prob_lf(mu1_index, mu2_index) =  rejection_prob_lf(mu1_index, mu2_index) + test_lf;
         rejection_prob_rsw(mu1_index, mu2_index) =  rejection_prob_rsw(mu1_index, mu2_index) + test_rsw;
