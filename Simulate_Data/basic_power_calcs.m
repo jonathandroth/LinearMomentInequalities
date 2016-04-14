@@ -42,29 +42,8 @@ for mu1_index = 1:grid_length
         %Construct g_T using the norm_draw and the given mus
         g_T = z_draw + [mu1 ; mu2 ];
         
-        %Calculate the normalized maximum (used for multiple test)
-        R_gt = R_gt_sigma( g_T, Sigma);
-        
-        %Do the LF test
-        cutoff_lf = c_lf(Sigma, alpha, Z_draws);
-        test_lf =  ( R_gt > cutoff_lf );
-        
-        %Do the RSW test
-        [cutoff_RSW , mu_tilde] = c_RSW( g_T, Sigma, alpha, beta, Z_draws);
-        test_rsw = ( R_gt > cutoff_RSW ) .* max( mu_tilde == 0) ;
-        
-        %Do the conditional test
-        
-        %cutoff_conditional = c_conditional(g_T, Sigma, alpha);
-        %test_conditional = (R_gt > cutoff_conditional);
-        
-        T_conditional = c_conditional(g_T, Sigma, alpha);
-        test_conditional = T_conditional < alpha;
-        
-        
-        %Do the hybrid test
-        cutoff_lf_beta = c_lf(Sigma, beta, Z_draws);
-        test_hybrid = max( T_conditional < (alpha - beta) , R_gt > cutoff_lf_beta );
+        %Do the tests
+        [test_lf, test_rsw, test_conditional, test_hybrid] = basic_tests(g_T, Sigma, Z_draws, alpha, beta);
         
         %Update the rejection probability matrices
         rejection_prob_lf(mu1_index, mu2_index) =  rejection_prob_lf(mu1_index, mu2_index) + test_lf;
