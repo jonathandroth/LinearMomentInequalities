@@ -1,13 +1,20 @@
+numgridpoints = 21;
 
-%This function takes the number of a dataset
+%lambda_grid = linspace(0,1,numgridpoints);
+theta_c_grid = linspace(80,180,numgridpoints);
+theta_g_grid = linspace(-75,25, numgridpoints);
 
-%It returns as its out a function of (theta_c, theta_g, lambda) that gives
-%the matrix of moments for each jxt cell.
+in_identified_set = ones( numgridpoints);
 
-%Note: this function assumes the working directory is two levels below the
-%main directory (e.g. in Code/something)
+lambda_true = 0.386;
+theta_c_true = 129.73;
+theta_g_true = -21.38;
 
-function Moments_mat_fn = generate_moment_fn(ds)
+% theta_c_grid = theta_c_true;
+% theta_g_grid = theta_g_true;
+
+for ds = 1:50
+%for ds = 1:500
 
 load( strcat('../../Output/Simulated_Data/ds', num2str(ds), '.mat' ));
 
@@ -141,4 +148,25 @@ Lambda_indicator_mat = repmat( moment_has_lambda , size(Pi_for_moments,1) , 1);
 Moments_mat_fn = @(theta_c, theta_g, lambda) (Pi_for_moments + ( lambda * Lambda_indicator_mat ...
     + (1 - Lambda_indicator_mat) ) .* ( theta_c * Const_for_moments + theta_g * G_for_moments));
 
+moment_fn = @(theta_c, theta_g) -Moments_mat_fn(theta_c, theta_g, lambda_true);
+identified_set_ds = NaN(numgridpoints);
+
+           
+for theta_c_index = 1:size(theta_c_grid, 2);
+    for theta_g_index = 1:size(theta_g_grid, 2);
+        
+        theta_c = theta_c_grid(theta_c_index);
+        theta_g = theta_g_grid(theta_g_index);
+        
+        moments_mat = moment_fn(theta_c, theta_g);
+        
+        identified_set_ds(theta_c_index, theta_g_index) = min( moments_mat(:) <= 0 );
+        
+        
+    end
 end
+
+in_identified_set = min( identified_set_ds, in_identified_set);
+
+end
+

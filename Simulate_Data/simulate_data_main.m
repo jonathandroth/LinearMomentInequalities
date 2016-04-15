@@ -277,7 +277,7 @@ for ds = 1:numdatasets
     
     % Save the desired values
         ds_name = strcat( '../../Output/Simulated_Data/ds', num2str(ds));
-        save( ds_name, 'J_t_array', 'J_tminus1_array', 'Pi_array', 'F_array', 'G_array');
+        save( ds_name, 'J_t_array', 'J_tminus1_array', 'Pi_array', 'F_array', 'G_array', 'Pi_star_array');
 
     
     

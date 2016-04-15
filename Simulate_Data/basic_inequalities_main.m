@@ -10,6 +10,9 @@ numgridpoints = 21;
 lambda_grid = linspace(0,1,numgridpoints);
 theta_c_grid = linspace(80,180,numgridpoints);
 theta_g_grid = linspace(-75,25, numgridpoints);
+% theta_c_grid = linspace(40,220,numgridpoints);
+% theta_g_grid = linspace(-125,25, numgridpoints);
+
 
 lambda_true = 0.386;
 theta_c_true = 129.73;
@@ -29,7 +32,7 @@ nummoments = 6;
 %critical values
 Z_draws = randn(nummoments, 10000);
 
-numdatasets = 50;
+numdatasets = 30;
 
 
 for ds = 1:numdatasets
