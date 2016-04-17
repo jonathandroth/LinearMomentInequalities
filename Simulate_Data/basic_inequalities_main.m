@@ -28,24 +28,35 @@ nummoments = 18;
 %critical values
 Z_draws = randn(nummoments, 10000);
 
-numdatasets = 50;
+numdatasets = 2;
 
-
-for ds = 1:numdatasets
+dirnames = { 'Calibrated_SigmaZeta/', 'Calibrated_SigmaZeta_Over4/', 'SigmaZeta_Equal0/'};
     
-    [~,full_moment_fn] = generate_moment_fn( ds); 
+
+for dirname = dirnames
+
+    for ds = 1:numdatasets
+    
+    input_dir = strcat( '../../Output/Simulated_Data/', dirname)
+    ds
+    
+    [~,full_moment_fn] = generate_moment_fn( input_dir, ds); 
     moment_fn = @(theta_c, theta_g) -full_moment_fn(theta_c, theta_g, lambda_true); 
     
     [grid_lf, grid_rsw, grid_conditional,grid_hybrid] = grids_thetac_thetag( moment_fn, theta_c_grid, theta_g_grid,Z_draws, alpha, beta);
  
-    ds_name = strcat( '../../Output/Rejection_Grids/Lambda_Constant/grid', num2str(ds));
+    ds_name = strcat( '../../Output/Rejection_Grids/Lambda_Constant/', dirname, 'grid', num2str(ds));
+    ds_name = ds_name{:};
     save( ds_name, 'grid_lf', 'grid_rsw', 'grid_conditional', 'grid_hybrid');
+    
+    end
+
 end
-
-
 
 %% Aggregate all the results to get the probabilities
 
+for dirname = dirnames
+    
 rejection_prob_lf = zeros( numgridpoints);
 rejection_prob_rsw = rejection_prob_lf;
 rejection_prob_conditional = rejection_prob_lf;
@@ -53,7 +64,8 @@ rejection_prob_hybrid = rejection_prob_lf;
 
 for ds = 1:numdatasets
 
-    ds_name = strcat( '../../Output/Rejection_Grids/Lambda_Constant/grid', num2str(ds));
+    ds_name = strcat( '../../Output/Rejection_Grids/Lambda_Constant/', dirname, 'grid', num2str(ds));
+    ds_name = ds_name{:};
     load(ds_name);
     
     rejection_prob_lf = rejection_prob_lf + grid_lf / numdatasets;
@@ -63,10 +75,38 @@ for ds = 1:numdatasets
 
 end
 [ xgrid, ygrid] = meshgrid( theta_c_grid , theta_g_grid);
- 
-contour( xgrid, ygrid, rejection_prob_conditional, [0.05, 0.2, 0.5,0.7,0.9,0.99], 'ShowText', 'on');
-contourf( xgrid, ygrid, rejection_prob_conditional);
+
+figure_dir = strcat( '../../Output/Figures/Rejection_Grids/Lambda_Constant/', dirname);
+figure_dir = figure_dir{:};
+
+
+contour( xgrid, ygrid, rejection_prob_lf, [0.05, 0.2, 0.5,0.7,0.9,0.99], 'ShowText', 'on');
+title('Rejection Probabilities - Least Favorable');
+xlabel('thetac');
+ylabel('thetag');
+saveas( gcf, strcat(figure_dir, 'rejection_probs_lf'), 'epsc');
+
+contour( xgrid, ygrid, rejection_prob_rsw, [0.05, 0.2, 0.5,0.7,0.9,0.99], 'ShowText', 'on');
+title('Rejection Probabilities - RSW');
+xlabel('thetac');
+ylabel('thetag');
+saveas( gcf, strcat(figure_dir, 'rejection_probs_rsw'), 'epsc');
+
+contour( xgrid, ygrid, rejection_prob_hybrid, [0.05, 0.2, 0.5,0.7,0.9,0.99], 'ShowText', 'on');
+title('Rejection Probabilities - Hybrid');
+xlabel('thetac');
+ylabel('thetag');
+saveas( gcf, strcat(figure_dir, 'rejection_probs_hybrid'), 'epsc');
 
 contour( xgrid, ygrid, rejection_prob_conditional, [0.05, 0.2, 0.5,0.7,0.9,0.99], 'ShowText', 'on');
+title('Rejection Probabilities - Conditional');
+xlabel('thetac');
+ylabel('thetag');
+saveas( gcf, strcat(figure_dir, 'rejection_probs_conditional'), 'epsc');
 
+
+% contourf( xgrid, ygrid, rejection_prob_conditional);
+% contour( xgrid, ygrid, rejection_prob_conditional, [0.05, 0.2, 0.5,0.7,0.9,0.99], 'ShowText', 'on');
+
+end
 toc;

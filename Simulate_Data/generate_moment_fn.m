@@ -9,9 +9,11 @@
 %Note: this function assumes the working directory is two levels below the
 %main directory (e.g. in Code/something)
 
-function [Moments_mat_fn, Interacted_Moments_mat_fn] = generate_moment_fn(ds)
+function [Moments_mat_fn, Interacted_Moments_mat_fn] = generate_moment_fn(directory,ds)
 
-load( strcat('../../Output/Simulated_Data/ds', num2str(ds), '.mat' ));
+file_to_load  = cellstr( strcat(directory,'ds', num2str(ds), '.mat' ));
+file_to_load = file_to_load{:};
+load( file_to_load );
 
 
 T = size( Pi_array ,3);
