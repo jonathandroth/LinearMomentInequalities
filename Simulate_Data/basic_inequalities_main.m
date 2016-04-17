@@ -22,18 +22,18 @@ theta_g_true = -21.38;
 
 %Create a matrix of normal draws with mean 0 and covariace sigma
 %Each column is a draw
-nummoments = 6;
+nummoments = 18;
 
 %Create a matrix of standard normals of size k x 10000 for simulating
 %critical values
 Z_draws = randn(nummoments, 10000);
 
-numdatasets = 10;
+numdatasets = 50;
 
 
 for ds = 1:numdatasets
     
-    full_moment_fn = generate_moment_fn( ds); 
+    [~,full_moment_fn] = generate_moment_fn( ds); 
     moment_fn = @(theta_c, theta_g) -full_moment_fn(theta_c, theta_g, lambda_true); 
     
     [grid_lf, grid_rsw, grid_conditional,grid_hybrid] = grids_thetac_thetag( moment_fn, theta_c_grid, theta_g_grid,Z_draws, alpha, beta);
@@ -66,5 +66,7 @@ end
  
 contour( xgrid, ygrid, rejection_prob_conditional, [0.05, 0.2, 0.5,0.7,0.9,0.99], 'ShowText', 'on');
 contourf( xgrid, ygrid, rejection_prob_conditional);
+
+contour( xgrid, ygrid, rejection_prob_conditional, [0.05, 0.2, 0.5,0.7,0.9,0.99], 'ShowText', 'on');
 
 toc;
