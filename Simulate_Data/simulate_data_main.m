@@ -119,55 +119,57 @@ end
 
 
 
+
+
 %% Calibrate sigma_nu and sigma_eps to match variance in 9-year averages
-
-
-sigma_nu_vec = [10;20;30;40];
-%sigma_eps_vec = sigma_nu_vec;
-
-%sigma_nu_vec = 16;
-%sigma_eps_vec = 10;
-%sigma_nu_vec =  [10;11;12;13;14];
-%sigma_nu_vec = 10 + (0:10)'/10;
-sigma_eps_vec = [10;20;30;40];
-
-%sigma_nu_vec = [0.01; 0.1; 0.5; 0.7; 1];
-%sigma_eps_vec = [.001];
-var_vec = NaN(size(sigma_nu_vec) );
-p_e = NaN(size(sigma_nu_vec,1), size(sigma_eps_vec,1));
-p_d = NaN(size(p_e));
-
-for s = 1:length(sigma_nu_vec)
-
-     
-parfor sprime = 1:length(sigma_eps_vec)
-
-    %pct_done = (s-1)*sprime / (length(sigma_nu_vec) * length(sigma_eps_vec) )
-   
- 
-[mu_f, J_t, J_tm1] = mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu_vec(s), ...
-    sigma_eps_vec(sprime), zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, G_array);
-
-var_vec(s,sprime) = nineyr_variance(J_t,burnout);
-
-p_e(s,sprime) = mean( mean( mean( J_t(J_tm1 == 0),3 ), 2), 1 );
-p_d(s, sprime) = 1 - mean( mean( mean( J_t(J_tm1 == 1),3 ), 2), 1 );
-
-end
-end
-var_vec
-%[p_e, p_d ]
-%p_e ./ (p_e + p_d)
-
-%Choose the parameters that make the variance closest to
-%observed_3pd_variance
-
-% [~,sigma_nu_ind] = min( min( abs(var_vec - observed_threepd_variance),[], 2) ) ;
-% [~,sigma_eps_ind] = min( min( abs(var_vec - observed_threepd_variance),[], 1) ) ;
 % 
-% sigma_nu = sigma_nu_vec(sigma_nu_ind);
-% sigma_eps = sigma_eps_vec(sigma_eps_ind);
-
+% 
+% sigma_nu_vec = [10;20;30;40];
+% %sigma_eps_vec = sigma_nu_vec;
+% 
+% %sigma_nu_vec = 16;
+% %sigma_eps_vec = 10;
+% %sigma_nu_vec =  [10;11;12;13;14];
+% %sigma_nu_vec = 10 + (0:10)'/10;
+% sigma_eps_vec = [10;20;30;40];
+% 
+% %sigma_nu_vec = [0.01; 0.1; 0.5; 0.7; 1];
+% %sigma_eps_vec = [.001];
+% var_vec = NaN(size(sigma_nu_vec) );
+% p_e = NaN(size(sigma_nu_vec,1), size(sigma_eps_vec,1));
+% p_d = NaN(size(p_e));
+% 
+% for s = 1:length(sigma_nu_vec)
+% 
+%      
+% parfor sprime = 1:length(sigma_eps_vec)
+% 
+%     %pct_done = (s-1)*sprime / (length(sigma_nu_vec) * length(sigma_eps_vec) )
+%    
+%  
+% [mu_f, J_t, J_tm1] = mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu_vec(s), ...
+%     sigma_eps_vec(sprime), zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, G_array);
+% 
+% var_vec(s,sprime) = nineyr_variance(J_t,burnout);
+% 
+% p_e(s,sprime) = mean( mean( mean( J_t(J_tm1 == 0),3 ), 2), 1 );
+% p_d(s, sprime) = 1 - mean( mean( mean( J_t(J_tm1 == 1),3 ), 2), 1 );
+% 
+% end
+% end
+% var_vec
+% %[p_e, p_d ]
+% %p_e ./ (p_e + p_d)
+% 
+% %Choose the parameters that make the variance closest to
+% %observed_3pd_variance
+% 
+% % [~,sigma_nu_ind] = min( min( abs(var_vec - observed_threepd_variance),[], 2) ) ;
+% % [~,sigma_eps_ind] = min( min( abs(var_vec - observed_threepd_variance),[], 1) ) ;
+% % 
+% % sigma_nu = sigma_nu_vec(sigma_nu_ind);
+% % sigma_eps = sigma_eps_vec(sigma_eps_ind);
+% 
 
 
 %% Calibrate sigma_zeta to match variance in pi
@@ -270,6 +272,7 @@ for ds = 1:numdatasets
         J_tminus1_array = take_burnout_fn(J_tminus1_array);
         Pi_star_array = take_burnout_fn(Pi_star_array);
         Pi_array = take_burnout_fn(Pi_array);
+        Eta_shocks_array = take_burnout_fn( Eta_shocks_array);
         
         F_array = repmat( (1:F)',1, J, T-burnout);
         G_array = repmat( g_vec',F,1,T-burnout);
@@ -277,7 +280,7 @@ for ds = 1:numdatasets
     
     % Save the desired values
         ds_name = strcat( '../../Output/Simulated_Data/ds', num2str(ds));
-        save( ds_name, 'J_t_array', 'J_tminus1_array', 'Pi_array', 'F_array', 'G_array', 'Pi_star_array');
+        save( ds_name, 'J_t_array', 'J_tminus1_array', 'Pi_array', 'F_array', 'G_array', 'Pi_star_array', 'Eta_shocks_array');
 
     
     

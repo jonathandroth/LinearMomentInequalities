@@ -81,7 +81,7 @@ C_mat(:,5) = (J_t_vec == 1 & J_tminus1_vec == 0 & G_vec ~= min(G_vec) & J_gm1_t_
 C_mat(:,6) = (J_t_vec == 1 & J_tminus1_vec == 0 & G_vec ~= max(G_vec) & J_gp1_t_vec == 0 & J_gp1_tm1_vec == 0);
 
 moment_has_lambda = [1,1,0,0,0,0];%vector indicating whether the moment "needs a lambda"
-moment_sign_on_fc = [1,-1,1,-1,1,1];
+
 % Create a matrix where the i,j th entry is the value of delta-pi for observation
 % i if C_ij == 1, and is 0 otherwise
 
@@ -136,8 +136,6 @@ Lambda_indicator_mat = repmat( moment_has_lambda , size(Pi_for_moments,1) , 1);
 %Create a  fn that returns a (F*J) x M matrix where the (i,j)th entry is the jth moment for
 %grp i
 
-%Also need to fix the grpstats so that they avg only over the things that
-%are positive (i.e. the observations for which C > 0)
 Moments_mat_fn = @(theta_c, theta_g, lambda) (Pi_for_moments + ( lambda * Lambda_indicator_mat ...
     + (1 - Lambda_indicator_mat) ) .* ( theta_c * Const_for_moments + theta_g * G_for_moments));
 
