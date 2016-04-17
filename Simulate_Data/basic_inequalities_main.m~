@@ -1,6 +1,6 @@
 % This script does power calcs using the basic techniques for two
 % parameters, hodling one fixed
-
+tic;
 alpha = 0.05;
 beta = 0.005;
 
@@ -10,10 +10,13 @@ numgridpoints = 21;
 lambda_grid = linspace(0,1,numgridpoints);
 theta_c_grid = linspace(80,180,numgridpoints);
 theta_g_grid = linspace(-75,25, numgridpoints);
+% theta_c_grid = linspace(40,220,numgridpoints);
+% theta_g_grid = linspace(-125,25, numgridpoints);
 
-lambda_true = 0.39;
-theta_c_true = 130;
-theta_g_true = -21;
+
+lambda_true = 0.386;
+theta_c_true = 129.73;
+theta_g_true = -21.38;
 
 
 rejection_prob_lf = zeros( numgridpoints);
@@ -29,13 +32,13 @@ nummoments = 6;
 %critical values
 Z_draws = randn(nummoments, 10000);
 
-numdatasets = 1;
+numdatasets = 30;
 
 
 for ds = 1:numdatasets
     
     full_moment_fn = generate_moment_fn( ds); 
-    moment_fn = @(theta_c, theta_g) full_moment_fn(theta_c, theta_g, lambda_true); 
+    moment_fn = @(theta_c, theta_g) -full_moment_fn(theta_c, theta_g, lambda_true); 
     
 for theta_c_index = 1:numgridpoints
     for theta_g_index = 1:numgridpoints
@@ -55,10 +58,10 @@ for theta_c_index = 1:numgridpoints
         rejection_prob_rsw(theta_c_index, theta_g_index) =  rejection_prob_rsw(theta_c_index, theta_g_index) + test_rsw;
         rejection_prob_conditional(theta_c_index, theta_g_index) =  rejection_prob_conditional(theta_c_index, theta_g_index) + test_conditional;
         rejection_prob_hybrid(theta_c_index, theta_g_index) =  rejection_prob_hybrid(theta_c_index, theta_g_index) + test_hybrid;
-    end
-    
+    end   
 end
-
+    ds_name = strcat( '../../Output/Rejection_Grids/Lambda_Constant/grid', num2str(ds));
+    save( ds_name, 'J_t_array', 'J_tminus1_array', 'Pi_array', 'F_array', 'G_array', 'Pi_star_array');
 end
 
 rejection_prob_lf = rejection_prob_lf / numdatasets;
@@ -68,4 +71,7 @@ rejection_prob_hybrid = rejection_prob_hybrid / numdatasets;
 
 [ xgrid, ygrid] = meshgrid( theta_c_grid , theta_g_grid);
  
-contour( xgrid, ygrid, rejection_prob_conditional, [0;1], )
+contour( xgrid, ygrid, rejection_prob_conditional, [0.05, 0.2, 0.5,0.7,0.9,0.99], 'ShowText', 'on');
+contourf( xgrid, ygrid, rejection_prob_conditional);
+
+toc;
