@@ -23,13 +23,13 @@ function [test_lf, test_rsw, test_conditional, test_hybrid] = basic_tests(g_T, S
         %cutoff_conditional = c_conditional(g_T, Sigma, alpha);
         %test_conditional = (R_gt > cutoff_conditional);
         
-        T_conditional = c_conditional(g_T, Sigma, alpha);
-        test_conditional = T_conditional < alpha;
-        
+        [~, T_conditional_integrated] = c_conditional(g_T, Sigma, alpha);
+        %test_conditional = T_conditional < alpha;
+        test_conditional = T_conditional_integrated < alpha;
         
         %Do the hybrid test
         cutoff_lf_beta = c_lf(Sigma, beta, Z_draws);
-        test_hybrid = max( T_conditional < (alpha - beta) , R_gt > cutoff_lf_beta );
+        test_hybrid = max( T_conditional_integrated < (alpha - beta) , R_gt > cutoff_lf_beta );
         
 end
         

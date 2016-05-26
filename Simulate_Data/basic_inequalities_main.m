@@ -27,10 +27,11 @@ nummoments_interacted = 18;
 
 %Create a matrix of standard normals of size k x 10000 for simulating
 %critical values
+rng(0);
 Z_draws_interacted = randn(nummoments_interacted, 10000);
 Z_draws_basic = Z_draws_interacted( 1:nummoments_basic,:);
 
-numdatasets = 2;
+numdatasets = 500;
 
 dirnames = { 'Calibrated_SigmaZeta/', 'Calibrated_SigmaZeta_Over4/', 'SigmaZeta_Equal0/'};
     
@@ -73,6 +74,7 @@ rejection_prob_rsw = rejection_prob_lf;
 rejection_prob_conditional = rejection_prob_lf;
 rejection_prob_hybrid = rejection_prob_lf;
 
+
 for ds = 1:numdatasets
 
     ds_name = strcat( '../../Output/Rejection_Grids/Lambda_Constant/', dirname, moment_type, 'grid', num2str(ds));
@@ -83,7 +85,7 @@ for ds = 1:numdatasets
     rejection_prob_rsw = rejection_prob_rsw + grid_rsw / numdatasets;
     rejection_prob_conditional = rejection_prob_conditional + grid_conditional / numdatasets;
     rejection_prob_hybrid = rejection_prob_hybrid + grid_hybrid / numdatasets;
-
+    
 end
 [ xgrid, ygrid] = meshgrid( theta_c_grid , theta_g_grid);
 
@@ -122,3 +124,90 @@ saveas( gcf, strcat(figure_dir, 'rejection_probs_conditional'), 'epsc');
 end
 end
 toc;
+
+
+%% Do a grid just for theta_g using the plus/minus weight moments
+
+theta_g_grid = -450:50:450;
+
+numdatasets = 10;
+
+Z_draws_basic_thetag = Z_draws_basic(5:6,:);
+Z_draws_interacted_thetag = Z_draws_interacted([5:6,11:12,17:18] ,:);
+
+%Create an inline function to subset columns
+subset_cols = @(mat, cols) mat(:, cols);
+
+for dirname = dirnames
+
+    for ds = 1:numdatasets
+    
+    input_dir = strcat( '../../Output/Simulated_Data/', dirname)
+    ds
+    
+    [moment_fn_allparams,moment_fn_interacted_allparams] = generate_moment_fn( input_dir, ds); 
+    
+    %The basic moment fn is columns 5 and 6 of the basic moment fn of all
+    %the parameters (since this doesn't depend on theta_g, i set it to 0)
+    moment_fn = @(theta_g) - subset_cols( moment_fn_allparams(0, theta_g, lambda_true), 5:6);
+    
+    %Compute and save the grids for the basic moments
+    [grid_lf, grid_rsw, grid_conditional,grid_hybrid] = grids_thetag_only( moment_fn, theta_g_grid,Z_draws_basic_thetag, alpha, beta);
+ 
+    ds_name = strcat( '../../Output/Rejection_Grids/Lambda_Constant/', dirname, 'Basic_Moments/theta_g_grid', num2str(ds));
+    ds_name = ds_name{:};
+    save( ds_name, 'grid_lf', 'grid_rsw', 'grid_conditional', 'grid_hybrid');
+    
+    %Compute and save the grid for the interacted moments
+    moment_fn_interacted = @(theta_g) - subset_cols( moment_fn_interacted_allparams(0, theta_g, lambda_true), [5:6,11:12,17:18]);
+
+    [grid_lf, grid_rsw, grid_conditional,grid_hybrid] = grids_thetag_only( moment_fn_interacted, theta_g_grid,Z_draws_interacted_thetag, alpha, beta);
+    
+    ds_name = strcat( '../../Output/Rejection_Grids/Lambda_Constant/', dirname, 'Interacted_Moments/theta_g_grid', num2str(ds));
+    ds_name = ds_name{:};
+    save( ds_name, 'grid_lf', 'grid_rsw', 'grid_conditional', 'grid_hybrid');
+    end
+
+end
+
+
+%% Aggregate the results to get the probabilities for theta_g
+for moment_type = {'Basic_Moments/', 'Interacted_Moments/'};
+    
+for dirname = dirnames
+    
+rejection_prob_lf = zeros( size(theta_g_grid) );
+rejection_prob_rsw = rejection_prob_lf;
+rejection_prob_conditional = rejection_prob_lf;
+rejection_prob_hybrid = rejection_prob_lf;
+
+for ds = 1:numdatasets
+
+    ds_name = strcat( '../../Output/Rejection_Grids/Lambda_Constant/', dirname, moment_type, 'theta_g_grid', num2str(ds));
+    ds_name = ds_name{:};
+    load(ds_name);
+    
+    rejection_prob_lf = rejection_prob_lf + grid_lf / numdatasets;
+    rejection_prob_rsw = rejection_prob_rsw + grid_rsw / numdatasets;
+    rejection_prob_conditional = rejection_prob_conditional + grid_conditional / numdatasets;
+    rejection_prob_hybrid = rejection_prob_hybrid + grid_hybrid / numdatasets;
+    
+end
+
+
+figure_dir = strcat( '../../Output/Figures/Rejection_Grids/Theta_g_Only/', dirname, moment_type);
+figure_dir = figure_dir{:};
+mkdir(figure_dir);
+
+plot( repmat( theta_g_grid', 1, 4), [rejection_prob_lf', rejection_prob_rsw', rejection_prob_conditional', rejection_prob_hybrid'] );
+legend( 'LF', 'RSW', 'Conditional', 'Hybrid', 'Location','eastoutside' );
+ylabel( 'Rejection Probability');
+xlabel( 'theta\_g');
+ylim([0, 1]);
+set(gca, 'xtick', [-500:100:500]);
+
+saveas( gcf, strcat(figure_dir, 'rejection_probs_conditional'), 'epsc');
+
+end
+end
+
