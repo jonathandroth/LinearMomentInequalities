@@ -130,7 +130,7 @@ toc;
 
 theta_g_grid = -450:50:450;
 
-numdatasets = 10;
+numdatasets = 500;
 
 Z_draws_basic_thetag = Z_draws_basic(5:6,:);
 Z_draws_interacted_thetag = Z_draws_interacted([5:6,11:12,17:18] ,:);
@@ -206,7 +206,7 @@ xlabel( 'theta\_g');
 ylim([0, 1]);
 set(gca, 'xtick', [-500:100:500]);
 
-saveas( gcf, strcat(figure_dir, 'rejection_probs_conditional'), 'epsc');
+saveas( gcf, strcat(figure_dir, 'rejection_probs'), 'epsc');
 
 end
 end
