@@ -25,7 +25,19 @@ T_array = repmat( (1:T), F*J ,1  );
 T_array = T_array(:);
 T_array = reshape( T_array, F, J,T);
 
+%Create an array of profits for the weight class one weight ahead (behind). Set to 0
+%if the maximum (minimum) weight class
+Pi_gplus1_array = [ Pi_array(:,2:J,:), zeros(F,1,T)];
+Pi_gminus1_array = [ zeros(F,1,T), Pi_array(:,1:(J-1),:)];
 
+G_gplus1_array = [ G_array(:,2:J,:), zeros(F,1,T)];
+G_gminus1_array = [ zeros(F,1,T), G_array(:,1:(J-1),:)];
+
+J_gp1_t_array = [ J_t_array(:,2:J,:), zeros(F,1,T)];
+J_gm1_t_array = [ zeros(F,1,T), J_t_array(:,1:(J-1),:)];
+
+J_gp1_tm1_array = [ J_tminus1_array(:,2:J,:), zeros(F,1,T)];
+J_gm1_tm1_array = [ zeros(F,1,T), J_tminus1_array(:,1:(J-1),:)];
 
 %Construct the eta+ and eta- instrument
 Eta_shocks_vec = Eta_shocks_array(:);
@@ -34,6 +46,8 @@ Eta_minus_vec = max(-Eta_shocks_vec,0);
 
 %Put into "long" format
 Pi_vec = Pi_array(:);
+Pi_gplus1_vec = Pi_gplus1_array(:);
+Pi_gminus1_vec = Pi_gminus1_array(:);
 
 % %Create a J_array for g+1
 % J_gp1_t_array = [ J_t_array(:,(2:size(J_t_array,2)),:) , zeros(size(J_t_array,1) , 1, size(J_t_array,3) ) ];
@@ -45,7 +59,14 @@ Pi_vec = Pi_array(:);
 J_t_vec = J_t_array(:);
 J_tminus1_vec =  J_tminus1_array(:);
 
+J_gp1_t_vec = J_gp1_t_array(:);
+J_gm1_t_vec = J_gm1_t_array(:);
+J_gp1_tm1_vec = J_gp1_tm1_array(:);
+J_gm1_tm1_vec = J_gm1_tm1_array(:);
+
 G_vec = G_array(:);
+G_gplus1_vec = G_gplus1_array(:);
+G_gminus1_vec = G_gminus1_array(:);
 
 F_vec = F_array(:);
 T_vec = T_array(:);
@@ -68,6 +89,8 @@ C_mat(:,1) = (J_t_vec == 1 & J_tminus1_vec == 1);
 C_mat(:,2) = (J_t_vec == 0 & J_tminus1_vec == 1);
 C_mat(:,3) = (J_t_vec == 1 & J_tminus1_vec == 0);
 C_mat(:,4) = (J_t_vec == 0 & J_tminus1_vec == 0);
+C_mat(:,5) = (J_t_vec == 1 & J_tminus1_vec == 0 & G_vec ~= min(G_vec) & J_gm1_t_vec == 0 & J_gm1_tm1_vec == 0) ;
+C_mat(:,6) = (J_t_vec == 1 & J_tminus1_vec == 0 & G_vec ~= max(G_vec) & J_gp1_t_vec == 0 & J_gp1_tm1_vec == 0);
 
 moment_has_lambda = [1,1,0,0,0,0];%vector indicating whether the moment "needs a lambda"
 
@@ -96,14 +119,14 @@ add_lower = lower_weights .* (J_t_allf == 0) .* (J_tminus1_allf == 0) ;
 
 %Average pi over the eligible upper products (and set to 0 if no eligible
 %upper products
-Pi_upper = sum( Pi_allf .* add_upper  ,2) ./ max( 1, sum( add_upper, 2));
+Pi_upper = sum( Pi_allf( add_upper ) ,2) ./ max( 1, sum( add_upper, 2));
 %Average pi over the elibible lowe products
-Pi_lower = sum( Pi_allf .* add_lower  ,2) ./ max( 1, sum( add_lower, 2));
+Pi_lower = sum( Pi_allf( add_lower ) ,2) ./ max( 1, sum( add_lower, 2));
 
-%Average G over the eligible upper products
-G_upper = sum( G_allf .* add_upper  ,2) ./ max( 1, sum( add_upper, 2));
-%Average G over the elibible lowe products
-G_lower = sum( G_allf .* add_lower  ,2) ./ max( 1, sum( add_lower, 2));
+%Average pi over the eligible upper products
+G_upper = sum( G_allf( add_upper ) ,2) ./ max( 1, sum( add_upper, 2));
+%Average pi over the elibible lowe products
+G_lower = sum( G_allf( add_lower ) ,2) ./ max( 1, sum( add_lower, 2));
 
 
 %We are in condition 5 if we added product j and there is at least one
@@ -119,8 +142,8 @@ C_mat(:,6) = (J_t_vec == 1 & J_tminus1_vec == 0) & ( sum( add_upper, 2) > 0 );
 % i if C_ij == 1, and is 0 otherwise
 
 %For the first four moments, deltapi is pi if J_t =1 ,and -pi if J_t = 0
-%the first 4 moments. For the 5th moment, this is Pi_vec - the average for the eligible lower products
-%; for the 6th, this is pi_vec - the average_for the upper products
+%the first 4 moments. For the 5th moment, this is (Pi_vec -
+%Pi_gminus1_vec); for the 6th, this is (Pi_vec - Pi_gplus1_vec)
 
 Pi_cond_mat = [Pi_vec, -Pi_vec, Pi_vec, -Pi_vec,...
     Pi_vec - Pi_lower, Pi_vec - Pi_upper] .* C_mat;
@@ -135,7 +158,7 @@ Pi_cond_mat = [Pi_cond_mat,...
 
 %For moments 1:4, the value that multiplies theta_g is +g if the product is
 %in, and -g if it is out. For the last two, it is -1 and +1
-G_cond_mat = [-G_vec, G_vec, -G_vec, G_vec, G_lower - G_vec , G_upper - G_vec]  .* C_mat;
+G_cond_mat = [-G_vec, G_vec, -G_vec, G_vec, G_gminus1_vec - G_vec , G_gplus1_vec - G_vec]  .* C_mat;
 
 G_cond_mat = [G_cond_mat,...
                G_cond_mat .* repmat( Eta_plus_vec,1, size(G_cond_mat,2) ),...

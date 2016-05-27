@@ -31,7 +31,7 @@ rng(0);
 Z_draws_interacted = randn(nummoments_interacted, 10000);
 Z_draws_basic = Z_draws_interacted( 1:nummoments_basic,:);
 
-numdatasets = 500;
+numdatasets = 2;
 
 dirnames = { 'Calibrated_SigmaZeta/', 'Calibrated_SigmaZeta_Over4/', 'SigmaZeta_Equal0/'};
     
