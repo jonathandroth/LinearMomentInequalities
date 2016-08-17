@@ -375,7 +375,7 @@ sigma_zeta = 0;
         Zetaj_shocks_array = NaN(F,J,T);
         Zetajft_shocks_array = NaN(F,J,T);
 
-        rng(1);
+        rng(d);
         for t= 1:T
             %For eta, take one draw for each j for period t
             %Right now, assuming that the shocks are uncorrelated across J. Could

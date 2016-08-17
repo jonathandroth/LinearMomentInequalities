@@ -36,7 +36,7 @@ rng(0);
 Z_draws_interacted = randn(nummoments_interacted, 10000);
 Z_draws_basic = Z_draws_interacted( 1:nummoments_basic,:);
 
-numdatasets = 2;
+numdatasets = 1;
 
 nummarkets = 27; %This is the number of markets to sample from the long chain
 
@@ -53,7 +53,7 @@ for dirname = dirnames
     long_ds_object = load( char(strcat( '../../Output/Simulated_Data/', dirname, 'ds_long.mat') )) ;
     length_long_chain = size( long_ds_object.J_t_array,3);
     
-    parfor ds = 1:numdatasets
+    for ds = 1:numdatasets
     
     rng(ds);
     rand_index = randsample( length_long_chain , nummarkets, true);
@@ -61,14 +61,11 @@ for dirname = dirnames
     F_array = long_ds_object.F_array(:,:,rand_index);
     G_array = long_ds_object.G_array(:,:,rand_index);
     Eta_shocks_array = long_ds_object.Eta_shocks_array(:,:,rand_index);
-    %Pi_star_array = long_ds_object.Pi_star_array(:,:,rand_index);
-    J_t_array = long_ds_object.J_t_array(:,:,rand_index);
-    J_tminus1_array = long_ds_object.J_tminus1_array(:,:,rand_index);
-    Pi_array = long_ds_object.Pi_array(:,:,rand_index);
-   
+    Pi_star_array = long_ds_object.Pi_ss_array(:,:,rand_index);
+    
     ds
     
-    [moment_fn_allparams,moment_fn_interacted_allparams] = generate_moment_fn( F_array, G_array, Eta_shocks_array, Pi_array, J_t_array, J_tminus1_array); 
+    [moment_fn_allparams,moment_fn_interacted_allparams] = generate_moment_fn( input_dir, ds); 
     
     %Compute and save the grids for the basic moments
     moment_fn = @(theta_c, theta_g) -moment_fn_allparams(theta_c, theta_g, lambda_true);

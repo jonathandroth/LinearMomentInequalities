@@ -1,6 +1,6 @@
 function [grid_lf, grid_rsw, grid_conditional,grid_hybrid] = grids_thetac_thetag( moment_fn, theta_c_grid, theta_g_grid,Z_draws, alpha, beta)
 
- grid_lf = NaN( length(theta_c_grid) );
+ grid_lf = NaN( length(theta_c_grid), length(theta_g_grid) );
  grid_rsw = grid_lf;
  grid_conditional = grid_lf;
  grid_hybrid = grid_lf;

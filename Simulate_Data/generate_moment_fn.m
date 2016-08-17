@@ -9,11 +9,7 @@
 %Note: this function assumes the working directory is two levels below the
 %main directory (e.g. in Code/something)
 
-function [Moments_mat_fn, Interacted_Moments_mat_fn] = generate_moment_fn(directory,ds)
-
-file_to_load  = cellstr( strcat(directory,'ds', num2str(ds), '.mat' ));
-file_to_load = file_to_load{:};
-load( file_to_load );
+function [Moments_mat_fn, Interacted_Moments_mat_fn] = generate_moment_fn(F_array, G_array, Eta_shocks_array, Pi_array, J_t_array, J_tminus1_array)
 
 
 T = size( Pi_array ,3);

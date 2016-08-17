@@ -7,7 +7,7 @@
 
 function [test_lf, test_rsw, test_conditional, test_hybrid] = basic_tests(g_T, Sigma, Z_draws, alpha, beta)  
 
-%Calculate the normalized maximum (used for multiple test)
+        %Calculate the normalized maximum (used for multiple test)
         R_gt = R_gt_sigma( g_T, Sigma);
         
         %Do the LF test
