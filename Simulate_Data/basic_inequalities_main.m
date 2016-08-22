@@ -16,7 +16,7 @@ lambda_grid = linspace(0,1,numgridpoints);
 %theta_g_grid = linspace(-100,50, numgridpoints);
 % theta_c_grid = linspace(40,220,numgridpoints);
 % theta_g_grid = linspace(-125,25, numgridpoints);
-theta_g_grid = -150:5:50;
+theta_g_grid = -150:5:100;
 theta_c_grid = -250:5:510;
 
 lambda_true = 0.386;
@@ -36,7 +36,7 @@ rng(0);
 Z_draws_interacted = randn(nummoments_interacted, 10000);
 Z_draws_basic = Z_draws_interacted( 1:nummoments_basic,:);
 
-numdatasets = 2;
+numdatasets = 100;
 
 nummarkets = 27; %This is the number of markets to sample from the long chain
 
@@ -45,6 +45,9 @@ dirnames = { 'Calibrated_SigmaZeta/'};
     
 %parpool('local', 2);
     
+
+
+
 for dirname = dirnames
     
     rejection_grids_cell = cell(numdatasets, 4) ;
@@ -53,18 +56,43 @@ for dirname = dirnames
     long_ds_object = load( char(strcat( '../../Output/Simulated_Data/', dirname, 'ds_long.mat') )) ;
     length_long_chain = size( long_ds_object.J_t_array,3);
     
-    parfor ds = 1:numdatasets
     
+    
+    
+    %Create cells to store the datasets
+    F_array_cell = cell(numdatasets,1);
+    G_array_cell = cell(numdatasets,1);
+    Eta_shocks_array_cell = cell(numdatasets,1);
+    J_t_array_cell = cell(numdatasets,1);
+    J_tminus1_array_cell = cell(numdatasets,1);
+    Pi_array_cell = cell(numdatasets,1);
+    
+    for ds = 1:numdatasets
+
     rng(ds);
-    rand_index = randsample( length_long_chain , nummarkets, true);
+    rand_index = randsample( length_long_chain , nummarkets);
     
-    F_array = long_ds_object.F_array(:,:,rand_index);
-    G_array = long_ds_object.G_array(:,:,rand_index);
-    Eta_shocks_array = long_ds_object.Eta_shocks_array(:,:,rand_index);
+    F_array_cell{ds} = long_ds_object.F_array(:,:,rand_index);
+    G_array_cell{ds} = long_ds_object.G_array(:,:,rand_index);
+    Eta_shocks_array_cell{ds} = long_ds_object.Eta_shocks_array(:,:,rand_index);
     %Pi_star_array = long_ds_object.Pi_star_array(:,:,rand_index);
-    J_t_array = long_ds_object.J_t_array(:,:,rand_index);
-    J_tminus1_array = long_ds_object.J_tminus1_array(:,:,rand_index);
-    Pi_array = long_ds_object.Pi_array(:,:,rand_index);
+    J_t_array_cell{ds} = long_ds_object.J_t_array(:,:,rand_index);
+    J_tminus1_array_cell{ds} = long_ds_object.J_tminus1_array(:,:,rand_index);
+    Pi_array_cell{ds} = long_ds_object.Pi_array(:,:,rand_index);
+    end
+    
+    clear long_ds_object
+    
+    
+    parfor ds = 1:numdatasets
+        
+    F_array = F_array_cell{ds};
+    G_array = G_array_cell{ds};
+    Eta_shocks_array = Eta_shocks_array_cell{ds};
+    %Pi_star_array = Pi_star_array_cell{ds};
+    J_t_array = J_t_array_cell{ds};
+    J_tminus1_array = J_tminus1_array_cell{ds};
+    Pi_array = Pi_array_cell{ds};
    
     ds
     
@@ -109,8 +137,8 @@ end
 toc;
 
 %% Aggregate all the results to get the probabilities
-%for moment_type = {'Basic_Moments/', 'Interacted_Moments/'};
-for moment_type = {'Basic_Moments/'};
+for moment_type = {'Basic_Moments/', 'Interacted_Moments/'};
+%for moment_type = {'Basic_Moments/'};
     
 for dirname = dirnames
     
