@@ -10,6 +10,8 @@ function index_vec = closest_neighbor_indices( Z_mat , Sigma)
 numrows = size(Z_mat,1);
 index_vec = NaN( numrows,1 );
 
+Sigma_inv = Sigma^(-1);
+
 for row = 1:size(Z_mat,1)
    
     
@@ -19,7 +21,7 @@ for row = 1:size(Z_mat,1)
     
     %Compute the row the minimizes the distance. This row is the row of
     %Z_minus_t
-    Z_minus_t_min_row = closest_neighbor_index_helper( Z_t, Z_minus_t, Sigma); 
+    Z_minus_t_min_row = closest_neighbor_index_helper( Z_t, Z_minus_t, Sigma_inv); 
     
     %Convert the row into a row of Z_mat. In particular, since we omitted
     %the "row"th row, we add 1 if the min row is >= row
@@ -41,15 +43,15 @@ end
 %Inputs:
 %Z_t a row vector (1 x k)
 %Z_mat: a (mxk) matrix where each row is a vector to be compared to Z_t
-% Sigma: a kxk covariance matrix
+% Sigma_inv: the inverse of a kxk covariance matrix
 
 %Output
 % i: the index of the row of z_mat with the shortest normalized distance to
 % Z_t
 
-function i = closest_neighbor_index_helper( Z_t, Z_mat, Sigma)
+function i = closest_neighbor_index_helper( Z_t, Z_mat, Sigma_inv)
 
-distance_fn = @(Z_s) (Z_t - Z_s) * Sigma * (Z_t - Z_s)' ;
+distance_fn = @(Z_s) (Z_t - Z_s) * Sigma_inv * (Z_t - Z_s)' ;
 Z_cell = num2cell( Z_mat, 2);
 distance = cellfun( distance_fn, Z_cell);
 [~,i] = min(distance);

@@ -9,7 +9,7 @@
 %Note: this function assumes the working directory is two levels below the
 %main directory (e.g. in Code/something)
 
-function [Moments_mat_fn, Interacted_Moments_mat_fn] = generate_moment_fn(F_array, G_array, Eta_shocks_array, Pi_array, J_t_array, J_tminus1_array)
+function [Moments_mat_fn, Interacted_Moments_mat_fn, Y, A_g, A_c] = generate_moment_fn(F_array, G_array, Eta_shocks_array, Pi_array, J_t_array, J_tminus1_array)
 
 
 T = size( Pi_array ,3);
@@ -194,6 +194,10 @@ Lambda_indicator_mat = repmat( moment_has_lambda , size(Pi_for_moments,1) , 3);
 
 Interacted_Moments_mat_fn = @(theta_c, theta_g, lambda) (Pi_for_moments + ( lambda * Lambda_indicator_mat ...
     + (1 - Lambda_indicator_mat) ) .* ( theta_c * Const_for_moments + theta_g * G_for_moments));
+
+Y = Pi_for_moments;
+A_g = @(lambda)  (lambda * Lambda_indicator_mat  + (1 - Lambda_indicator_mat) ) .* G_for_moments ;
+A_c = @(lambda)  ( lambda * Lambda_indicator_mat  + (1 - Lambda_indicator_mat) ) .* Const_for_moments ;
 
 first_six_columns = @(mat) mat(:,1:6);
 
