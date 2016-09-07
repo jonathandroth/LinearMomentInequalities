@@ -17,7 +17,7 @@ lambda_grid = linspace(0,1,numgridpoints);
 % theta_c_grid = linspace(40,220,numgridpoints);
 % theta_g_grid = linspace(-125,25, numgridpoints);
 theta_g_grid = -150:5:100;
-theta_c_grid = -250:5:510;
+theta_c_grid = -250:10:510;
 
 lambda_true = 0.386;
 theta_c_true = 129.73;
@@ -39,6 +39,8 @@ Z_draws_basic = Z_draws_interacted( 1:nummoments_basic,:);
 numdatasets = 100;
 
 nummarkets = 27; %This is the number of markets to sample from the long chain
+
+conditional_cov = 1; %specify whether want to do the traditional covariance matrix or not
 
 %dirnames = { 'Calibrated_SigmaZeta/', 'Calibrated_SigmaZeta_Over4/', 'SigmaZeta_Equal0/'};
 dirnames = { 'Calibrated_SigmaZeta/'};
@@ -96,12 +98,41 @@ for dirname = dirnames
    
     ds
     
-    [moment_fn_allparams,moment_fn_interacted_allparams] = generate_moment_fn( F_array, G_array, Eta_shocks_array, Pi_array, J_t_array, J_tminus1_array); 
+    [moment_fn_allparams,moment_fn_interacted_allparams,Y, A_g, A_c,Y_basic, A_g_basic, A_c_basic] = ...
+        generate_moment_fn( F_array, G_array, Eta_shocks_array, Pi_array, J_t_array, J_tminus1_array); 
+    moment_fn = @(theta_c, theta_g) -moment_fn_allparams(theta_c, theta_g, lambda_true);
+
+   
+    if(conditional_cov == 1)
+        %A_g and A_c come out as functions of labmda
+        %We replace these with their value at the true lambda
+        A_g = A_g(lambda_true);
+        A_c = A_c(lambda_true); 
+        A_g_basic = A_g_basic(lambda_true);
+        A_c_basic = A_c_basic(lambda_true); 
+        
+        
+        %Merge theta_g and theta_c coefficients
+        A = [A_c, A_g];
+        A_basic = [A_c_basic, A_g_basic];
+        
+        %Remove any all zero columns
+        A= A(:,any(A));
+        A_basic = A_basic(:,any(A_basic));
+        
+        %Calculate the variance of Y conditional on A using the Abadie et
+        %al matched pairs method
+        Sigma_conditional = conditional_variance_fn(Y, A)
+        Sigma_conditional_basic  =conditional_variance_fn(Y_basic, A_basic);
+    end
     
     %Compute and save the grids for the basic moments
-    moment_fn = @(theta_c, theta_g) -moment_fn_allparams(theta_c, theta_g, lambda_true);
-    [grid_lf, grid_rsw, grid_conditional,grid_hybrid] = grids_thetac_thetag( moment_fn, theta_c_grid, theta_g_grid,Z_draws_basic, alpha, beta);
-    
+    if(conditional_cov == 1)
+        [grid_lf, grid_rsw, grid_conditional,grid_hybrid] = grids_thetac_thetag( moment_fn, theta_c_grid, theta_g_grid,Z_draws_basic, alpha, beta, Sigma_conditional_basic);
+    else
+        [grid_lf, grid_rsw, grid_conditional,grid_hybrid] = grids_thetac_thetag( moment_fn, theta_c_grid, theta_g_grid,Z_draws_basic, alpha, beta);
+    end
+       
     rejection_grids_cell(ds,:) = {grid_lf, grid_rsw, grid_conditional,grid_hybrid};
     
 %     ds_name = strcat( '../../Output/Rejection_Grids/Lambda_Constant/', dirname, 'Basic_Moments/grid', num2str(ds));
@@ -109,8 +140,13 @@ for dirname = dirnames
 %     save( ds_name, 'grid_lf', 'grid_rsw', 'grid_conditional', 'grid_hybrid');
 %     
     %Compute and save the grid for the interacted moments
-    moment_fn_interacted = @(theta_c, theta_g) -moment_fn_interacted_allparams(theta_c, theta_g, lambda_true);
-    [grid_lf, grid_rsw, grid_conditional,grid_hybrid] = grids_thetac_thetag( moment_fn_interacted, theta_c_grid, theta_g_grid,Z_draws_interacted, alpha, beta);
+    if(conditional_cov == 1)
+        moment_fn_interacted = @(theta_c, theta_g) -moment_fn_interacted_allparams(theta_c, theta_g, lambda_true);
+        [grid_lf, grid_rsw, grid_conditional,grid_hybrid] = grids_thetac_thetag( moment_fn_interacted, theta_c_grid, theta_g_grid,Z_draws_interacted, alpha, beta, Sigma_conditional);
+    else
+         moment_fn_interacted = @(theta_c, theta_g) -moment_fn_interacted_allparams(theta_c, theta_g, lambda_true);
+        [grid_lf, grid_rsw, grid_conditional,grid_hybrid] = grids_thetac_thetag( moment_fn_interacted, theta_c_grid, theta_g_grid,Z_draws_interacted, alpha, beta);
+    end
     
     interacted_rejection_grids_cell(ds,:) = {grid_lf, grid_rsw, grid_conditional,grid_hybrid};
 
