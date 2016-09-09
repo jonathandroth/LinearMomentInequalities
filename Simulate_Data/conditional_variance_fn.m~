@@ -8,10 +8,7 @@ function conditional_variance = conditional_variance_fn(y, X, diagonol)
 
     Sigma_X = cov(X);
     
-    if(diagonol)
-        Sigma_X = diag( diag( Sigma_X) );
-    end
-    
+        if(diagonol == 1)
     y_matched = y( closest_neighbor_indices(  X , Sigma_X), :) ;
     
     conditional_variance = 1/(2*T) * (y- y_matched)' * (y - y_matched);
