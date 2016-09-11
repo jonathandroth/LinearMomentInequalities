@@ -18,8 +18,8 @@ lambda_grid = linspace(0,1,numgridpoints);
 %theta_g_grid = linspace(-100,50, numgridpoints);
 % theta_c_grid = linspace(40,220,numgridpoints);
 % theta_g_grid = linspace(-125,25, numgridpoints);
-theta_g_grid = -150:50:100;
-theta_c_grid = -250:100:510;
+theta_g_grid = -150:5:100;
+theta_c_grid = -250:10:510;
 
 lambda_true = 0.386;
 theta_c_true = 129.73;
@@ -38,7 +38,7 @@ rng(0);
 Z_draws_interacted = randn(nummoments_interacted, 10000);
 Z_draws_basic = Z_draws_interacted( 1:nummoments_basic,:);
 
-numdatasets = 1;
+numdatasets = 500;
 
 nummarkets = 27; %This is the number of markets to sample from the long chain
 

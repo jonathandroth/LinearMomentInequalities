@@ -56,7 +56,7 @@ observed_variance_quantity = var( [467; 502; 494]/1000);%divide by 1000 to get i
 
 %Create a table of the target market shares
 
-latex2( '%.2f', {'Firm', 'Target Market Share', 'Target Avg. Products'}, f_names, f_share, avg_products_per_firm)
+%latex2( '%.2f', {'Firm', 'Target Market Share', 'Target Avg. Products'}, f_names, f_share, avg_products_per_firm)
 %% Make covariate arrays
 
 %Make arrays corresponding to the covariates for the products in the shocks
@@ -200,8 +200,8 @@ sigma_zeta = fzero( @(sigma_z) pi_star_variance_fn(sigma_z) - target_variance_pi
 
 %% Make tables of calibrated params
 
-latex2( '%.2f', {'Firm', '$\mu_f$'}, f_names, mu_f)
-latex2( '%.2f', {'Parameter', 'Value'}, {'$\sigma_\nu$' ; '$\sigma_\epsilon$';'$\sigma_\zeta$' }, [sigma_nu; sigma_eps; sigma_zeta ])
+%latex2( '%.2f', {'Firm', '$\mu_f$'}, f_names, mu_f)
+%latex2( '%.2f', {'Parameter', 'Value'}, {'$\sigma_\nu$' ; '$\sigma_\epsilon$';'$\sigma_\zeta$' }, [sigma_nu; sigma_eps; sigma_zeta ])
 
 %Save the calibrated parameters
 save('../../Output/Simulated_Data/calibrated_params', 'sigma_nu', 'sigma_eps', 'sigma_zeta');
