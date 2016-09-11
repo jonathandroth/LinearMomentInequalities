@@ -1,6 +1,6 @@
 #!/bin/bash 
-#SBATCH -o ../../Logs/basic_inequalities.out 
-#SBATCH -e ../../Logs/basic_inequalities.err 
+#SBATCH -o ../../Logs/basic_inequalities4.out 
+#SBATCH -e ../../Logs/basic_inequalities4.err 
 #SBATCH -p serial_requeue
 #SBATCH -c 24 
 #SBATCH -N 1 
