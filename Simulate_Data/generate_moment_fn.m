@@ -160,10 +160,10 @@ Const_cond_mat = [Const_cond_mat,...
 % end
 % toc
 
-num_obs_mat = grpstats( repmat(C_mat,1,3) , {T_vec, G_vec}, @sum);
-Pi_for_moments = grpstats( Pi_cond_mat, {T_vec, G_vec}, @sum) ./ num_obs_mat;
-G_for_moments = grpstats( G_cond_mat, {T_vec, G_vec}, @sum) ./ num_obs_mat;
-Const_for_moments = grpstats( Const_cond_mat, {T_vec, G_vec}, @sum) ./ num_obs_mat;
+num_obs_mat = grpstats( repmat(C_mat,1,3) , {T_vec}, @sum);
+Pi_for_moments = grpstats( Pi_cond_mat, {T_vec}, @sum) ./ num_obs_mat;
+G_for_moments = grpstats( G_cond_mat, {T_vec}, @sum) ./ num_obs_mat;
+Const_for_moments = grpstats( Const_cond_mat, {T_vec}, @sum) ./ num_obs_mat;
 
 %Replace NaNs with 0s. This is the case when there are no firms that meet C
 Pi_for_moments( isnan(Pi_for_moments)) = 0;
