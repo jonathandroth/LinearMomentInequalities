@@ -129,8 +129,8 @@ for dirname = dirnames
         
         %Calculate the variance of Y conditional on A using the Abadie et
         %al matched pairs method
-        Sigma_conditional = conditional_variance_fn(Y, A, diagonal);
-        Sigma_conditional_basic  =conditional_variance_fn(Y_basic, A_basic, diagonal);
+        Sigma_conditional_oracle = conditional_variance_fn(Y, A, diagonal);
+        Sigma_conditional_basic_oracle  =conditional_variance_fn(Y_basic, A_basic, diagonal);
      
  
      end
@@ -161,7 +161,8 @@ for dirname = dirnames
     moment_fn = @(theta_c, theta_g) -moment_fn_allparams(theta_c, theta_g, lambda_true);
 
    
-    if(conditional_cov == 1 && oracle_cov == 0)
+    if(conditional_cov == 1) 
+        if(oracle_cov == 0)
         %A_g and A_c come out as functions of labmda
         %We replace these with their value at the true lambda
         A_g = A_g(lambda_true);
@@ -182,6 +183,11 @@ for dirname = dirnames
         %al matched pairs method
         Sigma_conditional = conditional_variance_fn(Y, A, diagonal);
         Sigma_conditional_basic  =conditional_variance_fn(Y_basic, A_basic, diagonal);
+         
+        elseif(oracle_cov ==1)
+            Sigma_conditional = Sigma_conditional_oracle;
+            Sigma_conditional_basic = Sigma_conditional_basic_oracle;
+        end
     end
     
     %Compute and save the grids for the basic moments
