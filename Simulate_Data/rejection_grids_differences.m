@@ -7,6 +7,10 @@ figure_output_dirs = {'../../Figures/Differences/FullConditionalvDiagonalConditi
                       '../../Figures/Differences/FullCondtionalvOracleConditional/',...
                       '../../Figures/Differences/FullConditionalvUnconditional/'};
                   
+theta_g_grid = -150:5:100;
+theta_c_grid = -250:10:510;
+                  
+                  
                   
 for i = 1:length(data_output_dirs2)
     for moment_type = {'Basic_Moments/', 'Interacted_Moments/'}
