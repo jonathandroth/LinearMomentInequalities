@@ -9,6 +9,7 @@ figure_output_dirs = {'../../Figures/Differences/FullConditionalvDiagonalConditi
                   
 theta_g_grid = -150:5:100;
 theta_c_grid = -250:10:510;
+[ xgrid, ygrid] = meshgrid( theta_c_grid , theta_g_grid);
                   
                   
                   
