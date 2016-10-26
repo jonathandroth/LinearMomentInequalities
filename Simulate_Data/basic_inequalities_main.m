@@ -38,9 +38,9 @@ rng(0);
 Z_draws_interacted = randn(nummoments_interacted, 10000);
 Z_draws_basic = Z_draws_interacted( 1:nummoments_basic,:);
 
-numdatasets = 500;
+numdatasets = 2;
 
-nummarkets = 27; %This is the number of markets to sample from the long chain
+nummarkets = 500; %This is the number of markets to sample from the long chain
 
 
 %dirnames = { 'Calibrated_SigmaZeta/', 'Calibrated_SigmaZeta_Over4/', 'SigmaZeta_Equal0/'};
@@ -81,7 +81,7 @@ for dirname = dirnames
     
     F_array_cell{ds} = long_ds_object.F_array(:,:,rand_index);
     G_array_cell{ds} = long_ds_object.G_array(:,:,rand_index);
-    Eta_shocks_array_cell{ds} = long_ds_object.Eta_shocks_array(:,:,rand_index);
+    Eta_shocks_array_cell{ds} = long_ds_object.Eta_jt_shocks_array(:,:,rand_index);
     %Pi_star_array = long_ds_object.Pi_star_array(:,:,rand_index);
     J_t_array_cell{ds} = long_ds_object.J_t_array(:,:,rand_index);
     J_tminus1_array_cell{ds} = long_ds_object.J_tminus1_array(:,:,rand_index);

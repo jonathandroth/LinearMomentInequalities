@@ -10,6 +10,7 @@ function conditional_variance = conditional_variance_fn(y, X, diagonol)
     
     if(diagonol)
         Sigma_X = diag( diag( Sigma_X) );
+        %display('Using Diagonal Matrix');
     end
     
     y_matched = y( closest_neighbor_indices(  X , Sigma_X), :) ;

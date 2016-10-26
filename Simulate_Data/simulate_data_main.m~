@@ -89,12 +89,6 @@ Epsilon_shocks_array = NaN(F,J,T);
 Zetaj_shocks_array = NaN(F,J,T);
 Zetajft_shocks_array = NaN(F,J,T);
 
-%We do the calibration with Eta_t = 0 to match what we did before we added
-%this in (kind of ad hoc)
-
-Eta_t_vec = zeros(T);
-
-
 rng(0);
 for t= 1:T
     %For eta, take one draw for each j for period t
@@ -184,7 +178,7 @@ sigma_nu = 30;
 sigma_eps = 30;
 
  [mu_f, J_t, J_tm1, Pi_star_array] = mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu, ...
-     sigma_eps, zeros(F,J) , Epsilon_shocks_array, Eta_jt_shocks_array, Eta_t_vec, G_array);
+     sigma_eps, zeros(F,J) , Epsilon_shocks_array, Eta_jt_shocks_array, G_array);
 
 %This function returns the pi_star array as a function of sigma_z. It sets
 %sigma_zetaj= sigma_zetajft, and uses the shocks and the pi_star already
@@ -210,35 +204,28 @@ sigma_zeta = fzero( @(sigma_z) pi_star_variance_fn(sigma_z) - target_variance_pi
 %latex2( '%.2f', {'Parameter', 'Value'}, {'$\sigma_\nu$' ; '$\sigma_\epsilon$';'$\sigma_\zeta$' }, [sigma_nu; sigma_eps; sigma_zeta ])
 
 %Save the calibrated parameters
-save('../../Output/Simulated_Data/calibrated_params', 'sigma_nu', 'sigma_eps', 'sigma_zeta', 'mu_f');
+save('../../Output/Simulated_Data/calibrated_params', 'sigma_nu', 'sigma_eps', 'sigma_zeta');
 
 %% Simulate Data using Calibrated Parameters
 % Now, we simulate one long chain
 
 load('../../Output/Simulated_Data/calibrated_params');
 
-
-%Reallocate the variance from zetaj to w
 sigma_w = sigma_zeta;
-sigma_zetaj = 0;
-sigma_zetajft = sigma_zeta;
 rho = 0.9;
 
-
 %Re-set T
-
 T = 50000 + burnout;
 
    
     %Reset F and G
     F_array = repmat( (1:F)',1, J, T);
     G_array = repmat( g_vec',F,1,T);
-     %G_array = repmat( 10*g_vec',F,1,T); %Make G larger than in the calibration
 
     % Re-draw the shocks for this simulation
     
         Eta_jt_shocks_array = NaN(F,J,T);
-        Eta_t_vec = NaN(T);
+        Eta_t_array = NaN(F,J,T);
         Epsilon_shocks_array = NaN(F,J,T);
         Zetaj_shocks_array = NaN(F,J,T);
         Zetajft_shocks_array = NaN(F,J,T);
@@ -280,19 +267,18 @@ T = 50000 + burnout;
             %Do the same for zeta_jft
             Zetajft_shocks_array(:,:,t) = randn(F,J);
             
-            %Store the eta_t shocks in a vector
-            Eta_t_vec(t) = eta_t;
+            %Store the eta_t shocks in an array
+            Eta_t_array = repmat(eta_t, F,J);
  
         end
     
      
     % Draw product offerings and pi_star
         [J_t_array, J_tminus1_array, Pi_star_array] = calculate_offerings( sigma_nu, ...
-        sigma_eps, zeros(F,J) , Epsilon_shocks_array, Eta_jt_shocks_array, Eta_t_vec, mu_f, G_array );
-    
+        sigma_eps, zeros(F,J) , Epsilon_shocks_array, Eta_jt_shocks_array, mu_f, G_array );
     
     % Construct pi from pi_star
-        Pi_array = pi_array_fn( Pi_star_array, Zetaj_shocks_array, Zetajft_shocks_array, sigma_zetaj, sigma_zetajft);
+        Pi_array = pi_array_fn( Pi_star_array, Zetaj_shocks_array, Zetajft_shocks_array, sigma_zeta, sigma_zeta);
     
     %Take burnout
         take_burnout_fn = @(X) X(:,:,(burnout+1):(size(X,3)) );
@@ -302,7 +288,7 @@ T = 50000 + burnout;
         Pi_star_array = take_burnout_fn(Pi_star_array);
         Pi_array = take_burnout_fn(Pi_array);
         Eta_jt_shocks_array = take_burnout_fn( Eta_jt_shocks_array);
-        Eta_t_vec = take_burnout_fn( Eta_t_vec);
+        Eta_t_array = take_burnout_fn( Eta_t_array);
         
         F_array = repmat( (1:F)',1, J, T-burnout);
         G_array = repmat( g_vec',F,1,T-burnout);
@@ -310,7 +296,7 @@ T = 50000 + burnout;
     
     % Save the desired values
         ds_name = '../../Output/Simulated_Data/Calibrated_SigmaZeta/ds_long';
-        save( ds_name, 'J_t_array', 'J_tminus1_array', 'Pi_array', 'F_array', 'G_array', 'Pi_star_array', 'Eta_jt_shocks_array', 'Eta_t_vec');
+        save( ds_name, 'J_t_array', 'J_tminus1_array', 'Pi_array', 'F_array', 'G_array', 'Pi_star_array', 'Eta_jt_shocks_array', 'Eta_t_array');
 
     
     

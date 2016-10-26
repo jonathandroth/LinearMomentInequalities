@@ -5,9 +5,10 @@ oracle_cov = 1;
 diagonal = 0;
 
 %Specify the working directory
-%working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
-working_dir = '/n/home12/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data';
-parpool('local', str2num(getenv('SLURM_CPUS_PER_TASK')));
+working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
+%working_dir = '/n/home12/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data';
+
+%parpool('local', str2num(getenv('SLURM_CPUS_PER_TASK')));
 
 cd( working_dir);
 %Specify where the input data is (can be relative to the working_dir)
