@@ -66,11 +66,12 @@ for dirname = dirnames
     
     F_array_cell = cell(numdatasets,1);
     G_array_cell = cell(numdatasets,1);
-    Eta_shocks_array_cell = cell(numdatasets,1);
+    Eta_jt_shocks_array_cell = cell(numdatasets,1);
+    Eta_t_vec_cell = cell(numdatasets,1);
     J_t_array_cell = cell(numdatasets,1);
     J_tminus1_array_cell = cell(numdatasets,1);
     Pi_array_cell = cell(numdatasets,1);
-
+    
     %The following loop takes subsets of the long chain and stores in a
     %cell. Each individual dataset will then be passed to a worker in the
     %parfor loop below
@@ -81,7 +82,8 @@ for dirname = dirnames
     
     F_array_cell{ds} = long_ds_object.F_array(:,:,rand_index);
     G_array_cell{ds} = long_ds_object.G_array(:,:,rand_index);
-    Eta_shocks_array_cell{ds} = long_ds_object.Eta_jt_shocks_array(:,:,rand_index);
+    Eta_jt_shocks_array_cell{ds} = long_ds_object.Eta_jt_shocks_array(:,:,rand_index);
+    Eta_t_vec_cell{ds} = long_ds_object.Eta_t_vec(:,:,rand_index);
     %Pi_star_array = long_ds_object.Pi_star_array(:,:,rand_index);
     J_t_array_cell{ds} = long_ds_object.J_t_array(:,:,rand_index);
     J_tminus1_array_cell{ds} = long_ds_object.J_tminus1_array(:,:,rand_index);
@@ -99,14 +101,15 @@ for dirname = dirnames
     
         F_array = long_ds_object.F_array(:,:,rand_index);
         G_array = long_ds_object.G_array(:,:,rand_index);
-        Eta_shocks_array = long_ds_object.Eta_shocks_array(:,:,rand_index);
+        Eta_jt_shocks_array = long_ds_object.Eta_jt_shocks_array(:,:,rand_index);
+        Eta_t_vec = long_ds_object.Eta_t_vec(:,:,rand_index);
         %Pi_star_array = long_ds_object.Pi_star_array(:,:,rand_index);
         J_t_array = long_ds_object.J_t_array(:,:,rand_index);
         J_tminus1_array = long_ds_object.J_tminus1_array(:,:,rand_index);
         Pi_array = long_ds_object.Pi_array(:,:,rand_index);
     
          [moment_fn_allparams,moment_fn_interacted_allparams,Y, A_g, A_c,Y_basic, A_g_basic, A_c_basic] = ...
-        generate_moment_fn( F_array, G_array, Eta_shocks_array, Pi_array, J_t_array, J_tminus1_array); 
+        generate_moment_fn( F_array, G_array, Eta_jt_shocks_array, Pi_array, J_t_array, J_tminus1_array); 
         moment_fn = @(theta_c, theta_g) -moment_fn_allparams(theta_c, theta_g, lambda_true);
 
    
@@ -148,7 +151,7 @@ for dirname = dirnames
         
     F_array = F_array_cell{ds};
     G_array = G_array_cell{ds};
-    Eta_shocks_array = Eta_shocks_array_cell{ds};
+    Eta_jt_shocks_array = Eta_jt_shocks_array_cell{ds};
     %Pi_star_array = Pi_star_array_cell{ds};
     J_t_array = J_t_array_cell{ds};
     J_tminus1_array = J_tminus1_array_cell{ds};
@@ -157,7 +160,7 @@ for dirname = dirnames
     ds
     
     [moment_fn_allparams,moment_fn_interacted_allparams,Y, A_g, A_c,Y_basic, A_g_basic, A_c_basic] = ...
-        generate_moment_fn( F_array, G_array, Eta_shocks_array, Pi_array, J_t_array, J_tminus1_array); 
+        generate_moment_fn( F_array, G_array, Eta_jt_shocks_array, Pi_array, J_t_array, J_tminus1_array); 
     moment_fn = @(theta_c, theta_g) -moment_fn_allparams(theta_c, theta_g, lambda_true);
 
    

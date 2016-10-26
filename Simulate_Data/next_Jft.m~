@@ -1,9 +1,0 @@
-function Jft = next_Jft( Jftminus1 , p_o, p_d )
-
-draws = rand( size(Jftminus1) );
-
-%If a product is out in Jftminus1, it is in 
-Jft = (Jftminus1 == 0) .* (draws < p_o) + (Jftminus1 == 1) .* (draws < (1-p_d) );
-
-
-end
