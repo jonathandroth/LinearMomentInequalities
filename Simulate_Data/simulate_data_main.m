@@ -228,7 +228,7 @@ rho = 0.9;
 %Re-set T
 
 T = 50000 + burnout;
-
+%T = 50 + burnout;
    
     %Reset F and G
     F_array = repmat( (1:F)',1, J, T);
@@ -238,7 +238,7 @@ T = 50000 + burnout;
     % Re-draw the shocks for this simulation
     
         Eta_jt_shocks_array = NaN(F,J,T);
-        Eta_t_vec = NaN(T);
+        Eta_t_vec = NaN(T,1);
         Epsilon_shocks_array = NaN(F,J,T);
         Zetaj_shocks_array = NaN(F,J,T);
         Zetajft_shocks_array = NaN(F,J,T);
@@ -281,7 +281,7 @@ T = 50000 + burnout;
             Zetajft_shocks_array(:,:,t) = randn(F,J);
             
             %Store the eta_t shocks in a vector
-            Eta_t_vec(t) = eta_t;
+            Eta_t_vec(t,1) = eta_t;
  
         end
     
@@ -302,7 +302,7 @@ T = 50000 + burnout;
         Pi_star_array = take_burnout_fn(Pi_star_array);
         Pi_array = take_burnout_fn(Pi_array);
         Eta_jt_shocks_array = take_burnout_fn( Eta_jt_shocks_array);
-        Eta_t_vec = take_burnout_fn( Eta_t_vec);
+        Eta_t_vec = Eta_t_vec( (burnout+1):end) ;
         
         F_array = repmat( (1:F)',1, J, T-burnout);
         G_array = repmat( g_vec',F,1,T-burnout);
@@ -310,7 +310,7 @@ T = 50000 + burnout;
     
     % Save the desired values
         ds_name = '../../Output/Simulated_Data/Calibrated_SigmaZeta/ds_long';
-        save( ds_name, 'J_t_array', 'J_tminus1_array', 'Pi_array', 'F_array', 'G_array', 'Pi_star_array', 'Eta_jt_shocks_array', 'Eta_t_vec');
+        save( ds_name, 'J_t_array', 'J_tminus1_array', 'Pi_array', 'F_array', 'G_array', 'Pi_star_array', 'Eta_jt_shocks_array', 'Eta_t_vec', '-v7.3');
 
     
     

@@ -160,15 +160,23 @@ Const_cond_mat = [Const_cond_mat,...
 % end
 % toc
 
-num_obs_mat = grpstats( repmat(C_mat,1,3) , {T_vec}, @sum);
-Pi_for_moments = grpstats( Pi_cond_mat, {T_vec}, @sum) ./ num_obs_mat;
-G_for_moments = grpstats( G_cond_mat, {T_vec}, @sum) ./ num_obs_mat;
-Const_for_moments = grpstats( Const_cond_mat, {T_vec}, @sum) ./ num_obs_mat;
 
-%Replace NaNs with 0s. This is the case when there are no firms that meet C
-Pi_for_moments( isnan(Pi_for_moments)) = 0;
-G_for_moments( isnan(G_for_moments)) = 0;
-Const_for_moments( isnan(Const_for_moments)) = 0;
+
+% num_obs_mat = grpstats( repmat(C_mat,1,3) , {T_vec}, @sum);
+% Pi_for_moments = grpstats( Pi_cond_mat, {T_vec}, @sum) ./ num_obs_mat;
+% G_for_moments = grpstats( G_cond_mat, {T_vec}, @sum) ./ num_obs_mat;
+% Const_for_moments = grpstats( Const_cond_mat, {T_vec}, @sum) ./ num_obs_mat;
+
+%%Replace NaNs with 0s. This is the case when there are no firms that meet C
+%Pi_for_moments( isnan(Pi_for_moments)) = 0;
+%G_for_moments( isnan(G_for_moments)) = 0;
+%Const_for_moments( isnan(Const_for_moments)) = 0;
+
+Pi_for_moments = grpstats( Pi_cond_mat, {T_vec}, @mean);
+G_for_moments = grpstats( G_cond_mat, {T_vec}, @mean ) ;
+Const_for_moments = grpstats( Const_cond_mat, {T_vec}, @mean);
+
+
 
 %Create a matrix with the values that will multiply theta_c
 % For the first four moments, this is +1 if g>0 and -1 if g<0
