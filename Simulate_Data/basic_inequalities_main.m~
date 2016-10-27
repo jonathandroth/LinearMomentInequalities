@@ -30,7 +30,7 @@ theta_g_true = -21.38;
 %Create a matrix of normal draws with mean 0 and covariace sigma
 %Each column is a draw
 nummoments_basic = 6;
-nummoments_interacted = 30;
+nummoments_interacted = 18;
 
 %Create a matrix of standard normals of size k x 10000 for simulating
 %critical values
@@ -109,7 +109,7 @@ for dirname = dirnames
         Pi_array = long_ds_object.Pi_array(:,:,rand_index);
     
          [moment_fn_allparams,moment_fn_interacted_allparams,Y, A_g, A_c,Y_basic, A_g_basic, A_c_basic] = ...
-        generate_moment_fn( F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array); 
+        generate_moment_fn( F_array, G_array, Eta_jt_shocks_array, Pi_array, J_t_array, J_tminus1_array); 
         moment_fn = @(theta_c, theta_g) -moment_fn_allparams(theta_c, theta_g, lambda_true);
 
    
@@ -161,7 +161,7 @@ for dirname = dirnames
     ds
     
     [moment_fn_allparams,moment_fn_interacted_allparams,Y, A_g, A_c,Y_basic, A_g_basic, A_c_basic] = ...
-        generate_moment_fn( F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array); 
+        generate_moment_fn( F_array, G_array, Eta_jt_shocks_array, Pi_array, J_t_array, J_tminus1_array); 
     moment_fn = @(theta_c, theta_g) -moment_fn_allparams(theta_c, theta_g, lambda_true);
 
    

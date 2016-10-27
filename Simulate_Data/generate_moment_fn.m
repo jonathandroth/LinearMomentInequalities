@@ -10,7 +10,7 @@
 %main directory (e.g. in Code/something)
 
 function [Moments_mat_fn, Interacted_Moments_mat_fn, Y, A_g, A_c, Y_basic, A_g_basic, A_c_basic]...
-    = generate_moment_fn(F_array, G_array, Eta_shocks_array, Pi_array, J_t_array, J_tminus1_array)
+    = generate_moment_fn(F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array)
 
 
 T = size( Pi_array ,3);
@@ -25,9 +25,17 @@ T_array = reshape( T_array, F, J,T);
 
 
 %Construct the eta+ and eta- instrument
-Eta_shocks_vec = Eta_shocks_array(:);
-Eta_plus_vec = max(Eta_shocks_vec,0);
-Eta_minus_vec = max(-Eta_shocks_vec,0);
+Eta_jt_shocks_vec = Eta_jt_shocks_array(:);
+
+Eta_jt_plus_vec = max(Eta_jt_shocks_vec,0);
+Eta_jt_minus_vec = max(-Eta_jt_shocks_vec,0);
+
+
+Eta_t_array = permute( repmat( Eta_t_vec, 1, F, J), [2, 3, 1]);
+Eta_t_vec = Eta_t_array(:);
+
+Eta_t_plus_vec = max(Eta_t_vec,0);
+Eta_t_minus_vec = max(-Eta_t_vec,0);
 
 %Put into "long" format
 Pi_vec = Pi_array(:);
@@ -125,8 +133,10 @@ Pi_cond_mat = [Pi_vec, -Pi_vec, Pi_vec, -Pi_vec,...
 %Interact with eta_plus and eta_minus
 
 Pi_cond_mat = [Pi_cond_mat,...
-               Pi_cond_mat .* repmat( Eta_plus_vec, 1, size(Pi_cond_mat,2) ),...
-               Pi_cond_mat .* repmat( Eta_minus_vec, 1, size(Pi_cond_mat,2) )];
+               Pi_cond_mat .* repmat( Eta_jt_plus_vec, 1, size(Pi_cond_mat,2) ),...
+               Pi_cond_mat .* repmat( Eta_jt_minus_vec, 1, size(Pi_cond_mat,2) ),...
+               Pi_cond_mat .* repmat( Eta_t_plus_vec, 1, size(Pi_cond_mat,2) ),...
+               Pi_cond_mat .* repmat( Eta_t_minus_vec, 1, size(Pi_cond_mat,2) )];
 % Create a matrix where the i,j th entry is the value that multiplies theta_g in the moment for observation
 % i if C_ij == 1, and is 0 otherwise
 
@@ -135,8 +145,10 @@ Pi_cond_mat = [Pi_cond_mat,...
 G_cond_mat = [-G_vec, G_vec, -G_vec, G_vec, G_lower - G_vec , G_upper - G_vec]  .* C_mat;
 
 G_cond_mat = [G_cond_mat,...
-               G_cond_mat .* repmat( Eta_plus_vec,1, size(G_cond_mat,2) ),...
-               G_cond_mat .* repmat( Eta_minus_vec, 1, size(G_cond_mat,2) )];
+               G_cond_mat .* repmat( Eta_jt_plus_vec,1, size(G_cond_mat,2) ),...
+               G_cond_mat .* repmat( Eta_jt_minus_vec, 1, size(G_cond_mat,2) ),...
+               G_cond_mat .* repmat( Eta_t_plus_vec,1, size(G_cond_mat,2) ),...
+               G_cond_mat .* repmat( Eta_t_minus_vec, 1, size(G_cond_mat,2) )];
 
 % Create a matrix where the i,j th entry is the value that multiplies theta_c in the moment for observation
 % i if C_ij == 1, and is 0 otherwise
@@ -144,8 +156,10 @@ G_cond_mat = [G_cond_mat,...
 Const_cond_mat = repmat([-1,1,-1,1,0,0], size(C_mat,1),1) .* C_mat;
 
 Const_cond_mat = [Const_cond_mat,...
-               Const_cond_mat .* repmat( Eta_plus_vec,1, size(Const_cond_mat,2) ),...
-               Const_cond_mat .* repmat( Eta_minus_vec, 1, size(Const_cond_mat,2) )];
+               Const_cond_mat .* repmat( Eta_jt_plus_vec,1, size(Const_cond_mat,2) ),...
+               Const_cond_mat .* repmat( Eta_jt_minus_vec, 1, size(Const_cond_mat,2) ),...
+               Const_cond_mat .* repmat( Eta_t_plus_vec,1, size(Const_cond_mat,2) ),...
+               Const_cond_mat .* repmat( Eta_t_minus_vec, 1, size(Const_cond_mat,2) )];
 
 
 
@@ -195,7 +209,7 @@ Const_for_moments = grpstats( Const_cond_mat, {T_vec}, @mean);
 %This is a matrix of size #grps x M where each column is all 1s if the mth moment
 %relates to a case where J_tminus1= 1 and is 0 otherwise
 
-Lambda_indicator_mat = repmat( moment_has_lambda , size(Pi_for_moments,1) , 3);
+Lambda_indicator_mat = repmat( moment_has_lambda , size(Pi_for_moments,1) , size(Pi_for_moments,2) / length(moment_has_lambda) );
 
 
 %Create a  fn that returns a (F*J) x M matrix where the (i,j)th entry is the jth moment for
