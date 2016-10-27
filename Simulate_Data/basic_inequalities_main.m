@@ -132,8 +132,8 @@ for dirname = dirnames
         
         %Calculate the variance of Y conditional on A using the Abadie et
         %al matched pairs method
-        Sigma_conditional_oracle = conditional_variance_fn(Y, A_g, diagonal);
-        Sigma_conditional_basic_oracle  =conditional_variance_fn(Y_basic, A_g_basic, diagonal);
+        Sigma_conditional_oracle = conditional_variance_fn(Y, A, diagonal);
+        Sigma_conditional_basic_oracle  =conditional_variance_fn(Y_basic, A_basic, diagonal);
      
  
      end
@@ -185,8 +185,8 @@ for dirname = dirnames
         
         %Calculate the variance of Y conditional on A using the Abadie et
         %al matched pairs method
-        Sigma_conditional = conditional_variance_fn(Y, A_g, diagonal);
-        Sigma_conditional_basic  =conditional_variance_fn(Y_basic, A_g_basic, diagonal);
+        Sigma_conditional = conditional_variance_fn(Y, A, diagonal);
+        Sigma_conditional_basic  =conditional_variance_fn(Y_basic, A_basic, diagonal);
          
         elseif(oracle_cov ==1)
             Sigma_conditional = Sigma_conditional_oracle;
