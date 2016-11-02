@@ -9,4 +9,4 @@
 
 source new-modules.sh
 module load matlab
-matlab-default -nodisplay -nosplash <run_basic_inequalities_main.m
+srun -n 1 -c 24 matlab-default -nodisplay -nosplash <run_basic_inequalities_main.m
