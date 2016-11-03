@@ -229,7 +229,12 @@ rho = 0.9;
 
 T = 50000 + burnout;
 %T = 50 + burnout;
-   
+ 
+
+%MAKE G_VEC BIGGER
+%g_vec = 2 * g_vec;
+
+
     %Reset F and G
     F_array = repmat( (1:F)',1, J, T);
     G_array = repmat( g_vec',F,1,T);
