@@ -1,0 +1,14 @@
+c_lf_lp = c_lf_lp(x_T, Z_draws, Sigma, alpha)
+
+numsims = size(Z_draws,2);
+
+eps_draws = chol(Sigma)* Z_draws;
+
+eta_vec = NaN(numsims,1);
+for s = 1:numsims
+    
+    y_T_s = eps_draws(:,s);
+    eta_vec(s,1) = test_delta_lp_fn(y_T_s, X_T);
+end
+
+

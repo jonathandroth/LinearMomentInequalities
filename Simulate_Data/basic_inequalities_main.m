@@ -1,54 +1,13 @@
 % This script does power calcs using the basic techniques for two
 % parameters, hodling one fixed
 
-
-
-%pc = parcluster('local');
-%pc.NumWorkers = 2;
-
+%Set the parameters for the grid size, and draw the Z draws for the critical values
+%(I do this in a separate script so that I can easily set the parameters
+%elsewhere)
+basic_inequalities_set_parameters   
+    
+%%
 tic;
-alpha = 0.05;
-beta = 0.005;
-
-
-numgridpoints = 10;
-
-lambda_grid = linspace(0,1,numgridpoints);
-%theta_c_grid = linspace(80,180,numgridpoints);
-%theta_g_grid = linspace(-100,50, numgridpoints);
-% theta_c_grid = linspace(40,220,numgridpoints);
-% theta_g_grid = linspace(-125,25, numgridpoints);
-theta_g_grid = -150:5:100;
-theta_c_grid = -250:10:510;
-
-lambda_true = 0.386;
-theta_c_true = 129.73;
-theta_g_true = -21.38;
-
-
-
-%Create a matrix of normal draws with mean 0 and covariace sigma
-%Each column is a draw
-nummoments_basic = 6;
-nummoments_interacted = 30;
-
-%Create a matrix of standard normals of size k x 10000 for simulating
-%critical values
-rng(0);
-Z_draws_interacted = randn(nummoments_interacted, 10000);
-Z_draws_basic = Z_draws_interacted( 1:nummoments_basic,:);
-
-numdatasets = 10;
-
-nummarkets = 500; %This is the number of markets to sample from the long chain
-
-
-%dirnames = { 'Calibrated_SigmaZeta/', 'Calibrated_SigmaZeta_Over4/', 'SigmaZeta_Equal0/'};
-%dirnames = { 'Calibrated_SigmaZeta/'};
-    
-%parpool('local', 2);
-    
-
 
 
 for dirname = dirnames
@@ -126,7 +85,7 @@ for dirname = dirnames
         A = [A_c, A_g];
         A_basic = [A_c_basic, A_g_basic];
         
-        %Remove any all zero columns
+        %Remove any all-zero columns
         A= A(:,any(A));
         A_basic = A_basic(:,any(A_basic));
         
@@ -224,7 +183,7 @@ for dirname = dirnames
 %     save( ds_name, 'grid_lf', 'grid_rsw', 'grid_conditional', 'grid_hybrid');
     end
 
-    %Save the cell for the normal moments
+    %Save the cell for the basic moments
 
     ds_name = strcat( data_output_dir, dirname, 'Basic_Moments/grid_cell');
     ds_name = ds_name{:};
