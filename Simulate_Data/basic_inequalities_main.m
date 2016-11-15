@@ -38,7 +38,7 @@ rng(0);
 Z_draws_interacted = randn(nummoments_interacted, 10000);
 Z_draws_basic = Z_draws_interacted( 1:nummoments_basic,:);
 
-numdatasets = 500;
+numdatasets = 10;
 
 nummarkets = 500; %This is the number of markets to sample from the long chain
 
