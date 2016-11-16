@@ -2,9 +2,9 @@ basic_inequalities_set_parameters
 
 diagonal = 0;
 
-working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
-%working_dir = '/n/home12/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data';
-%parpool('local', str2num(getenv('SLURM_CPUS_PER_TASK')));
+%working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
+working_dir = '/n/home12/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data';
+parpool('local', str2num(getenv('SLURM_CPUS_PER_TASK')));
 
 cd( working_dir);
 %Specify where the input data is (can be relative to the working_dir)
@@ -12,12 +12,14 @@ data_input_dir = '../../Output/Simulated_Data/';
 
 %Specify where the output should go (can be relative to the working  dir)
 data_output_dir = '../../Output/Conditional_FullMatrix/Data/';
-figures_output_dir = '../../Figures/Conditional_FullMatrix/';
+figures_output_dir = '../../Figures/Conditional_FullMatrix/LP_figures/';
+
+mkdir(figures_output_dir);
 
 dirname = 'Calibrated_SigmaZeta/';
 
 %%
-numdatasets = 1;
+numdatasets = 2;
 tic;
 
 
@@ -135,24 +137,72 @@ toc;
 
 
 %% 
-mean_g = mean(G_array(1,:,1))
+G_array = G_array_cell{1};
+mean_g = mean(G_array(1,:,1));
 l = [1; mean_g];
+%l = [1;0];
 delta_true = [theta_c_true; theta_g_true];
 l'*delta_true
 
-for ds = 1:numdatasets
+load( strcat( data_output_dir, dirname, 'Interacted_Moments/values_for_lp') )
+load( strcat( data_output_dir, dirname, 'Interacted_Moments/grid_cell') )
+
+confidence_sets_using_c_alpha = NaN(numdatasets,2);
+confidence_sets_using_c_lp_alpha = NaN(numdatasets,2);
+
+parfor ds = 1:numdatasets
     
    X_T = X_T_cell{ds,1};
    y_T = y_T_cell{ds,1};
    Sigma = Sigma_conditional_cell{ds,1}; 
    
+   D_sigma_minushalf = diag( sqrt( diag(Sigma) ).^(-1) );
+   y_T = D_sigma_minushalf * y_T;
+   X_T = D_sigma_minushalf * X_T;
+   
+   
    c_alpha = c_lf(Sigma, alpha, Z_draws_interacted);
    
-   test_delta_lp_fn(y_T, X_T);
+   %test_delta_lp_fn(y_T, X_T);
    
  
-   cs_linear_delta_lp_fn(y_T,X_T,l,c_alpha);
+   confidence_sets_using_c_alpha(ds,:) = cs_linear_delta_lp_fn(y_T,X_T,l,c_alpha)';
    
    c_lp_alpha = c_lf_lp(X_T,Z_draws_interacted(:,1:200),Sigma,alpha);
-   cs_linear_delta_lp_fn(y_T,X_T,l,c_lp_alpha);
+   confidence_sets_using_c_lp_alpha(ds,:) = cs_linear_delta_lp_fn(y_T,X_T,l,c_lp_alpha)';
 end
+
+
+
+%% Create graphs
+gridpoints = 1000;
+l_theta_grid = linspace(min(confidence_sets_using_c_alpha(:,1)) -1 ,...
+                        max(confidence_sets_using_c_alpha(:,2)) + 1, gridpoints );
+                    
+rejection_grid_c_alpha = NaN(gridpoints,1);
+rejection_grid_c_lp_alpha = NaN(gridpoints,1);
+rejection_grid_grid = NaN(gridpoints,1);
+for i = 1:gridpoints
+    
+    l_theta = l_theta_grid(i);
+    
+    rejection_grid_c_alpha(i,1) = 1 -mean( (confidence_sets_using_c_alpha(:,1) <= l_theta) & ... 
+                                   (l_theta <= confidence_sets_using_c_alpha(:,2)) );
+    rejection_grid_c_lp_alpha(i,1) = 1 -mean( (confidence_sets_using_c_lp_alpha(:,1) <= l_theta) & ... 
+                                   (l_theta <= confidence_sets_using_c_lp_alpha(:,2)) );
+    
+    rejection_grid_grid(i,1) = 1 -mean( (confidence_sets_using_grid(:,1) <= l_theta) & ... 
+                                   (l_theta <= confidence_sets_using_grid(:,2)) );
+                               
+end
+
+grid_min_max
+
+plot( repmat( l_theta_grid', 1, 3), [rejection_grid_c_alpha, rejection_grid_c_lp_alpha, rejection_grid_grid ])
+legend( 'LF','LF (modified)', 'Grid', 'Location','eastoutside' )
+ylabel('Rejection Probability');
+xlabel('l * theta');
+saveas( gcf, strcat(figure_out_dir, 'Mean Weight Rejection Probabilities'), 'epsc');
+
+%options = optimoptions('linprog', 'Display', 'final' );
+%linprog( 1, [1;-1], [2,-3],[],[],[],[], [],options )
