@@ -2,7 +2,13 @@
 
 % min_{eta,delta} eta
 
-%s.t. Y
+%s.t. Y_T - X_T * delta <= eta
+
+% for the provided y_T and x_T
+
+% This can be compared against a critical value to determine whether there
+% we can reject the null hypothesis that E[Y_T - X_T delta] <=0 for some
+% delta
 
 function eta_star = test_delta_lp_fn( y_T, X_T)
 
@@ -29,8 +35,9 @@ A = - (A_eta + A_delta);
 
 b = - y_T;
 
-eta_star = linprog( f, A, b);
-eta_star = eta_star(1);
+[~,eta_star,flag] = linprog( f, A, b);
+if(flag == -2 | OR
+%eta_star = eta_star(1);
 
 end
 
