@@ -172,7 +172,8 @@ parfor ds = 1:numdatasets
    confidence_sets_using_c_lp_alpha(ds,:) = cs_linear_delta_lp_fn(y_T,X_T,l,c_lp_alpha)';
 end
 
-
+%Create the confidence sets using the grid search
+grid_min_max
 
 %% Create graphs
 gridpoints = 1000;
@@ -196,7 +197,6 @@ for i = 1:gridpoints
                                
 end
 
-grid_min_max
 
 plot( repmat( l_theta_grid', 1, 3), [rejection_grid_c_alpha, rejection_grid_c_lp_alpha, rejection_grid_grid ])
 legend( 'LF','LF (modified)', 'Grid', 'Location','eastoutside' )
