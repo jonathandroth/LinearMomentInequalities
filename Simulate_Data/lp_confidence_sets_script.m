@@ -202,7 +202,7 @@ plot( repmat( l_theta_grid', 1, 3), [rejection_grid_c_alpha, rejection_grid_c_lp
 legend( 'LF','LF (modified)', 'Grid', 'Location','eastoutside' )
 ylabel('Rejection Probability');
 xlabel('l * theta');
-saveas( gcf, strcat(figure_out_dir, 'Mean Weight Rejection Probabilities'), 'epsc');
+saveas( gcf, strcat(figure_output_dir, 'Mean Weight Rejection Probabilities'), 'epsc');
 
 %options = optimoptions('linprog', 'Display', 'final' );
 %linprog( 1, [1;-1], [2,-3],[],[],[],[], [],options )
