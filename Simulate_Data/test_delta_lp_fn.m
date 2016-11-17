@@ -35,8 +35,8 @@ A = - (A_eta + A_delta);
 
 b = - y_T;
 
-eta_star = linprog( f, A, b);
-eta_star = eta_star(1);
+[~,eta_star] = linprog( f, A, b);
+%eta_star = eta_star(1);
 
 end
 
