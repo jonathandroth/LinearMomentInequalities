@@ -4,7 +4,7 @@
 #SBATCH -p serial_requeue
 #SBATCH -c 24 
 #SBATCH -N 1 
-#SBATCH --mem 20000 
+#SBATCH --mem 40000 
 #SBATCH -t 2-01:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=jonathanroth@g.harvard.edu
