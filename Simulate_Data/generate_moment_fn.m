@@ -81,8 +81,9 @@ moment_has_lambda = [1,1,0,0,0,0];%vector indicating whether the moment "needs a
 %% Calculate profits for the plus-weight and minus-weight moments
 
 %The allproducts f function takes an an argument a FxJxT panel
-%It creates a matrix where each row is the row in the panel in   
-allproducts_f_fn = @(panel) panel( sub2ind( size(panel), repmat(F_vec, 1, J), repmat( (1:J), size(F_vec,1), 1) ,repmat(T_vec, 1, J)) );
+%It creates a matrix where each row is the row in the panel correspoinding with F   
+
+allproducts_f_fn = @(panel) panel( sub2ind( size(panel), repmat( (1:F)', T*J, J), repmat( (1:J), size(F_vec,1), 1) ,repmat(T_vec, 1, J)) );
 
 G_allf = allproducts_f_fn(G_array);
 J_t_allf = allproducts_f_fn(J_t_array);

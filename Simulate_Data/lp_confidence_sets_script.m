@@ -19,7 +19,10 @@ mkdir(figures_output_dir);
 dirname = 'Calibrated_SigmaZeta/';
 
 %%
-%numdatasets = 2;
+%numdatasets = 1;
+%nummarkets = 25000;
+
+
 tic;
 
 
