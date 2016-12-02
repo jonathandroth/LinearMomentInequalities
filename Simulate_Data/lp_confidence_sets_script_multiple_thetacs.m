@@ -214,7 +214,7 @@ confidence_sets_using_c_lp_alpha = NaN(numdatasets,2);
 nummoments = size( y_T_cell{ds,1} , 1);
 Z_draws_interacted = randn(nummoments, 10000);
 
-for ds = 1:numdatasets
+parfor ds = 1:numdatasets
     
    X_T = X_T_cell{ds,1};
    y_T = y_T_cell{ds,1};
