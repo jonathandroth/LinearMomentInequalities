@@ -244,16 +244,18 @@ end
     long_ds_object = load( char(strcat( data_input_dir, dirname, 'ds_long.mat') )) ;
     
     
-    F_array_cell = long_ds_object.F_array;
-    G_array_cell = long_ds_object.G_array;
-    Eta_jt_shocks_array_cell = long_ds_object.Eta_jt_shocks_array;
-    Eta_t_vec_cell = long_ds_object.Eta_t_vec(rand_index);
+    F_array = long_ds_object.F_array;
+    G_array = long_ds_object.G_array;
+    Eta_jt_shocks_array = long_ds_object.Eta_jt_shocks_array;
+    Eta_t_vec = long_ds_object.Eta_t_vec;
     %Pi_star_array = long_ds_object.Pi_star_array;
-    J_t_array_cell = long_ds_object.J_t_array;
-    J_tminus1_array_cell = long_ds_object.J_tminus1_array;
-    Pi_array_cell = long_ds_object.Pi_array;
+    J_t_array = long_ds_object.J_t_array;
+    J_tminus1_array = long_ds_object.J_tminus1_array;
+    Pi_array = long_ds_object.Pi_array;
 
-    [A_g_cell, A_c_cell, Y_cell] = generate_moment_fn_multiple_thetacs( F_group_cell, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array);
+    clear long_ds_object;
+    
+     [A_g_cell, A_c_cell, Y_cell] = generate_moment_fn_multiple_thetacs( F_group_cell, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array);
 
         first_iter = 1;
         for(i = 1:num_F_groups)
@@ -336,6 +338,8 @@ end
   %We set c_alpha = 0
   identified_set_bounds = cs_linear_delta_lp_fn(y_T,X_T,l,0)';
 
+  
+  display('Done with identified set calc');
 %% Create graphs
 gridpoints = 1000;
 l_theta_grid = linspace(min(confidence_sets_using_c_alpha(:,1)) -1 ,...

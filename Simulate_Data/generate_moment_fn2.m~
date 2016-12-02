@@ -187,9 +187,21 @@ Const_cond_mat = [Const_cond_mat,...
 %G_for_moments( isnan(G_for_moments)) = 0;
 %Const_for_moments( isnan(Const_for_moments)) = 0;
 
-Pi_for_moments = grpstats2( Pi_cond_mat, T_vec);
-G_for_moments = grpstats2( G_cond_mat, T_vec ) ;
-Const_for_moments = grpstats2( Const_cond_mat, T_vec);
+Pi_for_moments = grpstats( Pi_cond_mat, {T_vec}, @mean);
+G_for_moments = grpstats( G_cond_mat, {T_vec}, @mean ) ;
+Const_for_moments = grpstats( Const_cond_mat, {T_vec}, @mean);
+
+[un,~,pos] = unique(T_vec,'rows');
+% Produce row, col subs 
+[col,row] = meshgrid(1:size(Pi_cond_mat,2),pos);
+% Accumulate 
+Pi_for_moments2 = [accumarray([row(:), col(:)], reshape(Pi_cond_mat,[],1),[],@nanmean)];
+
+min(min( Pi_for_moments2 == Pi_for_moments) )
+
+Pi_for_moments3 = grpstats2( Pi_cond_mat, T_vec);
+
+min(min( Pi_for_moments3 == Pi_for_moments) )
 %Create a matrix with the values that will multiply theta_c
 % For the first four moments, this is +1 if g>0 and -1 if g<0
 % For the last two moents, this is 0
