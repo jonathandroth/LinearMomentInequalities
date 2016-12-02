@@ -1,6 +1,6 @@
 #!/bin/bash 
-#SBATCH -o ../../Logs/lp_cs_multiple_thetas.out
-#SBATCH -e ../../Logs/lp_cs_multiple_thetas.err
+#SBATCH -o ../../Logs/lp_cs_singe_theta.out
+#SBATCH -e ../../Logs/lp_cs_single_theta.err
 #SBATCH -p serial_requeue
 #SBATCH -c 24 
 #SBATCH -N 1 
