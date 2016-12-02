@@ -2,17 +2,14 @@ basic_inequalities_set_parameters
 
 diagonal = 0;
 
-working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
-%working_dir = '/n/home12/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data';
-%parpool('local', str2num(getenv('SLURM_CPUS_PER_TASK')));
+%working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
+working_dir = '/n/home12/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data';
+parpool('local', str2num(getenv('SLURM_CPUS_PER_TASK')));
 
 cd( working_dir);
 %Specify where the input data is (can be relative to the working_dir)
 data_input_dir = '../../Output/Simulated_Data/';
 
-%Specify where the output should go (can be relative to the working  dir)
-data_output_dir = '../../Output/Conditional_FullMatrix/Data/Multiple_Thetacs/';
-figures_output_dir = '../../Figures/Conditional_FullMatrix/LP_figures/Multiple_Thetacs/';
 
 mkdir(data_output_dir);
 mkdir(figures_output_dir);
@@ -20,16 +17,15 @@ mkdir(figures_output_dir);
 dirname = 'Calibrated_SigmaZeta/';
 
 
-numdatasets = 10;
-%nummarkets = 25000;
+numdatasets = 500;
 
-F_group_cell = {1;2;3;4;5;6;7;8;9};
+num_F_groups = size(F_group_cell,1);
 
+numsims_lp = 200;
 
 %% Calculate the moments and conditional variances
 
 
-num_F_groups = size(F_group_cell,1);
 
 
 tic;
@@ -81,7 +77,7 @@ tic;
    clear long_ds_object    
     
     
-    for ds = 1:numdatasets
+    parfor ds = 1:numdatasets
         
     F_array = F_array_cell{ds};
     G_array = G_array_cell{ds};
@@ -236,7 +232,7 @@ for ds = 1:numdatasets
  
    confidence_sets_using_c_alpha(ds,:) = cs_linear_delta_lp_fn(y_T,X_T,l,c_alpha)';
    
-   c_lp_alpha = c_lf_lp(X_T,Z_draws_interacted(:,1:200),Sigma,alpha);
+   c_lp_alpha = c_lf_lp(X_T,Z_draws_interacted(:,1:numsims_lp),Sigma,alpha);
    confidence_sets_using_c_lp_alpha(ds,:) = cs_linear_delta_lp_fn(y_T,X_T,l,c_lp_alpha)';
 end
 

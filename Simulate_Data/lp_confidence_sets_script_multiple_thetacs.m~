@@ -10,25 +10,22 @@ cd( working_dir);
 %Specify where the input data is (can be relative to the working_dir)
 data_input_dir = '../../Output/Simulated_Data/';
 
-%Specify where the output should go (can be relative to the working  dir)
-data_output_dir = '../../Output/Conditional_FullMatrix/Data/Multiple_Thetacs/';
-figures_output_dir = '../../Figures/Conditional_FullMatrix/LP_figures/Multiple_Thetacs/';
 
+mkdir(data_output_dir);
 mkdir(figures_output_dir);
 
 dirname = 'Calibrated_SigmaZeta/';
 
 
-numdatasets = 10;
-%nummarkets = 25000;
+numdatasets = 1;
 
-F_group_cell = {1;2;3;4;5;6;7;8;9};
+num_F_groups = size(F_group_cell,1);
 
+numsims_lp
 
 %% Calculate the moments and conditional variances
 
 
-num_F_groups = size(F_group_cell,1);
 
 
 tic;
@@ -337,7 +334,7 @@ end
   y_T = Y_T / sqrt(T);
   
   %We set c_alpha = 0
-  identified_set_bounds = cs_linear_delta_lp_fn(y_T,X_T,l,0)'
+  identified_set_bounds = cs_linear_delta_lp_fn(y_T,X_T,l,0)';
 
 %% Create graphs
 gridpoints = 1000;
@@ -360,9 +357,12 @@ for i = 1:gridpoints
 end
 
 
-plot( repmat( l_theta_grid', 1, 2), [rejection_grid_c_alpha, rejection_grid_c_lp_alpha ])
-line(repmat(identified_set_bounds',2,1],[0;1;0;1])
-legend( 'LF','LF (modified)',  'Location','eastoutside' )
+plot( repmat( l_theta_grid', 1, 2), [rejection_grid_c_alpha, rejection_grid_c_lp_alpha ]);
+line( [identified_set_bounds(1);identified_set_bounds(1)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
+line( [identified_set_bounds(2);identified_set_bounds(2)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
+
+
+legend( 'LF','LF (modified)', 'Identified Set Boundary',  'Location','eastoutside' );
 ylabel('Rejection Probability');
 xlabel('l * theta');
 saveas( gcf, strcat(figures_output_dir, 'Mean Weight Rejection Probabilities'), 'epsc');
