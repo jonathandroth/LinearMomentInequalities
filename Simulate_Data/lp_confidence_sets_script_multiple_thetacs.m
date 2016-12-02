@@ -241,6 +241,9 @@ end
 
 %% Estimate the bounds of the identified set by taking the whole chain and setting critical value to 0
 
+
+display('Starting to find identified set');
+
     long_ds_object = load( char(strcat( data_input_dir, dirname, 'ds_long.mat') )) ;
     
     
