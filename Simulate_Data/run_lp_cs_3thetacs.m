@@ -17,4 +17,4 @@ lp_confidence_sets_script_multiple_thetacs;
 
 
 %Do the confidence sets for theta_g only
-lp_confidence_sets_scrips_multiple_thetacs_for_thetag;
+lp_confidence_sets_script_multiple_thetacs_for_thetag;
