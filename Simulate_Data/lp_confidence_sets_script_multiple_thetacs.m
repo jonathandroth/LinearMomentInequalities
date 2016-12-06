@@ -2,9 +2,10 @@ basic_inequalities_set_parameters
 
 diagonal = 0;
 
-%working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
-working_dir = '/n/home12/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data';
-parpool('local', str2num(getenv('SLURM_CPUS_PER_TASK')));
+%working_dir = '/Volumes/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data';
+working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
+%working_dir = '/n/home12/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data';
+%parpool('local', str2num(getenv('SLURM_CPUS_PER_TASK')));
 
 cd( working_dir);
 %Specify where the input data is (can be relative to the working_dir)
@@ -200,8 +201,13 @@ toc;
 %% Confidence sets for linear combination of theta's
 G_array = G_array_cell{1};
 mean_g = mean(G_array(1,:,1));
+
+%If l not specified, then do the l that gives you the mean weights
+if( exist('l') == 0)
 l = [1; zeros(num_F_groups-1,1); mean_g];
 %l = [1;0];
+end
+
 delta_true = [repmat(theta_c_true,num_F_groups,1);  theta_g_true];
 l'*delta_true
 
@@ -238,6 +244,11 @@ end
 
 %Create the confidence sets using the grid search
 %grid_min_max
+
+
+    ds_name = strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp');
+    mkdir(ds_name);
+    save( ds_name, 'confidence_sets_using_c_alpha', 'confidence_sets_using_c_lp_alpha');
 
 %% Estimate the bounds of the identified set by taking the whole chain and setting critical value to 0
 
@@ -341,9 +352,15 @@ display('Starting to find identified set');
   %We set c_alpha = 0
   identified_set_bounds = cs_linear_delta_lp_fn(y_T,X_T,l,0)';
 
-  
+    ds_name = strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds');
+    mkdir(ds_name);
+    save( ds_name, 'identified_set_bounds');
+
   display('Done with identified set calc');
 %% Create graphs
+load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp'));
+load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds'));
+
 gridpoints = 1000;
 l_theta_grid = linspace(min(confidence_sets_using_c_alpha(:,1)) -1 ,...
                         max(confidence_sets_using_c_alpha(:,2)) + 1, gridpoints );
@@ -372,9 +389,21 @@ line( [identified_set_bounds(2);identified_set_bounds(2)] ,[0;1], 'LineStyle', '
 legend( 'LF','LF (modified)', 'Identified Set Boundary',  'Location','eastoutside' );
 ylabel('Rejection Probability');
 xlabel('l * theta');
-saveas( gcf, strcat(figures_output_dir, 'Mean Weight Rejection Probabilities'), 'epsc');
+
+%If manual bounds are specified for the x-axis limit, impose these
+if( exist('xlim_graph') ==1)
+    xlim( xlim_graph )    
+end
+
+%If filename not specified, assume it's means
+if( exist('filename_graph') ==0)
+       filename_graph =  'Mean Weight Rejection Probabilities';
+end
+
+saveas( gcf, strcat(figures_output_dir,filename_graph ), 'epsc');
+
 
 %options = optimoptions('linprog', 'Display', 'final' );
 %linprog( 1, [1;-1], [2,-3],[],[],[],[], [],options )
 
-display('Script complete');
+dis play('Script complete');

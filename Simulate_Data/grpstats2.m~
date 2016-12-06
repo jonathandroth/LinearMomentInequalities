@@ -1,9 +1,0 @@
-function result = grpstats2( data_mat , grp_mat, f) 
-
-[~,~,pos] = unique(grp_mat,'rows');
-% Produce row, col subs 
-[col,row] = meshgrid(1:size(data_mat,2),pos);
-% Accumulate 
-result = [accumarray([row(:), col(:)], reshape(grp_mat,[],1),[],f)];
-
-end
