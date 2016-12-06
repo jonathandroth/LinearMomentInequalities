@@ -13,14 +13,9 @@ F_group_cell = {[1;2;3;4;5;6;7;8;9]};
 %l = [1; zeros(num_F_groups-1,1); mean_g];
 
 %Run the main script (this does confidence sets for the mean weight)
+xlim_graph = [-10;150];
 lp_confidence_sets_script_multiple_thetacs;
 
 
 %Do the confidence sets for theta_g only
-l = [zeros( size(F_group_cell,1) ,1) ; 1];
-xlim_graph = [-150;100];
-filename_graph =  'Theta_g Rejection Probabilities';
-xlabel_graph = 'Theta_g';
-
-lp_compute_confidence_sets;
-lp_graphs;
+lp_confidence_sets_scrips_multiple_thetacs_for_thetag;

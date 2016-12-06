@@ -21,7 +21,7 @@ end
 delta_true = [repmat(theta_c_true,num_F_groups,1);  theta_g_true];
 l'*delta_true
 
-load( strcat( data_output_dir, dirname, 'Interacted_Moments/values_for_lp') )
+%load( strcat( data_output_dir, dirname, 'Interacted_Moments/values_for_lp') )
 %load( strcat( data_output_dir, dirname, 'Interacted_Moments/grid_cell') )
 
 confidence_sets_using_c_alpha = NaN(numdatasets,2);

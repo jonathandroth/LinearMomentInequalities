@@ -20,7 +20,8 @@ lp_confidence_sets_script_multiple_thetacs;
 l = [zeros( size(F_group_cell,1) ,1) ; 1];
 xlim_graph = [-150;100];
 filename_graph =  'Theta_g Rejection Probabilities';
+xlabel_graph = 'Theta_g';
+data_output_dir = strcat(data_output_dir, 'Theta_g/');
 
-xlabel_graph = 'test';
-lp_create_moments_and_covariances;
+lp_compute_confidence_sets;
 lp_graphs;
