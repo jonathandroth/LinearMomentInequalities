@@ -26,23 +26,17 @@ for(f_group_index = 1:num_f_groups)
     subset_indicator = ismember(1:total_num_firms, f_group);
     
     
-
-[~,~,Y, A_g, A_c,Y_basic, A_g_basic, A_c_basic] = ...
+    if(use_basic_moments == 0)
+[~,~,Y, A_g, A_c,~, ~, ~] = ...
         generate_moment_fn( F_array(subset_indicator,:,:), G_array(subset_indicator,:,:),...
         Eta_jt_shocks_array(subset_indicator,:,:), Eta_t_vec, Pi_array(subset_indicator, : ,:), ...
         J_t_array(subset_indicator, : ,:), J_tminus1_array(subset_indicator,:,:)); 
-        
-    
-    if( use_basic_moments == 1)
-        A_g_cell{f_group_index, 1} = A_g_basic;
-        A_c_cell{f_group_index, 1} = A_c_basic;
-        Y_cell{f_group_index, 1} = Y_basic;
-        
     else
-        A_g_cell{f_group_index, 1} = A_g;
-        A_c_cell{f_group_index, 1} = A_c;
-        Y_cell{f_group_index, 1} = Y;
+        
+    A_g_cell{f_group_index, 1} = A_g;
+    A_c_cell{f_group_index, 1} = A_c;
+    Y_cell{f_group_index, 1} = Y;
     
-    end
+    
     
 end

@@ -31,5 +31,8 @@ numsims_lp = 200;
 
 if( exist( 'combine_theta_g_moments') == 0)
     combine_theta_g_moments = 0;
- 
+end
+
+if( exist( 'use_basic_moments') == 0)
+    use_basic_moments = 0;
 end
