@@ -150,7 +150,10 @@ display('Starting to find identified set');
         end
          
           
-         
+        if( combine_theta_g_moments == 1)        
+         lp_combine_theta_g_moments 
+        end
+   
     
   %y_T and x_T are constructed so that population moments = y_T - X_T * delta
     % WE construct these so that they are less than 0 in expectation (the

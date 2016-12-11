@@ -61,8 +61,7 @@ tic;
     end
    clear long_ds_object    
     
-    
-    parfor ds = 1:numdatasets
+   parfor ds = 1:numdatasets
         
     F_array = F_array_cell{ds};
     G_array = G_array_cell{ds};
@@ -146,14 +145,21 @@ tic;
         end
          
           
-        %Remove any all zero columns
+       
+        %If combined_theta_g_moments, combined all of the theta_g moments
+        %in to one set, rather than having one for each firm group
+        
+        if( combine_theta_g_moments == 1)        
+         lp_combine_theta_g_moments 
+        end
+    
+          %Remove any all zero columns
         A= A(:,any(A));
         
         %Calculate the variance of Y conditional on A using the Abadie et
         %al matched pairs method
         Sigma_conditional = conditional_variance_fn(Y_wide, A, diagonal);
-         
-    
+        
   %y_T and x_T are constructed so that population moments = y_T - X_T * delta
     % WE construct these so that they are less than 0 in expectation (the
     % moment fns are constructed so that y_T + X_T * delta is greater than 0 in expectation)

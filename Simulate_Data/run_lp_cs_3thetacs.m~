@@ -1,5 +1,4 @@
-%specify whether to combine the moments for theta_g, or to have separate
-%ones for each firm
+%specify whether to combine the moments for theta_g, or to have sep
 combine_theta_g_moments = 0;
 
 %Specify where the output should go (can be relative to the working  dir)

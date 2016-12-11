@@ -27,3 +27,9 @@ numdatasets = 500;
 num_F_groups = size(F_group_cell,1);
 
 numsims_lp = 200;
+
+
+if( exist( 'combine_theta_g_moments') == 0)
+    combine_theta_g_moments = 0;
+ 
+end
