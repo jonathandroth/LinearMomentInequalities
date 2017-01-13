@@ -1,6 +1,7 @@
 
 %This function takes as input:
-% Sigma: a covariance matrix
+% Sigma: a covariance matrix (note that this function normalizes its
+%    diagnol to 1)
 % alpha: the significance level
 % Z_draws: a matrix of normal draws used to calculate the critical value
 

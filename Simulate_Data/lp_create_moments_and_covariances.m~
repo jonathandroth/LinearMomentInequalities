@@ -187,7 +187,7 @@ tic;
   
   %Normalize the moments and covariance matrix so that Sigma has diagnol of
   %1
-  D_sigma_minushalf = diag( sqrt( diag(Sigma_conditional) ).^(-1) );
+  D_sigma_minushalf = diag( sqrt( diag(Sigma) ).^(-1) );
   y_T = D_sigma_minushalf * y_T;
   X_T = D_sigma_minushalf * X_T;
   Sigma_conditional = D_sigma_minushalf * Sigma_conditional * D_sigma_minushalf';
