@@ -36,6 +36,7 @@ parfor ds = 1:numdatasets
    y_T = y_T_cell{ds,1};
    Sigma = Sigma_conditional_cell{ds,1}; 
    
+   %Rescale moments by the variance
    D_sigma_minushalf = diag( sqrt( diag(Sigma) ).^(-1) );
    y_T = D_sigma_minushalf * y_T;
    X_T = D_sigma_minushalf * X_T;

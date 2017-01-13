@@ -102,7 +102,7 @@ tic;
             end
             
             
-            %We want to be able to write the moments as Y_T - X_T * delta
+            %We want to be able to write the moments as y_T - X_T * delta
             
             %Let Ybar_i be the sum (down columns) of Y for F-group i (that
             %is, summing the Y's for each moment over all of the markets)
@@ -126,7 +126,7 @@ tic;
             if(first_iter ==1)
                 X_T = [ A_c_bar, zeros(length_A, num_remaining_groups), A_g_bar];
                 
-                Y_T = -Y_bar;
+                y_T = -Y_bar;
                 
                 Y_wide = Y;
                 
@@ -135,7 +135,7 @@ tic;
                 new_row_X = [zeros(length_A, num_previous_groups), A_c_bar, zeros(length_A, num_remaining_groups), A_g_bar];
                 X_T = [X_T;new_row_X];
                 
-                Y_T = [Y_T;-Y_bar];
+                y_T = [y_T;-Y_bar];
                 
                 Y_wide = [Y_wide, Y];
             end
@@ -165,7 +165,7 @@ tic;
             moment_nums( theta_g_cols) = moment_nums_theta_g_cols;
 
             X_T = grpstats2( X_T , moment_nums');
-            Y_T = grpstats2( Y_T , moment_nums');
+            y_T = grpstats2( y_T , moment_nums');
             Y_wide = grpstats2( Y_wide', moment_nums')'; 
 
         end
@@ -182,7 +182,7 @@ tic;
     % moment fns are constructed so that y_T + X_T * delta is greater than 0 in expectation)
   T = size(A_g,1);
   X_T = X_T / sqrt( T ); 
-  y_T = Y_T / sqrt(T);
+  y_T = y_T / sqrt(T);
   %max( abs( (y_T + X_T * [1 ;2]) - mean(  moment_fn_interacted_allparams(1,2, lambda_true) )' ))
     
   X_T_cell(ds,1) = {X_T};

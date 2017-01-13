@@ -43,16 +43,15 @@ A = - [ones( size(X_T,1) , 1), X_T]; %This is equivalent to the three lines abov
 
 b = - y_T;
 
-%If options provided, use those; otherwise, set default
 if( isempty(varargin) == 0)
     options = varargin{1};
+    options_provided = 1
 else
-    options = optimoptions('linprog','Algorithm','interior-point');
+    options_provided = 0
 end
-
-[delta_star,eta_star,flag,~,lambda] = linprog( f, A, b ,[],[],[],[],[], options);
-
+[delta_star,eta_star,flag,~,lambda] = linprog( f, A, b);
 lambda = lambda.ineqlin;
+
 delta_star = delta_star(2:end); %Remove eta, which is the first element
 
 %Deal with infinite cases
