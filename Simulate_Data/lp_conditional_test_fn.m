@@ -17,7 +17,7 @@ k = size(Sigma,1);
 
 
 [eta, delta, lambda] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','interior-point'));
-tol = 10^(-9);
+tol = 10^(-6);
 B_index = abs(lambda) > tol; %the bidning moments are the ones at which the Lagrange multiplier is >tol
 Bc_index = B_index == 0;
 
