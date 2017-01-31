@@ -6,7 +6,7 @@
 
 % for the provided y_T and x_T
 
-% This can be compared against a critical value to determine whether there
+% This can be compared against a critical value to determine whether
 % we can reject the null hypothesis that E[Y_T - X_T delta] <=0 for some
 % delta
 

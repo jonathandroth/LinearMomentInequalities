@@ -18,7 +18,7 @@ theta_c_true = 129.73;
 theta_g_true = -21.38;
 
 %Set lambda = lambda_true. 
-%(This is the default for lp_create_confidence_sets_script)
+%(This is  used in the analysis holding lambda c
 lambda = lambda_true;
 
 

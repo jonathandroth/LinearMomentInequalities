@@ -1,27 +1,52 @@
 function reject = lp_conditional_test_fn( y_T, X_T, Sigma, alpha)
 
-%Store number of parameters
-k = size(Sigma,1);
+%Store number of parameters and moments
+M = size(Sigma,1);
+k = size(X_T, 2);
+%Compute eta, and the argmin delta
+
+%[eta, delta, lambda] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','interior-point'));
+
+
+%tol = 10^(-6);
+%B_index = abs(lambda) > tol; %the bidning moments are the ones at which the Lagrange multiplier is >tol
+%Bc_index = B_index == 0;
+
 
 %Compute eta, and the argmin delta
-%[eta, delta, lambda] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','dual-simplex'));
+[eta, delta, lambda] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','dual-simplex'));
 
-%Store which moments are binding
-    %%Note we manually calculate this (within a tolerance), rather than
-    %%using the lagrange multipliers, since these can sometimes be 0 at a
-    %%binding moments
-% tol = 10^(-6);
-% slack = y_T - X_T * delta - eta;
-% B_index = abs(slack) < tol;
-% Bc_index = B_index == 0;
-
-
-[eta, delta, lambda] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','interior-point'));
-tol = 10^(-6);
-B_index = abs(lambda) > tol; %the bidning moments are the ones at which the Lagrange multiplier is >tol
-Bc_index = B_index == 0;
-
-%Normalize Sigma to have diagnol of 1
+%%Store which moments are binding
+    %Note we manually calculate this (within a tolerance), rather than
+    %using the lagrange multipliers, since these can sometimes be 0 at a
+    %binding moments
+ tol = 10^(-6);
+ slack = y_T - X_T * delta - eta;
+ B_index = abs(slack) < tol;
+ Bc_index = B_index == 0;
+ 
+ 
+ %Check if the right number of moments are binding. If not, throw a warning
+ %and return NA
+ if( sum(B_index) ~= (k+1) )
+     if( sum(B_index) > (k+1) )
+        warning('Number of Binding Moments Less Than k+1');
+        reject = NaN;
+        return;
+     else
+        warning('Number of Binding Moments Less Than k+1');
+        reject = NaN;
+        return;
+     end
+ end
+ %
+ 
+%  slack = y_T - X_T * delta - eta;
+%  [~, sorted_index] = sort(slack, 'descend');
+%  smallest_kplus1_moments = sorted_index(1:(k+1));
+%  B_index = false(size(slack));
+%  B_index(smallest_kplus1_moments) = true;
+%  Bc_index = B_index == 0;
 
 %Compute ingredients for the test
 size_B = sum(B_index == 1);
@@ -33,10 +58,10 @@ i_Bc = ones(size_Bc,1);
 X_TB = X_T(B_index,:);
 X_TBc = X_T(Bc_index,:);
 
-S_B = eye(k);
+S_B = eye(M);
 S_B = S_B(B_index, :);
 
-S_Bc = eye(k);
+S_Bc = eye(M);
 S_Bc = S_Bc(Bc_index, :);
 
 

@@ -83,9 +83,9 @@ tic;
             A_g_fn = A_g_cell{i,1};
             A_c_fn = A_c_cell{i,1};
             
-            %Evaluate at the true lambda
-            A_g = A_g_fn(lambda_true);
-            A_c = A_c_fn(lambda_true);
+            %Evaluate at lambda (default is true lambda)
+            A_g = A_g_fn(lambda);
+            A_c = A_c_fn(lambda);
 
             %Get Y from the cell
             Y = Y_cell{i,1};
@@ -183,7 +183,7 @@ tic;
   T = size(A_g,1);
   X_T = X_T / sqrt( T ); 
   y_T = y_T / sqrt(T);
-  %max( abs( (y_T + X_T * [1 ;2]) - mean(  moment_fn_interacted_allparams(1,2, lambda_true) )' ))
+  %max( abs( (y_T + X_T * [1 ;2]) - mean(  moment_fn_interacted_allparams(1,2, lambda) )' ))
   
   %Normalize the moments and covariance matrix so that Sigma has diagnol of
   %1
