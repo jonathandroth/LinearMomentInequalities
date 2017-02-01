@@ -22,8 +22,7 @@ mkdir(figures_output_dir);
 dirname = 'Calibrated_SigmaZeta/';
 
 
-%numdatasets = 500;
-numdatasets = 2;
+numdatasets = 500;
 
 num_F_groups = size(F_group_cell,1);
 
