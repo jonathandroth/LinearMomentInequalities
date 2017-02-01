@@ -1,5 +1,5 @@
 %This function provides a confidence set for a linear combination of the
-%linear parameter delta for moments of the form Y_T - X_T delta >= 0
+%elements of the delta vectors for moments of the form Y_T - X_T delta >= 0
 
 %It takes as inputs:
 
