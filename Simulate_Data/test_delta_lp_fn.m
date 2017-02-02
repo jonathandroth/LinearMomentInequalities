@@ -52,7 +52,18 @@ end
 
 [delta_star,eta_star,flag,~,lambda] = linprog( f, A, b ,[],[],[],[],[], options);
 
-lambda = lambda.ineqlin;
+if(isstruct(lambda) )
+    lambda = lambda.ineqlin;
+else
+    lambda
+    delta_star
+    eta_star
+    flag
+    y_T
+    X_T
+    error('Lambda not a structure');
+end
+
 delta_star = delta_star(2:end); %Remove eta, which is the first element
 
 %Deal with infinite cases
