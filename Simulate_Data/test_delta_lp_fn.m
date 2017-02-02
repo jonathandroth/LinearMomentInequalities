@@ -55,13 +55,8 @@ end
 if(isstruct(lambda) )
     lambda = lambda.ineqlin;
 else
-    lambda
-    delta_star
-    eta_star
-    flag
-    y_T
-    X_T
-    error('Lambda not a structure');
+    eta_star = Inf;
+    error('Warning: linear program did not converge. Setting eta to inf');
 end
 
 delta_star = delta_star(2:end); %Remove eta, which is the first element

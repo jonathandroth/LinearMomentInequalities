@@ -19,6 +19,8 @@
 
 function [c_lf_lp, eta_vec] = c_lf_lp(X_T, Z_draws, Sigma, alpha)
 
+%Note: x_T and Sigma are assumed to be rescaled so that Sigma has diagnol
+%of 1
 %Rescale the covariance matrix to have diagnol of 1
     % X_T is assumed to have already been re-scaled
     %Note: this is sort of an odd placement, where we do this rescaling
