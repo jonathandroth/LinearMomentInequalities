@@ -56,7 +56,7 @@ if(isstruct(lambda) )
     lambda = lambda.ineqlin;
 else
     eta_star = Inf;
-    warning('Warning: linear program did not converge. Setting eta to inf');
+    error('Warning: linear program did not converge. Setting eta to inf');
     return;
 end
 
