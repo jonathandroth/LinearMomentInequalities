@@ -47,7 +47,7 @@ b = - y_T;
 if( isempty(varargin) == 0)
     options = varargin{1};
 else
-    options = optimoptions('linprog','Algorithm','interior-point');
+    options = optimoptions('linprog','Algorithm','interior-point', 'MaxIter', 2000);
 end
 
 [delta_star,eta_star,flag,~,lambda] = linprog( f, A, b ,[],[],[],[],[], options);
