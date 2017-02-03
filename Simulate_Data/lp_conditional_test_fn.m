@@ -14,7 +14,7 @@ k = size(X_T, 2);
 
 
 %Compute eta, and the argmin delta
-[eta, delta, lambda] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','dual-simplex'));
+[eta, delta, lambda] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','dual-simplex', 'Display', 'off'));
 
 %%Store which moments are binding
     %Note we manually calculate this (within a tolerance), rather than
