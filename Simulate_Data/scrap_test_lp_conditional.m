@@ -49,6 +49,11 @@ X_T = A * X_T;
 y_T = A * y_T;
 Sigma = A * Sigma * A';
 
+%Renormalize the moments
+D_minushalf = diag( diag(Sigma)^(-1/2) );
+X_T = D_minushalf * X_T;
+y_T = D_minushalf * y_T;
+Sigma = D_minushalf * Sigma * D_minushalf;
 
 conditional_test_adjustment(ds,i) = lp_conditional_test_fn( y_T, X_T, Sigma, alpha);
 
@@ -79,7 +84,7 @@ plot(lambda_vec, [mean(conditional_test_adjustment);...
                   mean(lf_test_modified)] ) 
               
               
-legend( 'Conditional (Unshifted)', 'Conditional (Shifted)', 'LF','LF (modified)', 'Location','eastoutside' );
+legend( 'Conditional (Transformed)', 'Conditional (Non-Transformed)', 'LF','LF (modified)', 'Location','eastoutside' );
 ylabel('Rejection Probability');
 xlabel('Lambda');
 title('Rejection Probabilities for Lambda');
