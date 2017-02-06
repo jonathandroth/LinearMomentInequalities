@@ -50,7 +50,7 @@ y_T = A * y_T;
 Sigma = A * Sigma * A';
 
 %Renormalize the moments
-D_minushalf = diag( diag(Sigma)^(-1/2) );
+D_minushalf = diag( diag(Sigma).^(-1/2) );
 X_T = D_minushalf * X_T;
 y_T = D_minushalf * y_T;
 Sigma = D_minushalf * Sigma * D_minushalf;
