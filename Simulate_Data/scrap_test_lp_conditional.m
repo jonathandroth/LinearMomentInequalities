@@ -41,7 +41,7 @@ Sigma = Sigma_conditional_cell{ds};
 conditional_test_noadjustment(ds,i) = lp_conditional_test_fn( y_T, X_T, Sigma, alpha);
 
 %Add in 1/1000 times the average moment, so that solution to LP is unique
-c = 0.001;
+c = 0.00001;
 k = size(X_T,1);
 A = ( eye(k,k) + c*ones(k,k) );
 
