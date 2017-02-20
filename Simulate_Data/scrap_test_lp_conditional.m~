@@ -214,22 +214,16 @@ lambda_index = 1;
  save( strcat(ds_dir, 'lambda_identified_set'), 'identified_set', 'lambda_vec');
 
  %% Plot
-
- ds_dir = strcat( data_output_dir, 'Interacted_Moments/');
- load(  strcat(ds_dir, 'lambda_identified_set') );
- load(  strcat(ds_dir, 'lambda_results') );
- 
-  
- plot(lambda_vec, [mean(conditional_test_adjustment);...
+plot(lambda_vec, [mean(conditional_test_adjustment);...
                   mean(conditional_test_noadjustment);...
                   mean(lf_test_original);...
                   mean(lf_test_modified)] ) 
 
 identified_set_max = max( lambda_vec( identified_set == 1) );
 
-line( [identified_set_max; identified_set_max], [0;1], 'LineStyle', '--', 'Color',  'r');
+line( [id, 'LineStyle', '--', 'Color',  'r');
 
-legend( 'Conditional (Transformed)', 'Conditional (Non-Transformed)', 'LF','LF (modified)', 'Identified Set Bound', 'Location','eastoutside' );
+legend( 'Conditional (Transformed)', 'Conditional (Non-Transformed)', 'LF','LF (modified)', 'Location','eastoutside' );
 ylabel('Rejection Probability');
 xlabel('Lambda');
 title('Rejection Probabilities for Lambda');
