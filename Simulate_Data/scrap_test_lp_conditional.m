@@ -42,7 +42,7 @@ Sigma = Sigma_conditional_cell{ds};
 
 conditional_test_noadjustment(ds,i) = lp_conditional_test_fn( y_T, X_T, Sigma, alpha);
 
-%Add in 1/1000 times the average moment, so that solution to LP is unique
+%Transfrom the moments by adding in 1/100,000 times the average moment, so that solution to LP is unique
 c = 0.00001;
 k = size(X_T,1);
 A = ( eye(k,k) + c*ones(k,k) );
@@ -194,6 +194,8 @@ lambda_index = 1;
  
         end
    
+        
+        
     
   %y_T and x_T are constructed so that population moments = y_T - X_T * delta
     % WE construct these so that they are less than 0 in expectation (the
@@ -201,6 +203,15 @@ lambda_index = 1;
   T = size(A_g,1);
   X_T = X_T / sqrt( T ); 
   y_T = y_T / sqrt(T);
+  
+    %Transform the moments to add 10^(-5) times the mean
+    c = 0.00001;    
+    k = size(X_T,1);
+    A = ( eye(k,k) + c*ones(k,k) );
+
+    X_T = A * X_T;
+    y_T = A * y_T;
+
   
   %We say lambda is in the identified set if there is any delta such that
   %the moments hold in our long chain, i.e. if eta <= 0
