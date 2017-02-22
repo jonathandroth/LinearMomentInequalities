@@ -1,6 +1,6 @@
 #!/bin/bash 
-#SBATCH -o ../../Logs/lp_delta_single_theta.out
-#SBATCH -e ../../Logs/lp_delta_single_theta.err
+#SBATCH -o ../../Logs/lp_lambda_inference_single_theta.out
+#SBATCH -e ../../Logs/lp_lambda_inference_single_theta.err
 #SBATCH -p serial_requeue
 #SBATCH -c 24 
 #SBATCH -N 1 
@@ -11,4 +11,4 @@
 
 source new-modules.sh
 module load matlab
-srun -n 1 -c 24 matlab-default -nodisplay -nosplash <scrap_test_lp_conditional.m
+srun -n 1 -c 24 matlab-default -nodisplay -nosplash <run_lp_lambda_inference_single_theta.m
