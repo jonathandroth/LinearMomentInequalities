@@ -18,8 +18,10 @@ lp_create_moments_and_covariances
 
 
 lambda_vec = (0.01:.2:5.01)';
+
 conditional_test_noadjustment = NaN(numdatasets, size(lambda_vec,1));
 conditional_test_adjustment = NaN(size(conditional_test_noadjustment));
+hybrid_test_adjustment = NaN(size(conditional_test_noadjustment));
 lf_test_original = NaN(size(conditional_test_noadjustment));
 lf_test_modified = NaN(size(conditional_test_noadjustment));
 
@@ -58,6 +60,7 @@ y_T = D_minushalf * y_T;
 Sigma = D_minushalf * Sigma * D_minushalf;
 
 conditional_test_adjustment(ds,i) = lp_conditional_test_fn( y_T, X_T, Sigma, alpha);
+hybrid_test_adjustment(ds,i) = lp_hybrid_test_fn( y_T, X_T, Sigma, alpha, alpha/10);
 
 %Do non-conditional tests
 c_alpha = c_lf(Sigma, alpha, Z_draws_interacted);
@@ -76,7 +79,7 @@ end
 
     ds_dir = strcat( data_output_dir, 'Interacted_Moments/');
     mkdir(ds_dir);
-    save( strcat(ds_dir, 'lambda_results'), 'conditional_test_adjustment', 'conditional_test_noadjustment', 'lf_test_original', 'lf_test_modified');
+    save( strcat(ds_dir, 'lambda_results'), 'conditional_test_adjustment', 'conditional_test_noadjustment', 'lf_test_original', 'lf_test_modified', 'hybrid_test_adjustment');
 
 
  %% Estimate the identified set for lambda using a large chain and seeing where the moments are <= 0
@@ -233,6 +236,7 @@ lambda_index = 1;
   
  plot(lambda_vec, [mean(conditional_test_adjustment);...
                   mean(conditional_test_noadjustment);...
+                  mean(hybrid_test_adjustment);...
                   mean(lf_test_original);...
                   mean(lf_test_modified)] ) 
 
@@ -240,7 +244,7 @@ identified_set_max = max( lambda_vec( identified_set == 1) );
 
 line( [identified_set_max; identified_set_max], [0;1], 'LineStyle', '--', 'Color',  'r');
 
-legend( 'Conditional (Transformed)', 'Conditional (Non-Transformed)', 'LF','LF (modified)', 'Identified Set Bound', 'Location','eastoutside' );
+legend( 'Conditional (Transformed)', 'Conditional (Non-Transformed)', 'Hybrid', 'LF','LF (modified)', 'Identified Set Bound', 'Location','eastoutside' );
 ylabel('Rejection Probability');
 xlabel('Lambda');
 title('Rejection Probabilities for Lambda');
