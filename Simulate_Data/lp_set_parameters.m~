@@ -16,7 +16,7 @@ if( isempty(getenv('SLURM_CPUS_PER_TASK')) )
 else
    working_dir = '/n/home12/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data';
    parpool('local', str2num(getenv('SLURM_CPUS_PER_TASK')));
-   numdatasets = 500;
+   n
 end
 
 cd( working_dir);
