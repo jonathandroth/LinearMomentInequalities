@@ -1,7 +1,7 @@
 %% Specify parameters
 lp_set_parameters
 %% Import data and calculate moments and covariance matrices
-lp_create_moments_and_covariances
+%lp_create_moments_and_covariances
 
 
 lambda_vec = (0.01:.2:5.01)';
@@ -22,6 +22,10 @@ for lambda = lambda_vec'
 
 lambda
 lp_create_moments_and_covariances
+
+nummoments = size( y_T_cell{ds,1} , 1);
+rng(0);
+Z_draws_interacted = randn(nummoments, 10000);
 
 parfor ds = 1:numdatasets
 X_T = X_T_cell{ds};
