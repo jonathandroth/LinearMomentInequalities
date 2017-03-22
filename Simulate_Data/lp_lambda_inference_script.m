@@ -4,7 +4,8 @@ lp_set_parameters
 %lp_create_moments_and_covariances
 
 
-lambda_vec = (0.01:.2:5.01)';
+%lambda_vec = (0.01:.2:5.01)';
+lambda_vec = (0.01:5:5.01)';
 
 conditional_test_noadjustment = NaN(numdatasets, size(lambda_vec,1));
 conditional_test_adjustment = NaN(size(conditional_test_noadjustment));
