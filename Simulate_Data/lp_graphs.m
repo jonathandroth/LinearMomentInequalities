@@ -1,4 +1,4 @@
-%This script creates graphs for the LP confidence sets runs
+ %This script creates graphs for the LP confidence sets runs
 
 %% Create graphs
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp'));
