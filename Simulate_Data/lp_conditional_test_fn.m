@@ -32,12 +32,12 @@ k = size(X_T, 2);
      if( sum(B_index) > (k+1) )
         warning('Number of Binding Moments More Than k+1');
         %reject = NaN;
-        reject = 1;
+        reject = 0;
         return;
      else
         warning('Number of Binding Moments Less Than k+1');
         %reject = NaN;
-        reject = 1;
+        reject = 0;
         return;
      end
  end
