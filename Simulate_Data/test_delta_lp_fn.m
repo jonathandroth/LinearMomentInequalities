@@ -16,7 +16,7 @@
 % delta-star = the value of delta at the optimum
 % lambda = the lagrange multipliers at the optimum
 
-function [eta_star, delta_star, lambda] = test_delta_lp_fn( y_T, X_T, varargin)
+function [eta_star, delta_star, lambda, error_flag] = test_delta_lp_fn( y_T, X_T, varargin)
 
 
 %Run the linear program
@@ -29,6 +29,7 @@ function [eta_star, delta_star, lambda] = test_delta_lp_fn( y_T, X_T, varargin)
 % max f X
 % st A X <= B
 
+error_flag =0;
 
 k_delta = size(X_T,2);
 
@@ -57,6 +58,7 @@ if(isstruct(lambda) )
 else
     eta_star = Inf;
     warning('Warning: linear program did not converge. Setting eta to inf');
+    error_flag = 1;
     return;
 end
 
@@ -65,6 +67,7 @@ delta_star = delta_star(2:end); %Remove eta, which is the first element
 %Deal with infinite cases
 if(flag == -2 || flag == -4 || flag == -5)
     eta_star = inf;
+    error_flag = 2;
 end
 
 end

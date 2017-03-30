@@ -14,7 +14,12 @@ k = size(X_T, 2);
 
 
 %Compute eta, and the argmin delta
-[eta, delta, lambda] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','dual-simplex', 'Display', 'off'));
+[eta, delta, lambda,flag] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','dual-simplex', 'Display', 'off'));
+
+if(flag >0 )
+    error('Trying to do conditional test with infinite cutoff');
+
+end
 
 %%Store which moments are binding
     %Note we manually calculate this (within a tolerance), rather than
@@ -38,6 +43,7 @@ k = size(X_T, 2);
         warning('Number of Binding Moments Less Than k+1');
         %reject = NaN;
         reject = 0;
+        
         return;
      end
  end

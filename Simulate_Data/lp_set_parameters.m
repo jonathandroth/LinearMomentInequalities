@@ -12,7 +12,7 @@ diagonal = 0;
 %numdatasets accordingly
 if( isempty(getenv('SLURM_CPUS_PER_TASK')) )
    working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
-   numdatasets = 2;
+   numdatasets = 100;
 else
    working_dir = '/n/home12/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data';
    parpool('local', str2num(getenv('SLURM_CPUS_PER_TASK')));
