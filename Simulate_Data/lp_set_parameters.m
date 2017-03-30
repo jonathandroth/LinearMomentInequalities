@@ -31,7 +31,7 @@ dirname = 'Calibrated_SigmaZeta/';
 
 
 
-num_F_groups = size(F_group_cell,1);
+num_F_groups = size(F_group_cell_moments,1);
 
 numsims_lp = 200;
 

@@ -5,9 +5,11 @@ data_output_dir = '../../Output/Conditional_FullMatrix/Data/Single_Thetac/';
 figures_output_dir = '../../Figures/Conditional_FullMatrix/LP_figures/Single_Thetac/';
 
 
-%Specify the groups of firms that have different coefficients
-F_group_cell_moments = {[1;2;3;4;5;6;7;8;9]};
-
+%Specify the groups of firms that have different coefficients and moments
+    %This says that there will moments separately for each firm, but only
+    %one theta_c parameter
+F_group_cell_moments = {1;2;3;4;5;6;7;8;9};
+F_group_cell_parameters = {[1;2;3;4;5;6;7;8;9]};
 
 %num_F_groups = size(F_group_cell_moments,1);
 %l = [1; zeros(num_F_groups-1,1); mean_g];

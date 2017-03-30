@@ -5,7 +5,7 @@ figures_output_dir = '../../Figures/Conditional_FullMatrix/LP_figures/3Thetacs/'
 filename_graph = 'lambda_rejection_probabilities';
 
 %Specify the groups of firms that have different coefficients
-F_group_cell = {[1;2;3];[4;5;6];[7;8;9]};
+F_group_cell_moments = {[1;2;3];[4;5;6];[7;8;9]};
 
 use_basic_moments = 0;
 

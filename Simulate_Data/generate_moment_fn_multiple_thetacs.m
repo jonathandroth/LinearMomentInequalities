@@ -1,4 +1,4 @@
-function [A_g_cell, A_c_cell, Y_cell] = generate_moment_fn_multiple_thetacs( F_group_cell, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, varargin)
+function [A_g_cell, A_c_cell, Y_cell] = generate_moment_fn_multiple_thetacs( F_group_cell_moments, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, varargin)
 
 %If an optional last argument is specified, it is an indicator for whether
 %to use the basic moments only. Otherwise, assume this is zero and use the
@@ -10,7 +10,7 @@ else
 end
 
 total_num_firms = size(F_array,1);     %Use the fact that rows index firms, so that the first 
-num_f_groups = size(F_group_cell,1);
+num_f_groups = size(F_group_cell_moments,1);
 
 
 
@@ -20,7 +20,7 @@ Y_cell = cell(num_f_groups,1);
 
 for(f_group_index = 1:num_f_groups)
 
-    f_group = F_group_cell{f_group_index, 1};
+    f_group = F_group_cell_moments{f_group_index, 1};
     
 
     subset_indicator = ismember(1:total_num_firms, f_group);

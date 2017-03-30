@@ -8,10 +8,10 @@ figures_output_dir = '../../Figures/Conditional_FullMatrix/LP_figures/Multiple_T
 
 
 %Specify the groups of firms that have different coefficients
-F_group_cell = {1;2;3;4;5;6;7;8;9};
+F_group_cell_moments = {1;2;3;4;5;6;7;8;9};
 
 
-%num_F_groups = size(F_group_cell,1);
+%num_F_groups = size(F_group_cell_moments,1);
 %l = [1; zeros(num_F_groups-1,1); mean_g];
 xlim_graph = [-10;150];
 lp_confidence_sets_script_multiple_thetacs;
