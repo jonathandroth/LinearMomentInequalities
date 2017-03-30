@@ -14,11 +14,11 @@ mean_g = mean(G_array(1,:,1));
 
 %If l not specified, then do the l that gives you the mean weights
 if( exist('l') == 0)
-l = [1; zeros(num_F_groups-1,1); mean_g];
+l = [1; zeros(num_F_groups_moments-1,1); mean_g];
 %l = [1;0];
 end
 
-delta_true = [repmat(theta_c_true,num_F_groups,1);  theta_g_true];
+delta_true = [repmat(theta_c_true,num_F_groups_moments,1);  theta_g_true];
 l'*delta_true
 
 %load( strcat( data_output_dir, dirname, 'Interacted_Moments/values_for_lp') )
@@ -83,7 +83,7 @@ display('Starting to find identified set');
      [A_g_cell, A_c_cell, Y_cell] = generate_moment_fn_multiple_thetacs( F_group_cell_moments, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, use_basic_moments);
 
         first_iter = 1;
-        for(i = 1:num_F_groups)
+        for(i = 1:num_F_groups_moments)
            
             %Get A_g and A_c as a function of lambda from the cell
             A_g_fn = A_g_cell{i,1};
@@ -128,7 +128,7 @@ display('Starting to find identified set');
             Y_bar = sum(Y, 1)';
             
             length_A = size(A_c_bar,1);
-            num_remaining_groups = num_F_groups - i;
+            num_remaining_groups = num_F_groups_moments - i;
             if(first_iter ==1)
                 X_T = [ A_c_bar, zeros(length_A, num_remaining_groups), A_g_bar];
                 
@@ -155,7 +155,7 @@ display('Starting to find identified set');
             moment_nums = 1:size(A,2);
             moment_nums_mod6 = mod2( moment_nums,6 );
             theta_g_cols = moment_nums_mod6 == 5 | moment_nums_mod6 == 6;       
-            moment_nums_theta_g_cols = mod2( moment_nums( theta_g_cols), size(A,2) / num_F_groups);
+            moment_nums_theta_g_cols = mod2( moment_nums( theta_g_cols), size(A,2) / num_F_groups_moments);
             moment_nums( theta_g_cols) = moment_nums_theta_g_cols;
 
             A = grpstats2( A' , moment_nums')';
@@ -163,7 +163,7 @@ display('Starting to find identified set');
             moment_nums = 1:size(X_T,1);
             moment_nums_mod6 = mod2( moment_nums,6 );
             theta_g_cols = moment_nums_mod6 == 5 | moment_nums_mod6 == 6;       
-            moment_nums_theta_g_cols = mod2( moment_nums( theta_g_cols), size(X_T,1) / num_F_groups);
+            moment_nums_theta_g_cols = mod2( moment_nums( theta_g_cols), size(X_T,1) / num_F_groups_moments);
             moment_nums( theta_g_cols) = moment_nums_theta_g_cols;
 
             X_T = grpstats2( X_T , moment_nums');

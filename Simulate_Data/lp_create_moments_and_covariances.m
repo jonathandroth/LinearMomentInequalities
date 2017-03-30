@@ -77,7 +77,7 @@ tic;
     [A_g_cell, A_c_cell, Y_cell] = generate_moment_fn_multiple_thetacs( F_group_cell_moments, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, use_basic_moments);
 
         first_iter = 1;
-        for(i = 1:num_F_groups)
+        for(i = 1:num_F_groups_moments)
            
             %Get A_g and A_c as a function of lambda from the cell
             A_g_fn = A_g_cell{i,1};
@@ -122,7 +122,7 @@ tic;
             Y_bar = sum(Y, 1)';
             
             length_A = size(A_c_bar,1);
-            num_remaining_groups = num_F_groups - i;
+            num_remaining_groups = num_F_groups_moments - i;
             if(first_iter ==1)
                 X_T = [ A_c_bar, zeros(length_A, num_remaining_groups), A_g_bar];
                 
@@ -153,7 +153,7 @@ tic;
             moment_nums = 1:size(A,2);
             moment_nums_mod6 = mod2( moment_nums,6 );
             theta_g_cols = moment_nums_mod6 == 5 | moment_nums_mod6 == 6;       
-            moment_nums_theta_g_cols = mod2( moment_nums( theta_g_cols), size(A,2) / num_F_groups);
+            moment_nums_theta_g_cols = mod2( moment_nums( theta_g_cols), size(A,2) / num_F_groups_moments);
             moment_nums( theta_g_cols) = moment_nums_theta_g_cols;
 
             A = grpstats2( A' , moment_nums')';
@@ -161,7 +161,7 @@ tic;
             moment_nums = 1:size(X_T,1);
             moment_nums_mod6 = mod2( moment_nums,6 );
             theta_g_cols = moment_nums_mod6 == 5 | moment_nums_mod6 == 6;       
-            moment_nums_theta_g_cols = mod2( moment_nums( theta_g_cols), size(X_T,1) / num_F_groups);
+            moment_nums_theta_g_cols = mod2( moment_nums( theta_g_cols), size(X_T,1) / num_F_groups_moments);
             moment_nums( theta_g_cols) = moment_nums_theta_g_cols;
 
             X_T = grpstats2( X_T , moment_nums');

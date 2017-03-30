@@ -100,7 +100,7 @@ lambda_index = 1;
         lambda
         
         first_iter = 1;
-        for(i = 1:num_F_groups)
+        for(i = 1:num_F_groups_moments)
            
             %Get A_g and A_c as a function of lambda from the cell
             A_g_fn = A_g_cell{i,1};
@@ -145,7 +145,7 @@ lambda_index = 1;
             Y_bar = sum(Y, 1)';
             
             length_A = size(A_c_bar,1);
-            num_remaining_groups = num_F_groups - i;
+            num_remaining_groups = num_F_groups_moments - i;
             if(first_iter ==1)
                 X_T = [ A_c_bar, zeros(length_A, num_remaining_groups), A_g_bar];
                 
@@ -172,7 +172,7 @@ lambda_index = 1;
             moment_nums = 1:size(A,2);
             moment_nums_mod6 = mod2( moment_nums,6 );
             theta_g_cols = moment_nums_mod6 == 5 | moment_nums_mod6 == 6;       
-            moment_nums_theta_g_cols = mod2( moment_nums( theta_g_cols), size(A,2) / num_F_groups);
+            moment_nums_theta_g_cols = mod2( moment_nums( theta_g_cols), size(A,2) / num_F_groups_moments);
             moment_nums( theta_g_cols) = moment_nums_theta_g_cols;
 
             A = grpstats2( A' , moment_nums')';
@@ -180,7 +180,7 @@ lambda_index = 1;
             moment_nums = 1:size(X_T,1);
             moment_nums_mod6 = mod2( moment_nums,6 );
             theta_g_cols = moment_nums_mod6 == 5 | moment_nums_mod6 == 6;       
-            moment_nums_theta_g_cols = mod2( moment_nums( theta_g_cols), size(X_T,1) / num_F_groups);
+            moment_nums_theta_g_cols = mod2( moment_nums( theta_g_cols), size(X_T,1) / num_F_groups_moments);
             moment_nums( theta_g_cols) = moment_nums_theta_g_cols;
 
             X_T = grpstats2( X_T , moment_nums');
