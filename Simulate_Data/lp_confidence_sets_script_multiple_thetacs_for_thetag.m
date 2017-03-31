@@ -5,7 +5,7 @@
 
 l = [zeros( num_F_groups_parameters ,1) ; 1];
 xlim_graph = [-150;100];
-filename_graph =  'Theta_g Rejection Probabilities';
+filename_graph =  'Theta_g_Rejection_Probabilities';
 xlabel_graph = 'Theta_g';
 data_output_dir = strcat(data_output_dir, 'Theta_g/');
 
