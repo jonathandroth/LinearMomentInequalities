@@ -2,7 +2,7 @@
 
 %Specify where the output should go (can be relative to the working  dir)
 data_output_dir = '../../Output/Conditional_FullMatrix/Data/3Thetacs/Firm_Level_Moments/';
-figures_output_dir = '../../Figures/Conditional_FullMatrix/LP_figures/3Thetacs/Firm_Level_Moments';
+figures_output_dir = '../../Figures/Conditional_FullMatrix/LP_figures/3Thetacs/Firm_Level_Moments/';
 
 
 %Specify the groups of firms that have different coefficients and moments
