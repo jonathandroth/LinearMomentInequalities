@@ -83,15 +83,24 @@ display('Starting to find identified set');
      [A_g_cell, A_c_cell, Y_cell] = generate_moment_fn_multiple_thetacs( F_group_cell_moments, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, use_basic_moments);
 
         first_iter = 1;
+        parameter_number = 1;
+        
         for(i = 1:num_F_groups_moments)
            
+            %Update parameter number
+            if( ~ismember( F_group_cell_moments{i},...
+                           F_group_cell_parameters{parameter_number} ) )
+                       parameter_number = parameter_number + 1;
+            end
+                
+                
             %Get A_g and A_c as a function of lambda from the cell
             A_g_fn = A_g_cell{i,1};
             A_c_fn = A_c_cell{i,1};
             
-            %Evaluate at the true lambda
-            A_g = A_g_fn(lambda_true);
-            A_c = A_c_fn(lambda_true);
+            %Evaluate at lambda (default is true lambda)
+            A_g = A_g_fn(lambda);
+            A_c = A_c_fn(lambda);
 
             %Get Y from the cell
             Y = Y_cell{i,1};
@@ -128,7 +137,7 @@ display('Starting to find identified set');
             Y_bar = sum(Y, 1)';
             
             length_A = size(A_c_bar,1);
-            num_remaining_groups = num_F_groups_moments - i;
+            num_remaining_groups = num_F_groups_parameters - parameter_number;
             if(first_iter ==1)
                 X_T = [ A_c_bar, zeros(length_A, num_remaining_groups), A_g_bar];
                 
@@ -137,7 +146,7 @@ display('Starting to find identified set');
                 Y_wide = Y;
                 
             else
-                num_previous_groups = i -1;
+                num_previous_groups = parameter_number -1;
                 new_row_X = [zeros(length_A, num_previous_groups), A_c_bar, zeros(length_A, num_remaining_groups), A_g_bar];
                 X_T = [X_T;new_row_X];
                 
@@ -151,6 +160,10 @@ display('Starting to find identified set');
         end
          
           
+       
+        %If combined_theta_g_moments, combined all of the theta_g moments
+        %in to one set, rather than having one for each firm group
+        
         if( combine_theta_g_moments == 1)        
             moment_nums = 1:size(A,2);
             moment_nums_mod6 = mod2( moment_nums,6 );
@@ -169,7 +182,7 @@ display('Starting to find identified set');
             X_T = grpstats2( X_T , moment_nums');
             y_T = grpstats2( y_T , moment_nums');
             Y_wide = grpstats2( Y_wide', moment_nums')'; 
- 
+
         end
    
     
