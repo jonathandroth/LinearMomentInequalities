@@ -21,13 +21,7 @@ function [c_lf_lp, eta_vec] = c_lf_lp(X_T, Z_draws, Sigma, alpha)
 
 %Note: x_T and Sigma are assumed to be rescaled so that Sigma has diagnol
 %of 1
-%Rescale the covariance matrix to have diagnol of 1
-    % X_T is assumed to have already been re-scaled
-    %Note: this is sort of an odd placement, where we do this rescaling
-    %inside and the other rescaling outside
-%D_sigma_minushalf = diag( sqrt( diag(Sigma) ).^(-1) );
 Sigma_sqrt = Sigma^(1/2);
-%eps_draws = D_sigma_minushalf * Sigma_sqrt * Z_draws;
 eps_draws = Sigma_sqrt * Z_draws;
 
 numsims = size(Z_draws,2);
