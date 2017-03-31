@@ -47,7 +47,7 @@ xlabel(xlabel_graph);
 
 %If filename not specified, assume it's means
 if( exist('filename_graph') ==0)
-       filename_graph =  'Mean Weight Rejection Probabilities';
+       filename_graph =  'Mean_Weight_Rejection_Probabilities';
 end
 
 
