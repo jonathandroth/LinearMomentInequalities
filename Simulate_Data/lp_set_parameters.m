@@ -12,7 +12,7 @@ diagonal = 0;
 %numdatasets accordingly
 if( isempty(getenv('SLURM_CPUS_PER_TASK')) )
    working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
-   numdatasets = 100;
+   numdatasets = 2;
 else
    working_dir = '/n/home12/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data';
    parpool('local', str2num(getenv('SLURM_CPUS_PER_TASK')));
@@ -30,8 +30,14 @@ mkdir(figures_output_dir);
 dirname = 'Calibrated_SigmaZeta/';
 
 
+if( exist( 'F_group_cell_parameters') == 0)
+    F_group_cell_parameters = F_group_cell_moments;
+end
+
 
 num_F_groups_moments = size(F_group_cell_moments,1);
+num_F_groups_parameters = size(F_group_cell_parameters,1);
+
 
 numsims_lp = 200;
 

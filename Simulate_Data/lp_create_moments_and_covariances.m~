@@ -81,13 +81,6 @@ tic;
         
         for(i = 1:num_F_groups_moments)
            
-            %Update parameter number
-            if( ~ismember( F_group_cell_moments{i},...
-                           F_group_cell_parameters{parameter_number} ) )
-                       parameter_number = parameter_number + 1;
-            end
-                
-                
             %Get A_g and A_c as a function of lambda from the cell
             A_g_fn = A_g_cell{i,1};
             A_c_fn = A_c_cell{i,1};

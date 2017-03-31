@@ -14,11 +14,11 @@ mean_g = mean(G_array(1,:,1));
 
 %If l not specified, then do the l that gives you the mean weights
 if( exist('l') == 0)
-l = [1; zeros(num_F_groups_moments-1,1); mean_g];
+l = [1; zeros(num_F_groups_parameters-1,1); mean_g];
 %l = [1;0];
 end
 
-delta_true = [repmat(theta_c_true,num_F_groups_moments,1);  theta_g_true];
+delta_true = [repmat(theta_c_true,num_F_groups_parameters,1);  theta_g_true];
 l'*delta_true
 
 %load( strcat( data_output_dir, dirname, 'Interacted_Moments/values_for_lp') )
