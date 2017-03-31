@@ -24,18 +24,12 @@ l'*delta_true
 %load( strcat( data_output_dir, dirname, 'Interacted_Moments/values_for_lp') )
 %load( strcat( data_output_dir, dirname, 'Interacted_Moments/grid_cell') )
 
-%For the LF methods, we save bounds of confidence sets, since we compute
-%these exactly. These are intiated here
+%For the LF methods, we save bounds of confidence sets, 
 confidence_sets_using_c_alpha = NaN(numdatasets,2);
 confidence_sets_using_c_lp_alpha = NaN(numdatasets,2);
 
-%For the conditional/hybrid methods, we get rejection probabilities over a
-%grid of values for l*theta. So we initialize those grids here
-num_beta0_gridpoints = 201;
-beta0_grid = linspace( xlim_graph(1), xlim_graph(2), num_beta0_gridpoints);
-rejection_grid_conditional = NaN(numdatasets, num_beta0_gridpoints);
-rejection_grid_hybrid = NaN(numdatasets, num_beta0_gridpoints);
-
+num_beta0_gridpoints = 11;
+    beta0_grid = linspace( xlim_graph(1), xlim_graph(2), num_beta0_gridpoints);
 
 nummoments = size( y_T_cell{ds,1} , 1);
 Z_draws_interacted = randn(nummoments, 10000);
@@ -104,25 +98,15 @@ parfor ds = 1:numdatasets
         
         count = count +1;
     end
-    
-    rejection_grid_conditional(ds,:) = conditional_rejection_vec;
-    rejection_grid_hybrid(ds,:) = hybrid_rejection_vec;
-    
 end
 
 %Create the confidence sets using the grid search
 %grid_min_max
-    
-    %Average the rejection probabilities for the hybrid and conditional
-    %methods
-    rejection_grid_conditional = mean(rejection_grid_conditional,1);
-    rejection_grid_hybrid = mean(rejection_grid_hybrid,1);
-    
+
 
     ds_name = strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp');
     mkdir(ds_name);
-    save( ds_name, 'confidence_sets_using_c_alpha', 'confidence_sets_using_c_lp_alpha',...
-                   'rejection_grid_hybrid', 'rejection_grid_conditional','beta0_grid' );
+    save( ds_name, 'confidence_sets_using_c_alpha', 'confidence_sets_using_c_lp_alpha');
 
     
     

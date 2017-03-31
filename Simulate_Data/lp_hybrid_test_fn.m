@@ -13,6 +13,11 @@
 %X_T : used in definition of moments; see above
 %Sigma: conditional variance of y_T | X_T
 %gamma: signficance for LF test
+% eta_vec (optional): the draws used when calculating the least favorable
+% critical values. If not supplied, this is simulated inside the function using 1000 draws. 
+    %If, however, the LF critical values are being calculated elsewhere, it may be
+    %computationally more efficient to pass these draws here; users can also customize the 
+    %number of draws by doing it outside
 %c_gamma (optional): the least favorable conditional critical value for
     %gamma. If not supplied, this is calculated inside the function using 1000 draws. 
     %If, however, the LF critical values are being calculated elsewhere, it may be
@@ -23,7 +28,8 @@ function reject = lp_hybrid_test_fn( y_T, X_T, Sigma, alpha, gamma, varargin)
 
 %Set c_gamma if additional argument is provided; otherwise, compute it
 if( isempty(varargin) == 0)
-    c_gamma = varargin{1};
+    eta_vec = varargin{1};
+    c_gamma = quantile( eta_vec, 1-alpha);
 else
     rng(0);
     numsims_lp = 1000;
