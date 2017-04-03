@@ -1,0 +1,26 @@
+#!/bin/bash
+# This script initiates on the Odyssey server the various permutations of the linear programming methods
+
+## Inference holding lambda constant
+
+#1 thetac
+Matlab_parallel_script_run_lp_cs_single_theta.sh
+Matlab_parallel_script_run_lp_cs_single_theta_basic_moments.sh
+Matlab_parallel_script_run_lp_cs_single_theta_firmlevel_moments.sh
+
+#3 thetacs
+Matlab_parallel_script_run_lp_cs_3thetacs.sh
+Matlab_parallel_script_run_lp_cs_3thetacs_basic_moments.sh
+Matlab_parallel_script_run_lp_cs_3thetacs_firmlevel_moments.sh
+Matlab_parallel_script_run_lp_cs_3thetacs_combined_thetag.sh
+
+#9 thetacs
+Matlab_parallel_script_run_lp_cs_multiple_thetas.sh
+Matlab_parallel_script_run_lp_cs_multiple_thetas_basic_moments.sh
+Matlab_parallel_script_run_lp_cs_multiple_thetas_firmlevel_moments.sh
+Matlab_parallel_script_run_lp_cs_multiple_thetas_combined_thetag.sh
+
+## Inference with lambda
+Matlab_parallel_script_run_lp_lambda_inference_single_theta.sh
+Matlab_parallel_script_run_lp_lambda_inference_3thetacs.sh
+Matlab_parallel_script_run_lp_lambda_inference_9thetacs.sh
