@@ -33,3 +33,18 @@ y = x*beta + 3*eps;
 
 cov(y)
 conditional_variance_fn(y ,x)
+
+%%
+
+N = 1000;
+k = 5;
+
+
+x = randn(N,k);
+eps = randn(N,k);
+
+y = x + eps;
+
+unconditonal_var  = cov(y);
+
+conditonal_var = conditional_variance_fn(y,x,0)

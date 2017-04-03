@@ -15,7 +15,8 @@ function conditional_variance = conditional_variance_fn(y, X, diagonol)
     %If Sigma_X does not have full rank, take an independent subset of the
     %columns of X
     elseif( rank(Sigma_X) < size(Sigma_X,1) )
-        [~,licols] = rref( cov(Sigma_X) );
+        %[~,licols] = rref( cov(Sigma_X) );%covariance of Sigma_X??
+        [~,licols] = rref( Sigma_X );
         
         X = X(:, licols);
         Sigma_X = Sigma_X(licols, licols);
