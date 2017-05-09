@@ -14,7 +14,7 @@ mean_g = mean(G_array(1,:,1));
 
 %If l not specified, then do the l that gives you the mean weights
 if( exist('l') == 0)
-l = [1; zeros(num_F_groups_parameters-1,1); mean_g];
+l = [ones(num_F_groups_parameters,1) / num_F_groups_parameters; mean_g];
 %l = [1;0];
 end
 
