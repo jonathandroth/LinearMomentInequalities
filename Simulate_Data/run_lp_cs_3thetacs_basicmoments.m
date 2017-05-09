@@ -2,7 +2,7 @@ use_basic_moments = 1;
 
 %specify whether to combine the moments for theta_g, or to have separate
 %ones for each firm
-combine_theta_g_moments = 0;
+combine_theta_g_moments = 1;
 
 %Specify where the output should go (can be relative to the working  dir)
 data_output_dir = '../../Output/Conditional_FullMatrix/Data/3Thetacs/Basic_Moments/';
