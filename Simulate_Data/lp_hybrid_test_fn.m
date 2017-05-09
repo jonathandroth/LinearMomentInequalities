@@ -139,7 +139,7 @@ reject = (eta / sigma_B) >= norminv( (1- alpha_tilde) * zeta_up + alpha_tilde * 
 
 
 if( norminv( (1- alpha_tilde) * zeta_up + alpha_tilde * zeta_lo ) == Inf)
-    warning('Infinite Critical Value Computed');
+    warning('Infinite Critical Value Computed (Hybrid)');
     
 end
 end
