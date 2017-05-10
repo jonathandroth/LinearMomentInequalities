@@ -1,7 +1,6 @@
 %% Specify parameters
 lp_set_parameters
 %% Import data and calculate moments and covariance matrices
-%lp_create_moments_and_covariances
 
 
 lambda_vec = (0.01:.2:5.01)';
@@ -85,18 +84,27 @@ end
     
      [A_g_cell, A_c_cell, Y_cell] = generate_moment_fn_multiple_thetacs( F_group_cell_moments, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, use_basic_moments);
 
-lambda_index = 1;     
+lambda_index = 1;
+
  for lambda = lambda_vec'
         lambda
         
         first_iter = 1;
-        for(i = 1:num_F_groups_moments)
+        parameter_number = 1;
+         for(i = 1:num_F_groups_moments)
            
+            %Update parameter number
+            if( ~ismember( F_group_cell_moments{i},...
+                           F_group_cell_parameters{parameter_number} ) )
+                       parameter_number = parameter_number + 1;
+            end
+                
+                
             %Get A_g and A_c as a function of lambda from the cell
             A_g_fn = A_g_cell{i,1};
             A_c_fn = A_c_cell{i,1};
             
-            %Evaluate at the current lambda
+            %Evaluate at lambda (default is true lambda)
             A_g = A_g_fn(lambda);
             A_c = A_c_fn(lambda);
 
@@ -106,12 +114,16 @@ lambda_index = 1;
             
             % To get the conditional matrix, we want to construct a matrix
             % A so that each row is all of the relevant weights on theta_g
-            % and the theta_c's for a given market
+            % and the theta_c's for a given market.
+            % We construct the parts related to theta_c and theta_g
+            % separately
             if(first_iter == 1)
-                A = [A_c , A_g];
+                A_c_combined = A_c;
+                A_g_combined = A_g;
                 
             else
-                A = [A, A_c, A_g];
+                A_c_combined = [A_c_combined, A_c];
+                A_g_combined = [A_g_combined, A_g];
             end
             
             
@@ -135,7 +147,7 @@ lambda_index = 1;
             Y_bar = sum(Y, 1)';
             
             length_A = size(A_c_bar,1);
-            num_remaining_groups = num_F_groups_moments - i;
+            num_remaining_groups = num_F_groups_parameters - parameter_number;
             if(first_iter ==1)
                 X_T = [ A_c_bar, zeros(length_A, num_remaining_groups), A_g_bar];
                 
@@ -144,7 +156,7 @@ lambda_index = 1;
                 Y_wide = Y;
                 
             else
-                num_previous_groups = i -1;
+                num_previous_groups = parameter_number -1;
                 new_row_X = [zeros(length_A, num_previous_groups), A_c_bar, zeros(length_A, num_remaining_groups), A_g_bar];
                 X_T = [X_T;new_row_X];
                 
@@ -158,27 +170,28 @@ lambda_index = 1;
         end
          
           
+       
+        %If combined_theta_g_moments, combined all of the theta_g moments
+        %in to one set, rather than having one for each firm group
+        
         if( combine_theta_g_moments == 1)        
-            moment_nums = 1:size(A,2);
-            moment_nums_mod6 = mod2( moment_nums,6 );
-            theta_g_cols = moment_nums_mod6 == 5 | moment_nums_mod6 == 6;       
-            moment_nums_theta_g_cols = mod2( moment_nums( theta_g_cols), size(A,2) / num_F_groups_moments);
-            moment_nums( theta_g_cols) = moment_nums_theta_g_cols;
-
-            A = grpstats2( A' , moment_nums')';
-
+            
             moment_nums = 1:size(X_T,1);
-            moment_nums_mod6 = mod2( moment_nums,6 );
-            theta_g_cols = moment_nums_mod6 == 5 | moment_nums_mod6 == 6;       
-            moment_nums_theta_g_cols = mod2( moment_nums( theta_g_cols), size(X_T,1) / num_F_groups_moments);
-            moment_nums( theta_g_cols) = moment_nums_theta_g_cols;
+            moment_num_in_group = mod2( moment_nums, size(X_T,1) / num_F_groups_moments );
+            theta_g_cols = moment_num_in_group == 5 | moment_num_in_group == 6;            
+            moment_nums( theta_g_cols ) = moment_num_in_group( theta_g_cols);
 
+            A_c_combined = grpstats2( A_c_combined' , moment_nums')';
+            A_g_combined = grpstats2( A_g_combined' , moment_nums')';
+            Y_wide = grpstats2( Y_wide', moment_nums')'; 
             X_T = grpstats2( X_T , moment_nums');
             y_T = grpstats2( y_T , moment_nums');
-            Y_wide = grpstats2( Y_wide', moment_nums')'; 
- 
+            
         end
-   
+        
+        A = [A_c_combined , A_g_combined];
+        %Remove any all zero columns
+        A= A(:,any(A));
         
         
     
@@ -226,7 +239,7 @@ identified_set_max = max( lambda_vec( identified_set == 1) );
 
 line( [identified_set_max; identified_set_max], [0;1], 'LineStyle', '--', 'Color',  'r');
 
-legend( 'Conditional (Transformed)', 'Conditional (Non-Transformed)', 'Hybrid', 'LF','LF (modified)', 'Identified Set Bound', 'Location','eastoutside' );
+legend( 'Conditional (Transformed)', 'Conditional (Non-Transformed)', 'Hybrid', 'LF','LFN', 'Identified Set Bound', 'Location','eastoutside' );
 ylabel('Rejection Probability');
 xlabel('Lambda');
 title('Rejection Probabilities for Lambda');
