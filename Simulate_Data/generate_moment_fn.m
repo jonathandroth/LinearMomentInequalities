@@ -13,6 +13,7 @@ function [Moments_mat_fn, Interacted_Moments_mat_fn, Y, A_g, A_c, Y_basic, A_g_b
     = generate_moment_fn(F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array)
 
 
+%% Basic dimensions
 T = size( Pi_array ,3);
 J = size( Pi_array, 2);
 F = size( Pi_array, 1);
@@ -24,28 +25,23 @@ T_array = reshape( T_array, F, J,T);
 
 
 
-%Construct the eta+ and eta- instrument
+%% Construct the eta+ and eta- instrument
 Eta_jt_shocks_vec = Eta_jt_shocks_array(:);
 
 Eta_jt_plus_vec = max(Eta_jt_shocks_vec,0);
 Eta_jt_minus_vec = max(-Eta_jt_shocks_vec,0);
 
 
-Eta_t_array = permute( repmat( Eta_t_vec, 1, F, J), [2, 3, 1]);
-Eta_t_vec = Eta_t_array(:);
+%%The following block of code can be used when we use eta_t as an instrument; no longer
+%%necessary since this has been removed
+%Eta_t_array = permute( repmat( Eta_t_vec, 1, F, J), [2, 3, 1]);
+%Eta_t_vec = Eta_t_array(:);
+%Eta_t_plus_vec = max(Eta_t_vec,0);
+%Eta_t_minus_vec = max(-Eta_t_vec,0);
 
-Eta_t_plus_vec = max(Eta_t_vec,0);
-Eta_t_minus_vec = max(-Eta_t_vec,0);
 
-%Put into "long" format
+%% Put into "long" format
 Pi_vec = Pi_array(:);
-
-% %Create a J_array for g+1
-% J_gp1_t_array = [ J_t_array(:,(2:size(J_t_array,2)),:) , zeros(size(J_t_array,1) , 1, size(J_t_array,3) ) ];
-% J_gm1_t_array = [ zeros(size(J_t_array,1) , 1, size(J_t_array,3) ) , J_t_array(:,(1:(size(J_t_array,2)-1) ),:) ];
-% J_gp1_tm1_array = [ J_tminus1_array(:,(2:size(J_tminus1_array,2)),:) , zeros(size(J_tminus1_array,1) , 1, size(J_tminus1_array,3) ) ];
-% J_gm1_tm1_array = [ zeros(size(J_tminus1_array,1) , 1, size(J_tminus1_array,3) ) , J_tminus1_array(:,(1:(size(J_tminus1_array,2)-1) ),:) ];
-
 
 J_t_vec = J_t_array(:);
 J_tminus1_vec =  J_tminus1_array(:);
@@ -59,11 +55,10 @@ T_vec = T_array(:);
 
 
 
-%%
+%% Construct indicators for the first 4 moments
 
-%Specify number of moments
+%Specify number of basic moments
 M= 6;
-
 N = size(J_t_vec,1); % compute number of obs
 
 %Create C_jft mat
@@ -78,7 +73,7 @@ moment_has_lambda = [1,1,0,0,0,0];%vector indicating whether the moment "needs a
 
 
 
-%% Calculate profits for the plus-weight and minus-weight moments
+%% Calculate profits and construct indicators for the plus-weight and minus-weight moments
 
 %The allproducts f function takes an an argument a FxJxT panel
 %It creates a matrix where each row is the row in the panel correspoinding with F   
@@ -112,102 +107,70 @@ G_upper = sum( G_allf .* add_upper  ,2) ./ max( 1, sum( add_upper, 2));
 G_lower = sum( G_allf .* add_lower  ,2) ./ max( 1, sum( add_lower, 2));
 
 
-%We are in condition 5 if we added product j and there is at least one
-%eligible lower weight product
+%We are in condition 5 (6) if we added product j and there is at least one
+%eligible lower (higher) weight product
 C_mat(:,5) = (J_t_vec == 1 & J_tminus1_vec == 0) & ( sum( add_lower, 2) > 0 );
 C_mat(:,6) = (J_t_vec == 1 & J_tminus1_vec == 0) & ( sum( add_upper, 2) > 0 );
 
-%%
 
 
+%% Assemble the components for the basic 6 moments
 
-% Create a matrix where the i,j th entry is the value of delta-pi for observation
-% i if C_ij == 1, and is 0 otherwise
+
 
 %For the first four moments, deltapi is pi if J_t =1 ,and -pi if J_t = 0
-%the first 4 moments. For the 5th moment, this is Pi_vec - the average for the eligible lower products
-%; for the 6th, this is pi_vec - the average_for the upper products
+%For the 5th moment, this is Pi_vec minus the average for the eligible lower products
+%; for the 6th, this is pi_vec minus the average_for the upper products
 
 Pi_cond_mat = [Pi_vec, -Pi_vec, Pi_vec, -Pi_vec,...
     Pi_vec - Pi_lower, Pi_vec - Pi_upper] .* C_mat;
 
-%Interact with eta_plus and eta_minus
-
-Pi_cond_mat = [Pi_cond_mat,...
-               Pi_cond_mat .* repmat( Eta_jt_plus_vec, 1, size(Pi_cond_mat,2) ),...
-               Pi_cond_mat .* repmat( Eta_jt_minus_vec, 1, size(Pi_cond_mat,2) ),...
-               Pi_cond_mat .* repmat( Eta_t_plus_vec, 1, size(Pi_cond_mat,2) ),...
-               Pi_cond_mat .* repmat( Eta_t_minus_vec, 1, size(Pi_cond_mat,2) )];
-% Create a matrix where the i,j th entry is the value that multiplies theta_g in the moment for observation
+           
+ % Create a matrix where the i,j th entry is the value that multiplies theta_g in the moment for observation
 % i if C_ij == 1, and is 0 otherwise
-
 %For moments 1:4, the value that multiplies theta_g is +g if the product is
 %in, and -g if it is out. For the last two, it is -1 and +1
 G_cond_mat = [-G_vec, G_vec, -G_vec, G_vec, G_lower - G_vec , G_upper - G_vec]  .* C_mat;
-
-G_cond_mat = [G_cond_mat,...
-               G_cond_mat .* repmat( Eta_jt_plus_vec,1, size(G_cond_mat,2) ),...
-               G_cond_mat .* repmat( Eta_jt_minus_vec, 1, size(G_cond_mat,2) ),...
-               G_cond_mat .* repmat( Eta_t_plus_vec,1, size(G_cond_mat,2) ),...
-               G_cond_mat .* repmat( Eta_t_minus_vec, 1, size(G_cond_mat,2) )];
 
 % Create a matrix where the i,j th entry is the value that multiplies theta_c in the moment for observation
 % i if C_ij == 1, and is 0 otherwise
            
 Const_cond_mat = repmat([-1,1,-1,1,0,0], size(C_mat,1),1) .* C_mat;
 
+
+           
+%% Interact the first four moments with eta_plus and eta_minus
+
+Pi_cond_mat = [Pi_cond_mat,...
+               Pi_cond_mat(:,1:4) .* repmat( Eta_jt_plus_vec, 1, 4 ),...
+               Pi_cond_mat(:,1:4) .* repmat( Eta_jt_minus_vec, 1, 4 )...
+               ];
+
+G_cond_mat = [G_cond_mat,...
+               G_cond_mat(:,1:4) .* repmat( Eta_jt_plus_vec,1, 4 ),...
+               G_cond_mat(:,1:4) .* repmat( Eta_jt_minus_vec, 1, 4 )...
+               ];
+
 Const_cond_mat = [Const_cond_mat,...
-               Const_cond_mat .* repmat( Eta_jt_plus_vec,1, size(Const_cond_mat,2) ),...
-               Const_cond_mat .* repmat( Eta_jt_minus_vec, 1, size(Const_cond_mat,2) ),...
-               Const_cond_mat .* repmat( Eta_t_plus_vec,1, size(Const_cond_mat,2) ),...
-               Const_cond_mat .* repmat( Eta_t_minus_vec, 1, size(Const_cond_mat,2) )];
+               Const_cond_mat(:,1:4) .* repmat( Eta_jt_plus_vec,1, 4 ),...
+               Const_cond_mat(:,1:4) .* repmat( Eta_jt_minus_vec, 1, 4 )...
+               ];
 
 
-
-% %Avg the values of Pi and G for each (t,g) group. All of the moments will
-% %be of the form: M = Pi_for_moments - constant1 - constant2 * G_for_moments
-% Grouping_mat = [ T_vec, G_vec];
-
-% tic
-% for m = 1:M
-%     Pi_for_moments = accumarray( grp2idx( num2str(Grouping_mat)), Pi_cond_mat(:,m), [], @mean) ;
-%     G_for_moments = accumarray( grp2idx( num2str(Grouping_mat)), G_cond_mat(:,m), [], @mean) ;
-% end
-% toc
-
-
-
-% num_obs_mat = grpstats( repmat(C_mat,1,3) , {T_vec}, @sum);
-% Pi_for_moments = grpstats( Pi_cond_mat, {T_vec}, @sum) ./ num_obs_mat;
-% G_for_moments = grpstats( G_cond_mat, {T_vec}, @sum) ./ num_obs_mat;
-% Const_for_moments = grpstats( Const_cond_mat, {T_vec}, @sum) ./ num_obs_mat;
-
-%%Replace NaNs with 0s. This is the case when there are no firms that meet C
-%Pi_for_moments( isnan(Pi_for_moments)) = 0;
-%G_for_moments( isnan(G_for_moments)) = 0;
-%Const_for_moments( isnan(Const_for_moments)) = 0;
-
+           
+%% Collapse the firm-product level observations to the market level
 Pi_for_moments = grpstats2( Pi_cond_mat, T_vec);
 G_for_moments = grpstats2( G_cond_mat, T_vec ) ;
 Const_for_moments = grpstats2( Const_cond_mat, T_vec);
-%Create a matrix with the values that will multiply theta_c
-% For the first four moments, this is +1 if g>0 and -1 if g<0
-% For the last two moents, this is 0
 
-%Const_for_moments = sign(G_for_moments);
-%Const_for_moments = repmat(sign(G_for_moments(:,1:6)),1,3);
-
-%Set const to 0 for the last two types of moments
-% Const_for_moments(:,5:6) = 0;
-% Const_for_moments(:,11:12) = 0;
-% Const_for_moments(:,17:18) = 0;
 
 %Create a matrix that indicates whether each moment should be multiplied by
 %lambda or not
 %This is a matrix of size #grps x M where each column is all 1s if the mth moment
 %relates to a case where J_tminus1= 1 and is 0 otherwise
 
-Lambda_indicator_mat = repmat( moment_has_lambda , size(Pi_for_moments,1) , size(Pi_for_moments,2) / length(moment_has_lambda) );
+Lambda_indicator_mat = repmat( [moment_has_lambda, moment_has_lambda(1:4), moment_has_lambda(1:4)],...
+                                size(Pi_for_moments,1) , 1);
 
 
 %Create a  fn that returns a (F*J) x M matrix where the (i,j)th entry is the jth moment for

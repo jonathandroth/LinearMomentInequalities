@@ -3,8 +3,8 @@
 combine_theta_g_moments = 1;
 
 %Specify where the output should go (can be relative to the working  dir)
-data_output_dir = '../../Output/Conditional_FullMatrix/Data/Multiple_Thetacs/Combined_Theta_g/';
-figures_output_dir = '../../Figures/Conditional_FullMatrix/LP_figures/Multiple_Thetacs/Combined_Theta_g/';
+data_output_dir = '../../Output/Conditional_FullMatrix/Data/9Thetacs/Interacted_Moments/';
+figures_output_dir = '../../Figures/Conditional_FullMatrix/LP_figures/9Thetacs/Interacted_Moments/';
 
 
 %Specify the groups of firms that have different coefficients

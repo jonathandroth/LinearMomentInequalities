@@ -104,7 +104,7 @@ zeta_up = normcdf( v_up / sigma_B);
 reject = (eta / sigma_B) >= norminv( (1- alpha) * zeta_up + alpha * zeta_lo );
 
 if( norminv( (1- alpha) * zeta_up + alpha * zeta_lo ) == Inf)
-    warning('Infinite Critical Value Computed');
+    warning('Infinite Critical Value Computed (Conditional)');
     
 end
 end

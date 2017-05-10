@@ -1,0 +1,22 @@
+
+run_file_attributes = dir('run_lp_cs*.m');
+run_file_names = run_file_names.name
+run_file_name = 'run_lp_cs_1thetac_basicmoments.m'
+
+
+
+run_file_name_noextension = strrep( run_file_name, '.m', '')
+
+
+fin = fopen('Matlab_parallel_script_template.sh');
+fout = fopen(run_file_name);
+
+while ~feof(fin)
+   s = fgetl(fin);
+   s = strrep(s, 'FILENAME', run_file_name_noextension);
+%   fprintf(fout,'%s',s);
+   disp(s)
+end
+
+fclose(fin);
+fclose(fout);

@@ -102,12 +102,16 @@ tic;
             
             % To get the conditional matrix, we want to construct a matrix
             % A so that each row is all of the relevant weights on theta_g
-            % and the theta_c's for a given market
+            % and the theta_c's for a given market.
+            % We construct the parts related to theta_c and theta_g
+            % separately
             if(first_iter == 1)
-                A = [A_c , A_g];
+                A_c_combined = A_c;
+                A_g_combined = A_g;
                 
             else
-                A = [A, A_c, A_g];
+                A_c_combined = [A_c_combined, A_c];
+                A_g_combined = [A_g_combined, A_g];
             end
             
             
@@ -159,27 +163,22 @@ tic;
         %in to one set, rather than having one for each firm group
         
         if( combine_theta_g_moments == 1)        
-            moment_nums = 1:size(A,2);
-            moment_nums_mod6 = mod2( moment_nums,6 );
-            theta_g_cols = moment_nums_mod6 == 5 | moment_nums_mod6 == 6;       
-            moment_nums_theta_g_cols = mod2( moment_nums( theta_g_cols), size(A,2) / num_F_groups_moments);
-            moment_nums( theta_g_cols) = moment_nums_theta_g_cols;
-
-            A = grpstats2( A' , moment_nums')';
-
+            
             moment_nums = 1:size(X_T,1);
-            moment_nums_mod6 = mod2( moment_nums,6 );
-            theta_g_cols = moment_nums_mod6 == 5 | moment_nums_mod6 == 6;       
-            moment_nums_theta_g_cols = mod2( moment_nums( theta_g_cols), size(X_T,1) / num_F_groups_moments);
-            moment_nums( theta_g_cols) = moment_nums_theta_g_cols;
+            moment_num_in_group = mod2( moment_nums, size(X_T,1) / num_F_groups_moments );
+            theta_g_cols = moment_num_in_group == 5 | moment_num_in_group == 6;            
+            moment_nums( theta_g_cols ) = moment_num_in_group( theta_g_cols);
 
+            A_c_combined = grpstats2( A_c_combined' , moment_nums')';
+            A_g_combined = grpstats2( A_g_combined' , moment_nums')';
+            Y_wide = grpstats2( Y_wide', moment_nums')'; 
             X_T = grpstats2( X_T , moment_nums');
             y_T = grpstats2( y_T , moment_nums');
-            Y_wide = grpstats2( Y_wide', moment_nums')'; 
-
+            
         end
-    
-          %Remove any all zero columns
+        
+        A = [A_c_combined , A_g_combined];
+        %Remove any all zero columns
         A= A(:,any(A));
         
         %Calculate the variance of Y conditional on A using the Abadie et

@@ -217,10 +217,16 @@ save('../../Output/Simulated_Data/calibrated_params', 'sigma_nu', 'sigma_eps', '
 
 load('../../Output/Simulated_Data/calibrated_params');
 
+%%
 
-%Reallocate the variance from zetaj to w
-sigma_w = sigma_zeta;
-sigma_zetaj = 0;
+%%The following block used to reallocate the variance from zetaj to w --
+%%REMOVED and replaced by the next two lines
+%sigma_w = sigma_zeta;
+%sigma_zetaj = 0;
+
+sigma_w =0;
+sigma_zetaj = sigma_zeta;
+
 sigma_zetajft = sigma_zeta;
 rho = 0.9;
 

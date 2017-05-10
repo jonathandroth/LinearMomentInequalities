@@ -25,7 +25,7 @@ lambda = lambda_true;
 %Create a matrix of normal draws with mean 0 and covariace sigma
 %Each column is a draw
 nummoments_basic = 6;
-nummoments_interacted = 30;
+nummoments_interacted = 14;
 
 %Create a matrix of standard normals of size k x 10000 for simulating
 %critical values
@@ -33,7 +33,7 @@ rng(0);
 Z_draws_interacted = randn(nummoments_interacted, 10000);
 Z_draws_basic = Z_draws_interacted( 1:nummoments_basic,:);
 
-numdatasets = 500;
+%numdatasets = 500;
 %numdatasets = 2;
 
 nummarkets = 500; %This is the number of markets to sample from the long chain

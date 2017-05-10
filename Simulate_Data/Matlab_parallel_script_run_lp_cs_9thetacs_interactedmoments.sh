@@ -1,6 +1,6 @@
 #!/bin/bash 
-#SBATCH -o ../../Logs/lp_cs_multiple_thetas_basicmoments.out
-#SBATCH -e ../../Logs/lp_cs_multiple_thetas_basicmoments.err
+#SBATCH -o ../../Logs/run_lp_cs_9thetacs_interactedmoments.out
+#SBATCH -e ../../Logs/run_lp_cs_9thetacs_interactedmoments.err
 #SBATCH -p serial_requeue
 #SBATCH -c 24 
 #SBATCH -N 1 
@@ -11,4 +11,4 @@
 
 source new-modules.sh
 module load matlab
-srun -n 1 -c 24 matlab-default -nodisplay -nosplash <run_lp_cs_multiple_thetas_basicmoments.m
+srun -n 1 -c 24 matlab-default -nodisplay -nosplash <run_lp_cs_9thetacs_interactedmoments.m

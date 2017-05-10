@@ -1,6 +1,6 @@
 #!/bin/bash 
-#SBATCH -o ../../Logs/lp_cs_single_theta_firmlevel_moments.out
-#SBATCH -e ../../Logs/lp_cs_single_theta_firmlevel_moments.err
+#SBATCH -o ../../Logs/run_lp_cs_single_theta_firmlevel_moments.out
+#SBATCH -e ../../Logs/run_lp_cs_single_theta_firmlevel_moments.err
 #SBATCH -p serial_requeue
 #SBATCH -c 24 
 #SBATCH -N 1 
