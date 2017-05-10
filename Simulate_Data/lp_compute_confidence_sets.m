@@ -1,7 +1,7 @@
 %This script computes the confidence sets and identified set for l * theta
 %in the lp_confidence_sets script
 
-%If l is not specfied in the environment, it is assumed to be [1,0,...,0,
+%If l is not specfied in the environment, it is assumed to be [1/F,...,1/F,
 %mean_g]
 
 %This script used to be part of lp_confidence_sets_multiple_thetacs, but I
