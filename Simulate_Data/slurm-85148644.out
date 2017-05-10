@@ -1,0 +1,14 @@
+/var/slurmd/spool/slurmd/job85148644/slurm_script: line 7: Matlab_parallel_script_run_lp_cs_single_theta.sh: command not found
+/var/slurmd/spool/slurmd/job85148644/slurm_script: line 8: Matlab_parallel_script_run_lp_cs_single_theta_basic_moments.sh: command not found
+/var/slurmd/spool/slurmd/job85148644/slurm_script: line 9: Matlab_parallel_script_run_lp_cs_single_theta_firmlevel_moments.sh: command not found
+/var/slurmd/spool/slurmd/job85148644/slurm_script: line 12: Matlab_parallel_script_run_lp_cs_3thetacs.sh: command not found
+/var/slurmd/spool/slurmd/job85148644/slurm_script: line 13: Matlab_parallel_script_run_lp_cs_3thetacs_basic_moments.sh: command not found
+/var/slurmd/spool/slurmd/job85148644/slurm_script: line 14: Matlab_parallel_script_run_lp_cs_3thetacs_firmlevel_moments.sh: command not found
+/var/slurmd/spool/slurmd/job85148644/slurm_script: line 15: Matlab_parallel_script_run_lp_cs_3thetacs_combined_thetag.sh: command not found
+/var/slurmd/spool/slurmd/job85148644/slurm_script: line 18: Matlab_parallel_script_run_lp_cs_multiple_thetas.sh: command not found
+/var/slurmd/spool/slurmd/job85148644/slurm_script: line 19: Matlab_parallel_script_run_lp_cs_multiple_thetas_basic_moments.sh: command not found
+/var/slurmd/spool/slurmd/job85148644/slurm_script: line 20: Matlab_parallel_script_run_lp_cs_multiple_thetas_firmlevel_moments.sh: command not found
+/var/slurmd/spool/slurmd/job85148644/slurm_script: line 21: Matlab_parallel_script_run_lp_cs_multiple_thetas_combined_thetag.sh: command not found
+/var/slurmd/spool/slurmd/job85148644/slurm_script: line 24: Matlab_parallel_script_run_lp_lambda_inference_single_theta.sh: command not found
+/var/slurmd/spool/slurmd/job85148644/slurm_script: line 25: Matlab_parallel_script_run_lp_lambda_inference_3thetacs.sh: command not found
+/var/slurmd/spool/slurmd/job85148644/slurm_script: line 26: Matlab_parallel_script_run_lp_lambda_inference_9thetacs.sh: command not found
