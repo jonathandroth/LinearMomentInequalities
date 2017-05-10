@@ -16,6 +16,12 @@ for filenum = 1:size(run_file_attributes)
   while ~feof(fin)
       s = fgetl(fin);
       s = strrep(s, 'FILENAME', run_file_name_noextension);
+      
+      %Add more memory if 9thetacs
+      if( ~isempty(regexp(run_file_name, '9thetac')) )
+                s = strrep(s, '80000', '160000');
+      end
+      
       fprintf(fout,'%s\n',s);
       %disp(s)
   end
