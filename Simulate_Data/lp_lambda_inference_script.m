@@ -3,8 +3,8 @@ lp_set_parameters
 %% Import data and calculate moments and covariance matrices
 
 
-lambda_vec = (0.01:.2:5.01)';
-%lambda_vec = (0.01:5:5.01)';
+%lambda_vec = (0.01:.2:5.01)';
+labmda_vec = 0.01:1:20;
 
 conditional_test_noadjustment = NaN(numdatasets, size(lambda_vec,1));
 conditional_test_adjustment = NaN(size(conditional_test_noadjustment));

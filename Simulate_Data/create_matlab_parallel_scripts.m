@@ -1,7 +1,7 @@
 
 
 %% Automatically generate the Odyssey run scripts for the specified Matlab files using a Template
-run_file_attributes = dir('run_lp_cs*.m');
+run_file_attributes = dir('run_lp*.m');
 
 
 for filenum = 1:size(run_file_attributes)
