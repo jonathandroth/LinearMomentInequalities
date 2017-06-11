@@ -1,6 +1,6 @@
 %Specify where the output should go (can be relative to the working  dir)
-data_output_dir = '../../Output/Conditional_FullMatrix/Data/Single_Thetac/Interacted_Moments/';
-figures_output_dir = '../../Figures/Conditional_FullMatrix/LP_figures/Single_Thetac/Interacted_Moments/';
+data_output_dir = '../../Output/Conditional_FullMatrix/Data/1Thetac/Interacted_Moments/';
+figures_output_dir = '../../Figures/Conditional_FullMatrix/LP_figures/1Thetac/Interacted_Moments/';
 
 filename_graph = 'lambda_rejection_probabilities';
 

@@ -2,8 +2,9 @@
 lp_set_parameters
 %% Import data and calculate moments and covariance matrices
 
-
 lambda_vec = (0.01:1:20.01)';
+%lambda_vec = (0.00:0.01:0.01)';
+%lambda_vec = (0.01:10:10.01)';
 %lambda_vec = (0.01:.2:5.01)';
 
 conditional_test_noadjustment = NaN(numdatasets, size(lambda_vec,1));
@@ -235,9 +236,14 @@ lambda_index = 1;
                   mean(lf_test_original);...
                   mean(lf_test_modified)] ) 
 
+
 identified_set_max = max( lambda_vec( identified_set == 1) );
 
-line( [identified_set_max; identified_set_max], [0;1], 'LineStyle', '--', 'Color',  'r');
+if(~isempty(identified_set_max) )
+    line( [identified_set_max; identified_set_max], [0;1], 'LineStyle', '--', 'Color',  'r');
+else
+    warning('Didnt find any lambdas in identfied set');
+end
 
 legend( 'Conditional (Transformed)', 'Conditional (Non-Transformed)', 'Hybrid', 'LF','LFN', 'Identified Set Bound', 'Location','eastoutside' );
 ylabel('Rejection Probability');
@@ -245,3 +251,4 @@ xlabel('Lambda');
 title('Rejection Probabilities for Lambda');
 saveas( gcf, strcat(figures_output_dir,filename_graph ), 'epsc');
 
+display( strcat(figures_output_dir,filename_graph ) )
