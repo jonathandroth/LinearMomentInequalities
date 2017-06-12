@@ -10,6 +10,8 @@ line( [identified_set_bounds(2);identified_set_bounds(2)] ,[0;1], 'LineStyle', '
 
 
 leg =legend( 'LF','LFN', 'Conditional', 'Hybrid', 'Identified Set Boundary',  'Location','eastoutside' );
+
+xlim_graph = [-10,100];
 if( exist('xlim_graph') ==1)
     %If manual bounds are specified for the x-axis limit, impose these
     xlim( xlim_graph )    
@@ -34,6 +36,6 @@ end
 % 
 %  set(legend1,'Location',rect,'FontSize',9);
 legend('show')
-
+%text(10,0,'//','fontsize',100)
 saveas( gcf, '~/Downloads/testfig', 'png');
-export_fig('~/Downloads/testfig-export.png')
+export_fig('~/Downloads/testfig-export.eps')

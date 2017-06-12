@@ -177,6 +177,8 @@ function breakInfo = breakxaxis(varargin)
         set(leftAxes,'XTick',xTick(1:(end-1)));
     end
     
+    
+    
     %Create and position the rightAxes. Remove all Y Axis annotations, the 
     %title, and a potentially offensive tick mark 
     rightAxes = copyobj(mainAxes,mainParent);
@@ -232,6 +234,7 @@ function breakInfo = breakxaxis(varargin)
     breakPosition(4) = breakPosition(4) +  2*yOverhang;
     set(breakAxes,'Position',breakPosition);
     
+    
     %Create a sine shaped patch to seperate the 2 sides
     breakXLim = [mainPosition(1) mainPosition(1)+mainPosition(3)];
     set(breakAxes,'xlim',breakXLim);
@@ -247,12 +250,13 @@ function breakInfo = breakxaxis(varargin)
     patchPointsX = [xPoints1 xPoints2(end:-1:1) xPoints1(1)];
     patchPointsY = [yPoints  yPoints(end:-1:1)  yPoints(1)];
     patch(patchPointsX,patchPointsY ,figureColor,'EdgeColor',figureColor,'Parent',breakAxes);
-
+    
     %Create A Line To Delineate the left and right edge of the patch
     line('xData',xPoints1,'ydata',yPoints,'Parent',breakAxes,'Color',mainYColor,'LineWidth',mainLineWidth);
     line('xData',xPoints2,'ydata',yPoints,'Parent',breakAxes,'Color',mainYColor,'LineWidth',mainLineWidth);
 
     set(breakAxes,'Visible','off');
+    
     
     %Make the old main axes invisiable
     invisibleObjects = RecursiveSetVisibleOff(mainAxes);

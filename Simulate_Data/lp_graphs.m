@@ -5,6 +5,7 @@ load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp'))
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds'));
 
 addpath('./breakxaxis')
+addpath('./export-fig')
 
 gridpoints = 5000;
 l_theta_grid = linspace(min(confidence_sets_using_c_alpha(:,1)) -1 ,...
@@ -71,8 +72,8 @@ if( exist('filename_graph') ==0)
 end
 
 
-saveas( gcf, strcat(figures_output_dir,filename_graph ), 'epsc');
-%clf
+export_fig(strcat(figures_output_dir,filename_graph,'.pdf'));
+clf
 
 %options = optimoptions('linprog', 'Display', 'final' );
 %linprog( 1, [1;-1], [2,-3],[],[],[],[], [],options )
