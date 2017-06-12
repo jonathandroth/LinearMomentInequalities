@@ -11,12 +11,10 @@ diagonal = 0;
 %If don't have SLUM_CPUS_PER_TASK, then we are on laptop, set wd and
 %numdatasets accordingly
 if( isempty(getenv('SLURM_CPUS_PER_TASK')) )
-   
-   if(exist('remote_to_server') && remote_to_server == 1)
-       working_dir = '/Volumes/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data/';
-   else
-       working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
-   end
+   if(~isempty(getenv('remote_to_server')) && getenv('remote_to_server') == 1)
+       working_dir = '/Volumes/jonathanroth/Moment_Inequalities_Ariel/
+    
+   working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
    numdatasets = 2;
 
     
