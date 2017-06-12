@@ -40,11 +40,24 @@ legend( 'LF','LFN', 'Conditional', 'Hybrid', 'Identified Set Boundary',  'Locati
 ylabel('Rejection Probability');
 
 
-%If manual bounds are specified for the x-axis limit, impose these
 if( exist('xlim_graph') ==1)
+    %If manual bounds are specified for the x-axis limit, impose these
     xlim( xlim_graph )    
+    
+    %Impose tick width if specified; otherwise 5
+    if(exist('xtick_width'))
+        set(gca,'XTick',[xlim_graph(1):xtick_width:xlim_graph(2)])
+    end
+
 end
 
+    
+%Create a break in the x-axis if specified
+    if(exist('xsplit_graph'))
+        breakxaxis(xsplit_graph)
+    end
+
+    
 %If no xlabel specified, do 'l * theta*
 if( exist('xlabel_graph') == 0)
     xlabel_graph = 'l * theta';    
@@ -59,7 +72,7 @@ end
 
 
 saveas( gcf, strcat(figures_output_dir,filename_graph ), 'epsc');
-
+%clf
 
 %options = optimoptions('linprog', 'Display', 'final' );
 %linprog( 1, [1;-1], [2,-3],[],[],[],[], [],options )

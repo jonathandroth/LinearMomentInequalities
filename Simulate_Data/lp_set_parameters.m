@@ -49,3 +49,8 @@ end
 if( exist( 'use_basic_moments') == 0)
     use_basic_moments = 0;
 end
+
+
+if( exist( 'graphs_only') == 0 )
+    graphs_only = 0;
+end

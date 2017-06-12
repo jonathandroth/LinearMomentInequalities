@@ -240,6 +240,10 @@ function breakInfo = breakxaxis(varargin)
     amp = splitWidth/2 * 0.9;
     xPoints1 = amp * sin(theta) + mainPosition(1) + leftWidthTemp;
     xPoints2 = amp * sin(theta) + mainPosition(1) + mainPosition(3) - rightWidthTemp;
+    %xPoints1 = repmat( mainPosition(1), 100,1)';
+    %xPoints2 = repmat( mainPosition(1) + mainPosition(3) - rightWidthTemp,100,1)';
+    xPoints1 = repmat( xPoints1(1), size(xPoints1) );
+    xPoints2 = repmat( xPoints2(1), size(xPoints2) );
     patchPointsX = [xPoints1 xPoints2(end:-1:1) xPoints1(1)];
     patchPointsY = [yPoints  yPoints(end:-1:1)  yPoints(1)];
     patch(patchPointsX,patchPointsY ,figureColor,'EdgeColor',figureColor,'Parent',breakAxes);

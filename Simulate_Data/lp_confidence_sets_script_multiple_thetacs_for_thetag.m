@@ -9,5 +9,8 @@ filename_graph =  'Theta_g_Rejection_Probabilities';
 xlabel_graph = 'Theta_g';
 data_output_dir = strcat(data_output_dir, 'Theta_g/');
 
+if(graphs_only == 0)
 lp_compute_confidence_sets;
+end
+
 lp_graphs;
