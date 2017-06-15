@@ -4,7 +4,10 @@
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp'));
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds'));
 
-gridpoints = 1000;
+addpath('./breakxaxis')
+addpath('./export-fig')
+
+gridpoints = 5000;
 l_theta_grid = linspace(min(confidence_sets_using_c_alpha(:,1)) -1 ,...
                         max(confidence_sets_using_c_alpha(:,2)) + 1, gridpoints );
                     
@@ -34,15 +37,28 @@ line( [identified_set_bounds(1);identified_set_bounds(1)] ,[0;1], 'LineStyle', '
 line( [identified_set_bounds(2);identified_set_bounds(2)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
 
 
-legend( 'LF','LF (modified)', 'Conditional', 'Hybrid', 'Identified Set Boundary',  'Location','eastoutside' );
+legend( 'LF','LFN', 'Conditional', 'Hybrid', 'Identified Set Boundary',  'Location','eastoutside' );
 ylabel('Rejection Probability');
 
 
-%If manual bounds are specified for the x-axis limit, impose these
 if( exist('xlim_graph') ==1)
+    %If manual bounds are specified for the x-axis limit, impose these
     xlim( xlim_graph )    
+    
+    %Impose tick width if specified; otherwise 5
+    if(exist('xtick_width'))
+        set(gca,'XTick',[xlim_graph(1):xtick_width:xlim_graph(2)])
+    end
+
 end
 
+    
+%Create a break in the x-axis if specified
+    if(exist('xsplit_graph'))
+        breakxaxis(xsplit_graph)
+    end
+
+    
 %If no xlabel specified, do 'l * theta*
 if( exist('xlabel_graph') == 0)
     xlabel_graph = 'l * theta';    
@@ -56,8 +72,8 @@ if( exist('filename_graph') ==0)
 end
 
 
-saveas( gcf, strcat(figures_output_dir,filename_graph ), 'epsc');
-
+export_fig(strcat(figures_output_dir,filename_graph,'.pdf'));
+clf
 
 %options = optimoptions('linprog', 'Display', 'final' );
 %linprog( 1, [1;-1], [2,-3],[],[],[],[], [],options )

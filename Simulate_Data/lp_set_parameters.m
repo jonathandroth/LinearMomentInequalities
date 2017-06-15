@@ -11,8 +11,15 @@ diagonal = 0;
 %If don't have SLUM_CPUS_PER_TASK, then we are on laptop, set wd and
 %numdatasets accordingly
 if( isempty(getenv('SLURM_CPUS_PER_TASK')) )
-   working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
+   
+   if(exist('remote_to_server') && remote_to_server == 1)
+       working_dir = '/Volumes/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data/';
+   else
+       working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
+   end
    numdatasets = 2;
+
+    
 else
    working_dir = '/n/home12/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data';
    parpool('local', str2num(getenv('SLURM_CPUS_PER_TASK')));
@@ -48,4 +55,9 @@ end
 
 if( exist( 'use_basic_moments') == 0)
     use_basic_moments = 0;
+end
+
+
+if( exist( 'graphs_only') == 0 )
+    graphs_only = 0;
 end

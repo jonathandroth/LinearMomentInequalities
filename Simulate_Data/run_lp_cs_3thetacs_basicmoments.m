@@ -16,7 +16,17 @@ F_group_cell_moments = {[1;2;3];[4;5;6];[7;8;9]};
 %num_F_groups_moments = size(F_group_cell_moments,1);
 %l = [1; zeros(num_F_groups_moments-1,1); mean_g];
 
-xlim_graph = [-150;175];
+if( exist('xlim_graph_meanweight'))
+    xlim_graph = xlim_graph_meanweight;
+else
+    xlim_graph = [-150;175];
+end
+
+if( exist('xsplit_graph_meanweight'))
+   xsplit_graph = xsplit_graph_meanweight;
+end
+
+filename_graph = 'Mean_Weight_Rejection_Probabilities';
 lp_confidence_sets_script_multiple_thetacs;
 
 
