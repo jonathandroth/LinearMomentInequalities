@@ -98,14 +98,9 @@ if( sum(rho <0) >0 )
 else
     v_up = Inf;
 end
-zeta_lo = normcdf( v_lo / sigma_B);
-zeta_up = normcdf( v_up / sigma_B);
 
+pval = Truncated_normal_p_value( (eta ./ sigma_B), v_lo, v_up);
 
-reject = (eta / sigma_B) >= norminv( (1- alpha) * zeta_up + alpha * zeta_lo );
+reject = pval < alpha;
 
-if( norminv( (1- alpha) * zeta_up + alpha * zeta_lo ) == Inf)
-    warning('Infinite Critical Value Computed (Conditional)');
-    
-end
 end
