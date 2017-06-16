@@ -40,7 +40,7 @@ if(~fullrank || degenerate)
     warning('Primal LP non-unique or degenerate. Using dual approach');
     [vlo_dual,vup_dual,eta_dual,gamma_tilde] = lp_dual_fn( y_T, X_T, Sigma);
     
-    sigma_B_dual = gamma_tilde' * Sigma * gamma_tilde;
+    sigma_B_dual = sqrt( gamma_tilde' * Sigma * gamma_tilde);
     maxstat = eta_dual ./ sigma_B_dual;
     pval = Truncated_normal_p_value(maxstat,vlo_dual,vup_dual);
     
