@@ -14,39 +14,40 @@ k = size(X_T, 2);
 
 
 %Compute eta, and the argmin delta
-[eta, delta, lambda,flag] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','dual-simplex', 'Display', 'off'));
+[eta, delta, lambda,error_flag] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','interior-point', 'Display', 'off', 'MaxIter', 100000));
 
-if(flag >0 )
+
+if(error_flag >0 )
     error('Trying to do conditional test with infinite cutoff');
 
 end
 
 %%Store which moments are binding
-    %Note we manually calculate this (within a tolerance), rather than
-    %using the lagrange multipliers, since these can sometimes be 0 at a
-    %binding moments
- tol = 10^(-6);
+ tol_slack = 10^(-6);
  slack = y_T - X_T * delta - eta;
- B_index = abs(slack) < tol;
+ B_index = abs(slack) < tol_slack;
  Bc_index = B_index == 0;
  
+%Check whether X_T,B has full rank
+X_TB = X_T(B_index,:);
+fullrank = rank(X_TB) == min( size(X_TB) );
  
- %Check if the right number of moments are binding. If not, throw a warning
- %and return NA
- if( sum(B_index) ~= (k+1) )
-     if( sum(B_index) > (k+1) )
-        warning('Number of Binding Moments More Than k+1');
-        %reject = NaN;
-        reject = 0;
-        return;
-     else
-        warning('Number of Binding Moments Less Than k+1');
-        %reject = NaN;
-        reject = 0;
-        
-        return;
-     end
- end
+%Check whether problem is degenerate 
+tol_lambda = 10^(-6);
+degenerate = sum( lambda>tol_lambda ) < (k+1) ;
+
+if(~fullrank || degenerate)
+    warning('Primal LP non-unique or degenerate. Using dual approach');
+    [vlo_dual,vup_dual,eta_dual,gamma_tilde] = lp_dual_fn( y_T, X_T, Sigma);
+    
+    sigma_B_dual = gamma_tilde' * Sigma * gamma_tilde;
+    maxstat = eta_dual ./ sigma_B_dual;
+    pval = Truncated_normal_p_value(maxstat,vlo_dual,vup_dual);
+    
+    reject = pval < alpha;
+    return;
+end
+
  %
  
 %  slack = y_T - X_T * delta - eta;
@@ -63,7 +64,7 @@ size_Bc = sum(B_index == 0);
 i_B = ones(size_B,1);
 i_Bc = ones(size_Bc,1);
 
-X_TB = X_T(B_index,:);
+%X_TB = X_T(B_index,:); %this is now done earlier
 X_TBc = X_T(Bc_index,:);
 
 S_B = eye(M);
