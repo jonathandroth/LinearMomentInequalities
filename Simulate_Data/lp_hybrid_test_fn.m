@@ -18,11 +18,6 @@
     %If, however, the LF critical values are being calculated elsewhere, it may be
     %computationally more efficient to pass these draws here; users can also customize the 
     %number of draws by doing it outside
-%c_gamma (optional): the least favorable conditional critical value for
-    %gamma. If not supplied, this is calculated inside the function using 1000 draws. 
-    %If, however, the LF critical values are being calculated elsewhere, it may be
-    %computationally more efficient to pass those here; users can also customize the 
-    %number of draws by doing it outside
 
 function reject = lp_hybrid_test_fn( y_T, X_T, Sigma, alpha, gamma, varargin)
 

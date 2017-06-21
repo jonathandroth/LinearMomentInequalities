@@ -40,9 +40,7 @@ rejection_grid_hybrid = NaN(numdatasets, num_beta0_gridpoints);
 nummoments = size( y_T_cell{ds,1} , 1);
 Z_draws_interacted = randn(nummoments, 10000);
 
-%%CHANGE THIS BACK
-for ds = 1:numdatasets
-%parfor ds = 1:numdatasets
+parfor ds = 1:numdatasets
     
    X_T = X_T_cell{ds,1};
    y_T = y_T_cell{ds,1};

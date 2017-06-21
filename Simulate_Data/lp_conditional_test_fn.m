@@ -1,5 +1,4 @@
 function reject = lp_conditional_test_fn( y_T, X_T, Sigma, alpha)
-
 %Store number of parameters and moments
 M = size(Sigma,1);
 k = size(X_T, 2);
@@ -22,19 +21,27 @@ if(error_flag >0 )
 
 end
 
+ 
+%Check whether problem is degenerate 
+tol_lambda = 10^(-6);
+degenerate = sum( lambda>tol_lambda ) < (k+1) ;
+
+
 %%Store which moments are binding
- tol_slack = 10^(-6);
- slack = y_T - X_T * delta - eta;
- B_index = abs(slack) < tol_slack;
+%%%Currently doing this using lambda rather than moments to avoid differing
+%%%precision issues
+ %tol_slack = 10^(-6);
+ %slack = y_T - X_T * delta - eta;
+ %B_index = abs(slack) < tol_slack;
+  
+ B_index = lambda > tol_lambda;
  Bc_index = B_index == 0;
  
 %Check whether X_T,B has full rank
 X_TB = X_T(B_index,:);
 fullrank = rank(X_TB) == min( size(X_TB) );
- 
-%Check whether problem is degenerate 
-tol_lambda = 10^(-6);
-degenerate = sum( lambda>tol_lambda ) < (k+1) ;
+
+
 
 if(~fullrank || degenerate)
     warning('Primal LP non-unique or degenerate. Using dual approach');
@@ -42,7 +49,9 @@ if(~fullrank || degenerate)
     
     sigma_B_dual = sqrt( gamma_tilde' * Sigma * gamma_tilde);
     maxstat = eta_dual ./ sigma_B_dual;
-    pval = Truncated_normal_p_value(maxstat,vlo_dual,vup_dual);
+    zlo_dual = vlo_dual ./ sigma_B_dual;
+    zup_dual = vup_dual ./ sigma_B_dual;
+    pval = Truncated_normal_p_value(maxstat,zlo_dual,zup_dual);
     
     reject = pval < alpha;
     return;
@@ -99,7 +108,7 @@ else
     v_up = Inf;
 end
 
-pval = Truncated_normal_p_value( (eta ./ sigma_B), v_lo, v_up);
+pval = Truncated_normal_p_value( (eta ./ sigma_B), (v_lo ./ sigma_B), (v_up ./sigma_B) );
 
 reject = pval < alpha;
 
