@@ -50,17 +50,23 @@ end
 
 %%
 
-mat50 = [ [2;2;4;4;10;10], [6;14;14;38;38;110],lb_mat_50,ub_mat_50]
+mat05 = [ [2;2;4;4;10;10], [6;14;14;38;38;110],lb_mat_05,ub_mat_05];
+mat50 = [ [2;2;4;4;10;10], [6;14;14;38;38;110],lb_mat_50,ub_mat_50];
+mat95 = [ [2;2;4;4;10;10], [6;14;14;38;38;110],lb_mat_95,ub_mat_95];
 
-mat50 = round(mat50, 2)
 
-format short
-txt = latex(mat50)
-txt = regexprep(txt,'\.(\d\d)\d(\d)*\$','\.$1\$') %convert to two decimal places
-txt = regexprep(txt,'\.00\$','\$') %convert two 0's after decimal to nothing
-txt = regexprep(txt,'\\','\\\\') %double backslashes
+fid = fopen(strcat('/Volumes/jonathanroth/Moment_Inequalities_Ariel/Output/',...
+                    filename_graph,'_power_table','05','.tex') ,'wt');
+fprintf(fid,clean_latex(mat05));
+fclose(fid);
+
 
 fid = fopen(strcat('/Volumes/jonathanroth/Moment_Inequalities_Ariel/Output/',...
                     filename_graph,'_power_table','50','.tex') ,'wt');
-fprintf(fid, txt);
+fprintf(fid,clean_latex(mat50));
+fclose(fid);
+
+fid = fopen(strcat('/Volumes/jonathanroth/Moment_Inequalities_Ariel/Output/',...
+                    filename_graph,'_power_table','95','.tex') ,'wt');
+fprintf(fid,clean_latex(mat95));
 fclose(fid);
