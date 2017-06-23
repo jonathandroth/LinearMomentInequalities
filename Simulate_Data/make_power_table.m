@@ -1,5 +1,7 @@
 %filename_graph = 'Theta_g_Rejection_Probabilities';
-filename_graph = 'Mean_Weight_Rejection_Probabilities';
+for filename_graph = {'Mean_Weight_Rejection_Probabilities','Theta_g_Rejection_Probabilities'};
+
+filename_graph = filename_graph{1};
 
 ub_mat_05 = [];
 lb_mat_05 = [];
@@ -12,9 +14,6 @@ filename_vec = [];
 numthetha_vec = [];
 moment_type_cell = {};
 
-for moment_type = {'Basic_Moments'}
-    moment_type
-end
 
 for numthetas = [1,3,9]
     for moment_type = {'Basic_Moments', 'Interacted_Moments'}
@@ -70,3 +69,5 @@ fid = fopen(strcat('/Volumes/jonathanroth/Moment_Inequalities_Ariel/Output/',...
                     filename_graph,'_power_table','95','.tex') ,'wt');
 fprintf(fid,clean_latex(mat95));
 fclose(fid);
+
+end
