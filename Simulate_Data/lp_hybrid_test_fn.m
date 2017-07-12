@@ -11,7 +11,8 @@
 
 %y_T : used in definition of moments; see above 
 %X_T : used in definition of moments; see above
-%Sigma: conditional variance of y_T | X_T
+%Sigma: conditional variance of y_T | X_T. Assumed to be normalized to have
+    %diagonal of ones
 %gamma: signficance for LF test
 % eta_vec (optional): the draws used when calculating the least favorable
 % critical values. If not supplied, this is simulated inside the function using 1000 draws. 
@@ -21,6 +22,7 @@
 
 function reject = lp_hybrid_test_fn( y_T, X_T, Sigma, alpha, gamma, varargin)
 
+%% Compute the LF cutoff, if it's not given
 %Set c_gamma if additional argument is provided; otherwise, compute it
 if( isempty(varargin) == 0)
     eta_vec = varargin{1};
@@ -32,54 +34,70 @@ else
     c_gamma = c_lf_lp(X_T,Z_draws,Sigma,gamma);
 end
 
+%% Run the LP to calculate eta
 %Store number of parameters and moments
 M = size(Sigma,1);
 k = size(X_T, 2);
-%Compute eta, and the argmin delta
-
-%[eta, delta, lambda] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','interior-point'));
-
-
-%tol = 10^(-6);
-%B_index = abs(lambda) > tol; %the bidning moments are the ones at which the Lagrange multiplier is >tol
-%Bc_index = B_index == 0;
-
 
 %Compute eta, and the argmin delta
-[eta, delta, lambda] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','dual-simplex', 'Display', 'off'));
+[eta, delta, lambda,error_flag] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','interior-point', 'Display', 'off', 'MaxIter', 100000));
+
+if(error_flag >0 )
+    error('Trying to do conditional test with infinite cutoff');
+end
+
+
+%% Compare eta to the LF cutoff
+%Reject if eta is greater than the LF cutoff and return
+if(eta > c_gamma)
+    reject = 1;
+    return;
+end
+
+%% If don't reject with LF, do the conditional test
+
+ 
+%Check whether problem is degenerate 
+tol_lambda = 10^(-6);
+degenerate = sum( lambda>tol_lambda ) ~= (k+1) ;
+
 
 %%Store which moments are binding
-    %Note we manually calculate this (within a tolerance), rather than
-    %using the lagrange multipliers, since these can sometimes be 0 at a
-    %binding moments
- tol = 10^(-6);
- slack = y_T - X_T * delta - eta;
- B_index = abs(slack) < tol;
+%%%Currently doing this using lambda rather than moments to avoid differing
+%%%precision issues
+ %tol_slack = 10^(-6);
+ %slack = y_T - X_T * delta - eta;
+ %B_index = abs(slack) < tol_slack;
+  
+ B_index = lambda > tol_lambda;
  Bc_index = B_index == 0;
  
- 
- %Check if the right number of moments are binding. If not, throw a warning
- %and return NA
- if( sum(B_index) ~= (k+1) )
-     if( sum(B_index) > (k+1) )
-        warning('Number of Binding Moments Less Than k+1');
-        reject = NaN;
-        return;
-     else
-        warning('Number of Binding Moments Less Than k+1');
-        reject = NaN;
-        return;
-     end
- end
- %
- 
-%  slack = y_T - X_T * delta - eta;
-%  [~, sorted_index] = sort(slack, 'descend');
-%  smallest_kplus1_moments = sorted_index(1:(k+1));
-%  B_index = false(size(slack));
-%  B_index(smallest_kplus1_moments) = true;
-%  Bc_index = B_index == 0;
+%Check whether X_T,B has full rank
+X_TB = X_T(B_index,:);
+fullrank = rank(X_TB) == min( size(X_TB) );
 
+
+
+if(~fullrank || degenerate)
+    warning('In hybrid: Primal LP non-unique or degenerate. Using dual approach.');
+    [vlo_dual,vup_dual,eta_dual,gamma_tilde] = lp_dual_fn( y_T, X_T, Sigma);
+    
+    vup_dual = min([vup_dual, c_gamma]); %this conditions on having not rejected the LF test 
+    
+    sigma_B_dual = sqrt( gamma_tilde' * Sigma * gamma_tilde);
+    maxstat = eta_dual ./ sigma_B_dual;
+    zlo_dual = vlo_dual ./ sigma_B_dual;
+    zup_dual = vup_dual ./ sigma_B_dual;
+    pval = Truncated_normal_p_value(maxstat,zlo_dual,zup_dual);
+    
+    alpha_tilde = 1 - (1-alpha)*(1-gamma);
+    reject = pval < alpha_tilde;
+    return;
+end
+
+
+
+%% If not degenerate, then use the "primal approach"
 %Compute ingredients for the test
 size_B = sum(B_index == 1);
 size_Bc = sum(B_index == 0);
@@ -124,17 +142,15 @@ if( sum(rho <0) >0 )
 else
     v_up = Inf;
 end
-zeta_lo = normcdf( v_lo / sigma_B); %do i need to add c_0 here?
-zeta_up = normcdf( v_up / sigma_B);%do i need to add c_0 here?
 
-alpha_tilde = 1 - (1-alpha)*(1-gamma);
-
-
-reject = (eta / sigma_B) >= norminv( (1- alpha_tilde) * zeta_up + alpha_tilde * zeta_lo );
+zlo = v_lo / sigma_B; %do i need to add c_0 here?
+zup = v_up / sigma_B;%do i need to add c_0 here?
+maxstat = eta ./ sigma_B;
 
 
-if( norminv( (1- alpha_tilde) * zeta_up + alpha_tilde * zeta_lo ) == Inf)
-    warning('Infinite Critical Value Computed (Hybrid)');
+pval = Truncated_normal_p_value(maxstat,zlo,zup);
     
-end
+alpha_tilde = 1 - (1-alpha)*(1-gamma);
+reject = pval < alpha_tilde;
+
 end

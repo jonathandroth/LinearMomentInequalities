@@ -40,8 +40,9 @@ rejection_grid_hybrid = NaN(numdatasets, num_beta0_gridpoints);
 nummoments = size( y_T_cell{ds,1} , 1);
 Z_draws_interacted = randn(nummoments, 10000);
 
-parfor ds = 1:numdatasets
-    
+%%CHANGE THIS BACK WHEN DONE DEBUGGING
+%parfor ds = 1:numdatasets
+for ds = 1:numdatasets    
    X_T = X_T_cell{ds,1};
    y_T = y_T_cell{ds,1};
    Sigma = Sigma_conditional_cell{ds,1}; 
