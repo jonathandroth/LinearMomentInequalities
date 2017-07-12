@@ -31,7 +31,7 @@ confidence_sets_using_c_lp_alpha = NaN(numdatasets,2);
 
 %For the conditional/hybrid methods, we get rejection probabilities over a
 %grid of values for l*theta. So we initialize those grids here
-num_beta0_gridpoints = 201;
+num_beta0_gridpoints = 1001;
 beta0_grid = linspace( xlim_graph(1), xlim_graph(2), num_beta0_gridpoints);
 rejection_grid_conditional = NaN(numdatasets, num_beta0_gridpoints);
 rejection_grid_hybrid = NaN(numdatasets, num_beta0_gridpoints);
