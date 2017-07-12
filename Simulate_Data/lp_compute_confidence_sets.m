@@ -65,10 +65,6 @@ for ds = 1:numdatasets
    %%%Do the conditional and hybrid tests treating l as a non-linear
    %parameter
    
-   %First, transform the moments slightly to avoid non-uniqueness
-   %Transfrom the moments by adding in 1/100,000 times the average moment, so that solution to LP is unique
-   c = 0.00001;
-   [y_T,X_T,Sigma] = add_mean_to_moments_fn(c, y_T,X_T,Sigma);
 
    %We do a change of basis such that M*theta yields l*theta in the first
    %row (I construct an orthonormal basis for the rest of the basis
