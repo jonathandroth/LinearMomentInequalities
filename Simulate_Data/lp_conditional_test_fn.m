@@ -44,7 +44,7 @@ X_TB = X_T(B_index,:);
 fullrank = rank(X_TB) == min( size(X_TB) );
 
 
-if( (~fullrank) || degenerate || error_flag > 0)
+if( (~fullrank) || degenerate)
     warning('Primal LP non-unique or degenerate. Using dual approach');
     [vlo_dual,vup_dual,eta_dual,gamma_tilde, error_in_lp] = lp_dual_fn( y_T, X_T, Sigma);
     
@@ -64,6 +64,7 @@ if( (~fullrank) || degenerate || error_flag > 0)
     return;
 end
 
+warning('Things look good. Using primal');
  %
  
 %  slack = y_T - X_T * delta - eta;

@@ -102,7 +102,7 @@ if(~fullrank || degenerate)
     return;
 end
 
-
+warning('Things look good. Using primal')
 
 %% If not degenerate, then use the "primal approach"
 %Compute ingredients for the test
