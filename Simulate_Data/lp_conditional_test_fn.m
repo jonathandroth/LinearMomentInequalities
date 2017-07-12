@@ -15,12 +15,14 @@ k = size(X_T, 2);
 %Compute eta, and the argmin delta
 [eta, delta, lambda,error_flag] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','interior-point', 'Display', 'off', 'MaxIter', 100000));
 
-
-if(error_flag >0 )
-    error('Trying to do conditional test with infinite cutoff');
-
+if(error_flag > 0)
+    reject = 0;
+    warning('LP for eta did not converge properly. Not rejecting');
+    return;
 end
 
+%%The following block checks for conditions under which the primal
+%%%and dual solutions are equal to one another. If these conditions don't hold, we go to the dual
  
 %Check whether problem is degenerate 
 tol_lambda = 10^(-6);
@@ -42,10 +44,15 @@ X_TB = X_T(B_index,:);
 fullrank = rank(X_TB) == min( size(X_TB) );
 
 
-
-if(~fullrank || degenerate)
+if( (~fullrank) || degenerate || error_flag > 0)
     warning('Primal LP non-unique or degenerate. Using dual approach');
-    [vlo_dual,vup_dual,eta_dual,gamma_tilde] = lp_dual_fn( y_T, X_T, Sigma);
+    [vlo_dual,vup_dual,eta_dual,gamma_tilde, error_in_lp] = lp_dual_fn( y_T, X_T, Sigma);
+    
+    if(error_in_lp == 1)
+         reject =0;
+         warning('Dual LP for eta did not converge. Not rejecting');
+         return;
+    end
     
     sigma_B_dual = sqrt( gamma_tilde' * Sigma * gamma_tilde);
     maxstat = eta_dual ./ sigma_B_dual;
