@@ -7,11 +7,10 @@ lambda_vec = (0.01:1:20.01)';
 %lambda_vec = (0.01:10:10.01)';
 %lambda_vec = (0.01:.2:5.01)';
 
-conditional_test_noadjustment = NaN(numdatasets, size(lambda_vec,1));
-conditional_test_adjustment = NaN(size(conditional_test_noadjustment));
-hybrid_test_adjustment = NaN(size(conditional_test_noadjustment));
-lf_test_original = NaN(size(conditional_test_noadjustment));
-lf_test_modified = NaN(size(conditional_test_noadjustment));
+conditional_test = NaN(numdatasets, size(lambda_vec,1));
+hybrid_test = NaN(size(conditional_test));
+lf_test_original = NaN(size(conditional_test));
+lf_test_modified = NaN(size(conditional_test));
 
 identified_set = NaN( size(lambda_vec) );
 
@@ -34,15 +33,8 @@ y_T = y_T_cell{ds};
 Sigma = Sigma_conditional_cell{ds};
 
 
-conditional_test_noadjustment(ds,i) = lp_conditional_test_fn( y_T, X_T, Sigma, alpha);
-
-%Transfrom the moments by adding in 1/100,000 times the average moment, so that solution to LP is unique
-c = 0.00001;
-[y_T,X_T,Sigma] = add_mean_to_moments_fn(c, y_T,X_T,Sigma);
-
-
-conditional_test_adjustment(ds,i) = lp_conditional_test_fn( y_T, X_T, Sigma, alpha);
-hybrid_test_adjustment(ds,i) = lp_hybrid_test_fn( y_T, X_T, Sigma, alpha, alpha/10);
+conditional_test(ds,i) = lp_conditional_test_fn( y_T, X_T, Sigma, alpha);
+hybrid_test(ds,i) = lp_hybrid_test_fn( y_T, X_T, Sigma, alpha, alpha/10);
 
 %Do non-conditional tests
 c_alpha = c_lf(Sigma, alpha, Z_draws_interacted);
@@ -61,7 +53,7 @@ end
 
     ds_dir = strcat( data_output_dir, 'Interacted_Moments/');
     mkdir(ds_dir);
-    save( strcat(ds_dir, 'lambda_results'), 'conditional_test_adjustment', 'conditional_test_noadjustment', 'lf_test_original', 'lf_test_modified', 'hybrid_test_adjustment');
+    save( strcat(ds_dir, 'lambda_results'), 'conditional_test', 'lf_test_original', 'lf_test_modified', 'hybrid_test');
 
 
  %% Estimate the identified set for lambda using a large chain and seeing where the moments are <= 0
@@ -230,9 +222,8 @@ lambda_index = 1;
  load(  strcat(ds_dir, 'lambda_results') );
  
   
- plot(lambda_vec, [mean(conditional_test_adjustment);...
-                  mean(conditional_test_noadjustment);...
-                  mean(hybrid_test_adjustment);...
+ plot(lambda_vec, [mean(conditional_test);...
+                  mean(hybrid_test);...
                   mean(lf_test_original);...
                   mean(lf_test_modified)] ) 
 
@@ -245,7 +236,7 @@ else
     warning('Didnt find any lambdas in identfied set');
 end
 
-legend( 'Conditional (Transformed)', 'Conditional (Non-Transformed)', 'Hybrid', 'LF','LFN', 'Identified Set Bound', 'Location','eastoutside' );
+legend( 'Conditional', 'Hybrid', 'LF','LFN', 'Identified Set Bound', 'Location','eastoutside' );
 ylabel('Rejection Probability');
 xlabel('Lambda');
 title('Rejection Probabilities for Lambda');

@@ -24,7 +24,7 @@ end
  
 %Check whether problem is degenerate 
 tol_lambda = 10^(-6);
-degenerate = sum( lambda>tol_lambda ) < (k+1) ;
+degenerate = sum( lambda>tol_lambda ) ~= (k+1) ;
 
 
 %%Store which moments are binding
