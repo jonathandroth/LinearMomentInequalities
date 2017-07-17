@@ -31,7 +31,7 @@ confidence_sets_using_c_lp_alpha = NaN(numdatasets,2);
 
 %For the conditional/hybrid methods, we get rejection probabilities over a
 %grid of values for l*theta. So we initialize those grids here
-num_beta0_gridpoints = 201;
+num_beta0_gridpoints = 1001;
 beta0_grid = linspace( xlim_graph(1), xlim_graph(2), num_beta0_gridpoints);
 rejection_grid_conditional = NaN(numdatasets, num_beta0_gridpoints);
 rejection_grid_hybrid = NaN(numdatasets, num_beta0_gridpoints);
@@ -40,8 +40,9 @@ rejection_grid_hybrid = NaN(numdatasets, num_beta0_gridpoints);
 nummoments = size( y_T_cell{ds,1} , 1);
 Z_draws_interacted = randn(nummoments, 10000);
 
+%%CHANGE THIS BACK WHEN DONE DEBUGGING
 parfor ds = 1:numdatasets
-    
+%for ds = 1:numdatasets    
    X_T = X_T_cell{ds,1};
    y_T = y_T_cell{ds,1};
    Sigma = Sigma_conditional_cell{ds,1}; 
@@ -64,10 +65,6 @@ parfor ds = 1:numdatasets
    %%%Do the conditional and hybrid tests treating l as a non-linear
    %parameter
    
-   %First, transform the moments slightly to avoid non-uniqueness
-   %Transfrom the moments by adding in 1/100,000 times the average moment, so that solution to LP is unique
-   c = 0.00001;
-   [y_T,X_T,Sigma] = add_mean_to_moments_fn(c, y_T,X_T,Sigma);
 
    %We do a change of basis such that M*theta yields l*theta in the first
    %row (I construct an orthonormal basis for the rest of the basis

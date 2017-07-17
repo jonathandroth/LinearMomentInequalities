@@ -1,5 +1,4 @@
 function reject = lp_conditional_test_fn( y_T, X_T, Sigma, alpha)
-
 %Store number of parameters and moments
 M = size(Sigma,1);
 k = size(X_T, 2);
@@ -14,39 +13,58 @@ k = size(X_T, 2);
 
 
 %Compute eta, and the argmin delta
-[eta, delta, lambda,flag] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','dual-simplex', 'Display', 'off'));
+[eta, delta, lambda,error_flag] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','interior-point', 'Display', 'off', 'MaxIter', 100000));
 
-if(flag >0 )
-    error('Trying to do conditional test with infinite cutoff');
-
+if(error_flag > 0)
+    reject = 0;
+    warning('LP for eta did not converge properly. Not rejecting');
+    return;
 end
 
+%%The following block checks for conditions under which the primal
+%%%and dual solutions are equal to one another. If these conditions don't hold, we go to the dual
+ 
+%Check whether problem is degenerate 
+tol_lambda = 10^(-6);
+degenerate = sum( lambda>tol_lambda ) ~= (k+1) ;
+
+
 %%Store which moments are binding
-    %Note we manually calculate this (within a tolerance), rather than
-    %using the lagrange multipliers, since these can sometimes be 0 at a
-    %binding moments
- tol = 10^(-6);
- slack = y_T - X_T * delta - eta;
- B_index = abs(slack) < tol;
+%%%Currently doing this using lambda rather than moments to avoid differing
+%%%precision issues
+ %tol_slack = 10^(-6);
+ %slack = y_T - X_T * delta - eta;
+ %B_index = abs(slack) < tol_slack;
+  
+ B_index = lambda > tol_lambda;
  Bc_index = B_index == 0;
  
- 
- %Check if the right number of moments are binding. If not, throw a warning
- %and return NA
- if( sum(B_index) ~= (k+1) )
-     if( sum(B_index) > (k+1) )
-        warning('Number of Binding Moments More Than k+1');
-        %reject = NaN;
-        reject = 0;
-        return;
-     else
-        warning('Number of Binding Moments Less Than k+1');
-        %reject = NaN;
-        reject = 0;
-        
-        return;
-     end
- end
+%Check whether X_T,B has full rank
+X_TB = X_T(B_index,:);
+fullrank = rank(X_TB) == min( size(X_TB) );
+
+
+if( (~fullrank) || degenerate)
+    warning('Primal LP non-unique or degenerate. Using dual approach');
+    [vlo_dual,vup_dual,eta_dual,gamma_tilde, error_in_lp] = lp_dual_fn( y_T, X_T, Sigma);
+    
+    if(error_in_lp == 1)
+         reject =0;
+         warning('Dual LP for eta did not converge. Not rejecting');
+         return;
+    end
+    
+    sigma_B_dual = sqrt( gamma_tilde' * Sigma * gamma_tilde);
+    maxstat = eta_dual ./ sigma_B_dual;
+    zlo_dual = vlo_dual ./ sigma_B_dual;
+    zup_dual = vup_dual ./ sigma_B_dual;
+    pval = Truncated_normal_p_value(maxstat,zlo_dual,zup_dual);
+    
+    reject = pval < alpha;
+    return;
+end
+
+warning('Things look good. Using primal');
  %
  
 %  slack = y_T - X_T * delta - eta;
@@ -63,7 +81,7 @@ size_Bc = sum(B_index == 0);
 i_B = ones(size_B,1);
 i_Bc = ones(size_Bc,1);
 
-X_TB = X_T(B_index,:);
+%X_TB = X_T(B_index,:); %this is now done earlier
 X_TBc = X_T(Bc_index,:);
 
 S_B = eye(M);
@@ -97,14 +115,9 @@ if( sum(rho <0) >0 )
 else
     v_up = Inf;
 end
-zeta_lo = normcdf( v_lo / sigma_B);
-zeta_up = normcdf( v_up / sigma_B);
 
+pval = Truncated_normal_p_value( (eta ./ sigma_B), (v_lo ./ sigma_B), (v_up ./sigma_B) );
 
-reject = (eta / sigma_B) >= norminv( (1- alpha) * zeta_up + alpha * zeta_lo );
+reject = pval < alpha;
 
-if( norminv( (1- alpha) * zeta_up + alpha * zeta_lo ) == Inf)
-    warning('Infinite Critical Value Computed (Conditional)');
-    
-end
 end

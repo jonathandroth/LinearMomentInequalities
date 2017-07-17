@@ -1,6 +1,10 @@
- %This script creates graphs for the LP confidence sets runs
 
-%% Create graphs
+
+
+load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp'));
+load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds'));
+
+
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp'));
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds'));
 
@@ -78,7 +82,10 @@ clf
 %options = optimoptions('linprog', 'Display', 'final' );
 %linprog( 1, [1;-1], [2,-3],[],[],[],[], [],options )
 
-%%
+display('Script complete');
+
+%% Create table rows with ID set bounds and values at which we achieve power = 0.05,0.5,0.95
+
 
 [lb_row_05,ub_row_05] = ub_and_lb_row_for_table( beta0_grid, l_theta_grid,...
                                                      rejection_grid_c_alpha,...
@@ -103,11 +110,5 @@ clf
                                                      rejection_grid_hybrid,...
                                                      identified_set_bounds,...
                                                      0.95);
-data_output_folder = strcat( data_output_dir, dirname, 'Interacted_Moments/');
-mkdir(data_output_folder);
-save( strcat(data_output_folder, filename_graph,'_', 'rows_for_power_table'),...
-    'lb_row_05', 'lb_row_50', 'lb_row_95',...
-    'ub_row_05', 'ub_row_50', 'ub_row_95') ;                                              
+                                                
 
-%%
-display('Script complete');
