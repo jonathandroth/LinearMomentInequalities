@@ -116,7 +116,7 @@ else
     v_up = Inf;
 end
 
-pval = Truncated_normal_p_value( (eta ./ sigma_B), (v_lo ./ sigma_B), (v_up ./sigma_B) );
+pval = Truncated_normal_p_value_by_simulation( (eta ./ sigma_B), (v_lo ./ sigma_B), (v_up ./sigma_B) );
 
 reject = pval < alpha;
 

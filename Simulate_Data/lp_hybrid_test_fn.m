@@ -155,7 +155,7 @@ zup = v_up / sigma_B;%do i need to add c_0 here?
 maxstat = eta ./ sigma_B;
 
 
-pval = Truncated_normal_p_value(maxstat,zlo,zup);
+pval = Truncated_normal_p_value_by_simulation(maxstat,zlo,zup);
     
 alpha_tilde = 1 - (1-alpha)*(1-gamma);
 reject = pval < alpha_tilde;
