@@ -81,7 +81,7 @@ fullrank = rank(X_TB) == min( size(X_TB) );
 
 
 if(~fullrank || degenerate)
-    warning('In hybrid: Primal LP non-unique or degenerate. Using dual approach.');
+    %warning('In hybrid: Primal LP non-unique or degenerate. Using dual approach.');
     [vlo_dual,vup_dual,eta_dual,gamma_tilde, error_in_lp] = lp_dual_fn( y_T, X_T, Sigma);
     if(error_in_lp == 1)
          reject =0;
@@ -102,7 +102,7 @@ if(~fullrank || degenerate)
     return;
 end
 
-warning('Things look good. Using primal')
+%warning('Things look good. Using primal')
 
 %% If not degenerate, then use the "primal approach"
 %Compute ingredients for the test
