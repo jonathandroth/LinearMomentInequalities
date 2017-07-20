@@ -1,4 +1,4 @@
-function reject = lp_conditional_test_fn( y_T, X_T, Sigma, alpha)
+function reject = lp_conditional_test_fn( y_T, X_T, Sigma, alpha, ds)
 %Store number of parameters and moments
 M = size(Sigma,1);
 k = size(X_T, 2);
@@ -58,10 +58,24 @@ if( (~fullrank) || degenerate)
     maxstat = eta_dual ./ sigma_B_dual;
     zlo_dual = vlo_dual ./ sigma_B_dual;
     zup_dual = vup_dual ./ sigma_B_dual;
-    pval = Truncated_normal_p_value(maxstat,zlo_dual,zup_dual);
     
-    reject = pval < alpha;
+    
+    if( ~ (zlo_dual <= maxstat && maxstat <= zup_dual) )
+        warning(strcat('max_stat (', num2str(maxstat), ')',...
+                   'is not between z_lo (', num2str(zlo_dual), ')',...
+                   'and z_up (', num2str(zup_dual), ...
+                   ') in the dual approach in dataset ', num2str(ds)) );
+    
+        reject = 0;
+        return;
+    else
+        pval = Truncated_normal_p_value_by_simulation(maxstat,zlo_dual,zup_dual);
+        reject = pval < alpha;
     return;
+    end
+
+
+ 
 end
 
 %warning('Things look good. Using primal');
@@ -117,8 +131,24 @@ else
     v_up = Inf;
 end
 
-pval = Truncated_normal_p_value_by_simulation( (eta ./ sigma_B), (v_lo ./ sigma_B), (v_up ./sigma_B) );
 
-reject = pval < alpha;
+z_lo = (v_lo / sigma_B);
+z_up = (v_up / sigma_B);
+max_stat = (eta / sigma_B);
+
+if( ~ (z_lo <= max_stat && max_stat <= z_up) )
+    warning(strcat('max_stat (', num2str(max_stat), ')',...
+                   'is not between z_lo (', num2str(z_lo), ')',...
+                   'and z_up (', num2str(z_up), ...
+                   ') in the primal approach in dataset ', num2str(ds)) );
+    reject = 0;
+
+else
+    pval = Truncated_normal_p_value_by_simulation( max_stat, z_lo , z_up );
+    reject = pval < alpha;
+
+end
+
+
 
 end

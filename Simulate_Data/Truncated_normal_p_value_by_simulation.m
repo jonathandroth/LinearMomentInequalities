@@ -18,11 +18,11 @@ else
     z_up = Inf;
 end
 
-if( ~ (z_lo <= max_stat && max_stat <= z_up) )
-    warning(strcat('max_stat (', num2str(max_stat), ')',...
-                   'is not between z_lo (', num2str(z_lo), ')',...
-                   'and z_up (', num2str(z_up), ')'));
-end
+% if( ~ (z_lo <= max_stat && max_stat <= z_up) )
+%     warning(strcat('max_stat (', num2str(max_stat), ')',...
+%                    'is not between z_lo (', num2str(z_lo), ')',...
+%                    'and z_up (', num2str(z_up), ')'));
+% end
 
 %For whatever reason, mvrandn doesn't work with a one-dimensional variable,
 % so we draw from a 2-dimensional normal without any correlation and then
