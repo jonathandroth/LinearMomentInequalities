@@ -20,7 +20,7 @@
     %computationally more efficient to pass these draws here; users can also customize the 
     %number of draws by doing it outside
 
-function reject = lp_hybrid_test_fn( y_T, X_T, Sigma, alpha, gamma, varargin)
+function reject = lp_hybrid_test_fn( y_T, X_T, Sigma, alpha, gamma, ds, varargin)
 
 %% Compute the LF cutoff, if it's not given
 %Set c_gamma if additional argument is provided; otherwise, compute it
@@ -92,14 +92,28 @@ if(~fullrank || degenerate)
     vup_dual = min([vup_dual, c_gamma]); %this conditions on having not rejected the LF test 
     
     sigma_B_dual = sqrt( gamma_tilde' * Sigma * gamma_tilde);
-    maxstat = eta_dual ./ sigma_B_dual;
+    max_stat = eta_dual ./ sigma_B_dual;
     zlo_dual = vlo_dual ./ sigma_B_dual;
     zup_dual = vup_dual ./ sigma_B_dual;
-    pval = Truncated_normal_p_value(maxstat,zlo_dual,zup_dual);
     
-    alpha_tilde = 1 - (1-alpha)*(1-gamma);
-    reject = pval < alpha_tilde;
+    
+    if( ~ (zlo_dual <= max_stat && max_stat <= zup_dual) )
+        warning(strcat('Hybrid: max_stat (', num2str(max_stat), ')',...
+                   'is not between z_lo (', num2str(zlo_dual), ')',...
+                   'and z_up (', num2str(zup_dual), ...
+                   ') in the dual approach in dataset ', num2str(ds)) );
+    
+        reject = 0;
+        return;
+    else
+        pval = Truncated_normal_p_value_by_simulation(max_stat,zlo_dual,zup_dual);
+        alpha_tilde = 1 - (1-alpha)*(1-gamma);
+        reject = pval < alpha_tilde;
     return;
+    end
+    
+    
+    
 end
 
 %warning('Things look good. Using primal')
@@ -150,14 +164,25 @@ else
     v_up = Inf;
 end
 
-zlo = v_lo / sigma_B; %do i need to add c_0 here?
-zup = v_up / sigma_B;%do i need to add c_0 here?
-maxstat = eta ./ sigma_B;
+z_lo = v_lo / sigma_B; %do i need to add c_0 here?
+z_up = v_up / sigma_B;%do i need to add c_0 here?
+max_stat = eta ./ sigma_B;
 
 
-pval = Truncated_normal_p_value(maxstat,zlo,zup);
-    
-alpha_tilde = 1 - (1-alpha)*(1-gamma);
-reject = pval < alpha_tilde;
+if( ~ (z_lo <= max_stat && max_stat <= z_up) )
+    warning(strcat('Hybrid: max_stat (', num2str(max_stat), ')',...
+                   'is not between z_lo (', num2str(z_lo), ')',...
+                   'and z_up (', num2str(z_up), ...
+                   ') in the primal approach in dataset ', num2str(ds)) );
+    reject = 0;
+
+else
+    pval = Truncated_normal_p_value_by_simulation(max_stat,z_lo,z_up);
+    alpha_tilde = 1 - (1-alpha)*(1-gamma);
+    reject = pval < alpha_tilde;
+
+end
+
+
 
 end

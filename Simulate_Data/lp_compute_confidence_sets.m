@@ -95,7 +95,7 @@ parfor ds = 1:numdatasets
         
         
         conditional_rejection_vec(count,1) = lp_conditional_test_fn( y_T_tilde, X_T_tilde, Sigma, alpha,ds);
-        hybrid_rejection_vec(count,1) = lp_hybrid_test_fn( y_T_tilde, X_T_tilde, Sigma, alpha, alpha/10, lf_simulated_draws);
+        hybrid_rejection_vec(count,1) = lp_hybrid_test_fn( y_T_tilde, X_T_tilde, Sigma, alpha, alpha/10,ds, lf_simulated_draws);
         
         
         
