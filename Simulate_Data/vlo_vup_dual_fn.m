@@ -7,8 +7,10 @@ function [vlo, vup] = vlo_vup_dual_fn(eta,s_T,gamma_tilde, Sigma, W_T)
 tol_c = 10^(-6);
 tol_equality = 10^(-6);
 
-lowinitial = min(-100,eta-20);
-highinitial = max(100,eta+20);
+sigma_B = sqrt( gamma_tilde' * Sigma * gamma_tilde);
+
+lowinitial = min(-100,eta - 20 * sigma_B);
+highinitial = max(100,eta + 20 * sigma_B);
 maxiters = 10000;
 
 
