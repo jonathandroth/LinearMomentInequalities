@@ -17,8 +17,8 @@ function cs = cs_linear_delta_lp_fn( y_T, X_T, l, c_alpha)
 A = -X_T;
 b = c_alpha - y_T;
 
-[~,lb] = linprog(l , A, b) ; 
-[~,ub] = linprog(-l, A, b);
+[~,lb] = linprog(l , A, b, [], [], [], [],  optimoptions('linprog','TolFun', 10^(-8), 'Display','off')) ; 
+[~,ub] = linprog(-l, A, b, [], [], [], [],  optimoptions('linprog','TolFun', 10^(-8), 'Display','off'));
 ub = -ub; %Need to take negative of the minimum to get the max
 
 cs = [lb; ub];
