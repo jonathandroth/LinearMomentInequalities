@@ -109,5 +109,21 @@ save( strcat(data_output_folder, filename_graph,'_', 'rows_for_power_table'),...
     'lb_row_05', 'lb_row_50', 'lb_row_95',...
     'ub_row_05', 'ub_row_50', 'ub_row_95') ;                                              
 
+%% Create excess length table
+identified_set_length = identified_set_bounds(2) - identified_set_bounds(1);
+
+%For the LF approaches, where we have a CS already, just take its length
+%and subtract the identified set length
+excess_lengths_lf = (confidence_sets_using_c_alpha(:,2) - confidence_sets_using_c_alpha(:,1)) - identified_set_length;
+excess_lengths_lfn = (confidence_sets_using_c_lp_alpha(:,2) - confidence_sets_using_c_lp_alpha(:,1)) - identified_set_length;
+
+%For the conditional and hybrid approaches, we will numerically integrate
+%over the grid
+
+
+
+
+
+
 %%
 display('Script complete');
