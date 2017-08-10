@@ -117,12 +117,20 @@ identified_set_length = identified_set_bounds(2) - identified_set_bounds(1);
 excess_lengths_lf = (confidence_sets_using_c_alpha(:,2) - confidence_sets_using_c_alpha(:,1)) - identified_set_length;
 excess_lengths_lfn = (confidence_sets_using_c_lp_alpha(:,2) - confidence_sets_using_c_lp_alpha(:,1)) - identified_set_length;
 
-%For the conditional and hybrid approaches, we will numerically integrate
-%over the grid
+%For the conditional and hybrid approaches, we sum the number of accepted
+%points times the space between gridpoints to obtain the area
+stepsize = beta0_grid(2) - beta0_grid(1);
 
+excess_lengths_conditional =  sum( stepsize * (1 - full_rejection_grid_conditional ), 2) - identified_set_length;
+excess_lengths_hybrid =  sum( stepsize * (1 - full_rejection_grid_hybrid ), 2) - identified_set_length;
 
+row_mean = cellfun( @(x) mean(x), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
+row_05 = cellfun( @(x) quantile(x,.05), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
+row_50 = cellfun( @(x) quantile(x,.50), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
+row_95 = cellfun( @(x) quantile(x,.95), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
 
-
+save( strcat(data_output_folder, filename_graph,'_', 'rows_for_excess_length_table'),...
+    'row_05', 'row_50', 'row_95', 'row_mean') ;                                              
 
 
 %%
