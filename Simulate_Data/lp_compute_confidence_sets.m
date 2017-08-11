@@ -112,6 +112,9 @@ end
     
     %Average the rejection probabilities for the hybrid and conditional
     %methods
+    full_rejection_grid_conditional = rejection_grid_conditional;
+    full_rejection_grid_hybrid = rejection_grid_hybrid;
+    
     rejection_grid_conditional = mean(rejection_grid_conditional,1);
     rejection_grid_hybrid = mean(rejection_grid_hybrid,1);
     
@@ -119,7 +122,8 @@ end
     ds_name = strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp');
     mkdir(ds_name);
     save( ds_name, 'confidence_sets_using_c_alpha', 'confidence_sets_using_c_lp_alpha',...
-                   'rejection_grid_hybrid', 'rejection_grid_conditional','beta0_grid' );
+                   'rejection_grid_hybrid', 'rejection_grid_conditional','beta0_grid' ,...
+                   'full_rejection_grid_conditional','full_rejection_grid_hybrid');
 
     
     

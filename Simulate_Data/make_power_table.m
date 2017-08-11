@@ -30,9 +30,9 @@ data_output_dir = strcat('/Volumes/jonathanroth/Moment_Inequalities_Ariel/Output
 if( strcmp(filename_graph ,'Theta_g_Rejection_Probabilities') )
     data_output_dir = strcat(data_output_dir, 'Theta_g/');
 end
+
 data_output_folder = strcat( data_output_dir, dirname, 'Interacted_Moments/');
 power_table_file = strcat(data_output_folder, filename_graph,'_', 'rows_for_power_table');
-
 load(power_table_file)
 
 ub_mat_05 = [ub_mat_05; ub_row_05];
