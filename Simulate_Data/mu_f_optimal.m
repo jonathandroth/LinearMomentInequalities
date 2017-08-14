@@ -1,9 +1,6 @@
 function [mu_f,J,J_tminus1, Pi_star] = mu_f_optimal( avg_products_per_firm, mu_f_guess, sigma_nu, ...
-    sigma_epsilon, J_0 , Epsilon_shocks_array, Eta_shocks_array, Eta_t_array,  G_array)
+    sigma_epsilon, J_0 , Epsilon_shocks_array, Eta_shocks_array, Eta_t_array,  G_array, burnout, F, theta_c)
 
-global burnout;
-global F;
-global theta_c;
 
 %Create a function that computes the J_array for a given value of mu_f,
 %holding constant all the other parameters
