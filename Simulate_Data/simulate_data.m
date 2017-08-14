@@ -1,4 +1,4 @@
-function [J_t_array, J_tminus1_array, Pi_array, F_array, G_array, Pi_star_array, Eta_jt_shocks_array, Eta_t_vec] = simulate_data( F , J ,T, burnout, sigma_nu, sigma_eps, sigma_w, sigma_zetaj, sigma_zetajft, rho, lambda,theta_c,theta_g, g_vec, mu_f)
+function [J_t_array, J_tminus1_array, Pi_array, F_array, G_array, Pi_star_array, Eta_jt_shocks_array, Eta_t_vec] = simulate_data( seed, F , J ,T, burnout, sigma_nu, sigma_eps, sigma_w, sigma_zetaj, sigma_zetajft, rho, lambda,theta_c,theta_g, g_vec, mu_f)
       
     G_array = repmat( g_vec',F,1,T);
      
@@ -12,7 +12,7 @@ function [J_t_array, J_tminus1_array, Pi_array, F_array, G_array, Pi_star_array,
         Zetaj_shocks_array = NaN(F,J,T);
         Zetajft_shocks_array = NaN(F,J,T);
 
-        rng(1);
+        rng(seed);
         
         
         eta_tminus1 = 0;
