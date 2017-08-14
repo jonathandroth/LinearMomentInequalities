@@ -1,31 +1,31 @@
 
 
 %% Set the parameter values
-global theta_c;
+%global theta_c;
 theta_c = 129.73;
 
-global lambda;
+%global lambda;
 lambda = 0.386; %should this be negative? Should this be one-over this? %Think we are good.
 %lambda = 1;
 
-global theta_g;
+%global theta_g;
 theta_g = -21.38;
 
 
-global burnout;
+%global burnout;
 burnout = 1000;
 
 
-global T;
+%global T;
 T = 27*1000 + burnout;
 
 %g_vec = [31.818; 12.7; 21.495; 31.494; 43.462; 51.616; 54.277]/10;
 g_vec = linspace(12.7, 54.277, 22)'/10; %Divide by 10 to put into 10k lb units
 
-global J;
+%global J;
 J = size(g_vec,1);
  
-global F;
+%global F;
 F = 9;
 
 
@@ -41,7 +41,7 @@ f_share = [5.56; 12.5; 12.5+4.17 + 1.39; 6.94; 4.17; 16.67; 6.94; 6.94+11.11; 2.
 mu_f_vec = [repmat(100,F-1,1); 50];
 
 
-global avg_total_yearly_products;
+%global avg_total_yearly_products;
 avg_total_yearly_products = 48;
 
 avg_products_per_firm = f_share * avg_total_yearly_products;
@@ -154,7 +154,7 @@ end
 %    
 %  
 % [mu_f, J_t, J_tm1] = mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu_vec(s), ...
-%     sigma_eps_vec(sprime), zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, G_array, burnout, T, F, J, theta_c);
+%     sigma_eps_vec(sprime), zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, G_array, burnout, T, F, J, theta_c, theta_g, lambda);
 % 
 % var_vec(s,sprime) = nineyr_variance(J_t,burnout);
 % 
@@ -184,7 +184,7 @@ sigma_nu = 30;
 sigma_eps = 30;
 
  [mu_f, J_t, J_tm1, Pi_star_array] = mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu, ...
-     sigma_eps, zeros(F,J) , Epsilon_shocks_array, Eta_jt_shocks_array, Eta_t_vec, G_array, burnout, T, F, J, theta_c);
+     sigma_eps, zeros(F,J) , Epsilon_shocks_array, Eta_jt_shocks_array, Eta_t_vec, G_array, burnout, T, F, J, theta_c, theta_g, lambda);
 
 %This function returns the pi_star array as a function of sigma_z. It sets
 %sigma_zetaj= sigma_zetajft, and uses the shocks and the pi_star already
