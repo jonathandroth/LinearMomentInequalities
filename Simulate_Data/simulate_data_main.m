@@ -154,7 +154,7 @@ end
 %    
 %  
 % [mu_f, J_t, J_tm1] = mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu_vec(s), ...
-%     sigma_eps_vec(sprime), zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, G_array, burnout, F, theta_c);
+%     sigma_eps_vec(sprime), zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, G_array, burnout, T, F, J, theta_c);
 % 
 % var_vec(s,sprime) = nineyr_variance(J_t,burnout);
 % 
@@ -184,7 +184,7 @@ sigma_nu = 30;
 sigma_eps = 30;
 
  [mu_f, J_t, J_tm1, Pi_star_array] = mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu, ...
-     sigma_eps, zeros(F,J) , Epsilon_shocks_array, Eta_jt_shocks_array, Eta_t_vec, G_array, burnout, F, theta_c);
+     sigma_eps, zeros(F,J) , Epsilon_shocks_array, Eta_jt_shocks_array, Eta_t_vec, G_array, burnout, T, F, J, theta_c);
 
 %This function returns the pi_star array as a function of sigma_z. It sets
 %sigma_zetaj= sigma_zetajft, and uses the shocks and the pi_star already
@@ -299,7 +299,8 @@ T = 50000 + burnout;
      
     % Draw product offerings and pi_star
         [J_t_array, J_tminus1_array, Pi_star_array] = calculate_offerings( sigma_nu, ...
-        sigma_eps, zeros(F,J) , Epsilon_shocks_array, Eta_jt_shocks_array, Eta_t_vec, mu_f, G_array );
+        sigma_eps, zeros(F,J) , Epsilon_shocks_array, Eta_jt_shocks_array, Eta_t_vec, mu_f, G_array,...
+        T,F,J,lambda,theta_c,theta_g);
     
     
     % Construct pi from pi_star
