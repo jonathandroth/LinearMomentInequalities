@@ -74,7 +74,7 @@ function [J_t_array, J_tminus1_array, Pi_array, F_array, G_array, Pi_star_array,
         Eta_jt_shocks_array = take_burnout_fn( Eta_jt_shocks_array);
         Eta_t_vec = Eta_t_vec( (burnout+1):end) ;
         
-        F_array = repmat( (1:F),1, J, T-burnout);
-        G_array = repmat( g_vec,F,1,T-burnout);
+        F_array = repmat( (1:F)',1, J, T-burnout);
+        G_array = repmat( g_vec',F,1,T-burnout);
 
 end
