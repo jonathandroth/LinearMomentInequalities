@@ -1,3 +1,4 @@
+tic;
 %1thetac_interacted params
 
 %specify whether to combine the moments for theta_g, or to have separate
@@ -38,11 +39,11 @@ load('../../Output/Simulated_Data/all_simulation_params')
 numSimulations = 2;
 
 boundsMat_meanweight = NaN(numSimulations,2);
-ub_slackMatrix_meanweight = [];
-lb_slackMatrix_meanweight = [];
+ub_slackCell_meanweight = cell(numSimulations,1);
+lb_slackCell_meanweight = cell(numSimulations,1);
 boundsMat_thetag = NaN(numSimulations,2);
-ub_slackMatrix_thetag = [];
-lb_slackMatrix_thetag = [];
+ub_slackCell_thetag = cell(numSimulations,1);
+lb_slackCell_thetag = cell(numSimulations,1);
 
 
 for(sim = 1:numSimulations)
@@ -57,8 +58,8 @@ l_meanweight = [ones(num_F_groups_parameters,1) / num_F_groups_parameters; mean_
 
 
 boundsMat_meanweight(sim,:) = identified_set_bounds_for_meanweight;
-ub_slackMatrix_meanweight = [ ub_slackMatrix_meanweight , slack_ub_meanweight];
-lb_slackMatrix_meanweight = [ lb_slackMatrix_meanweight , slack_lb_meanweight];
+ub_slackCell_meanweight{sim} = slack_ub_meanweight;
+lb_slackCell_meanweight{sim} = slack_lb_meanweight;
 
 
 l_thetag = [ zeros( num_F_groups_parameters ,1) ; 1 ];
@@ -66,9 +67,23 @@ l_thetag = [ zeros( num_F_groups_parameters ,1) ; 1 ];
 
 
 boundsMat_thetag(sim,:) = identified_set_bounds_for_thetag;
-ub_slackMatrix_thetag = [ ub_slackMatrix_thetag , slack_ub_thetag];
-lb_slackMatrix_thetag = [ lb_slackMatrix_thetag , slack_lb_thetag];
+ub_slackCell_thetag{sim} = slack_ub_thetag;
+lb_slackCell_thetag{sim} = slack_lb_thetag;
 
 end
 
+%%
+%Create functions to convert the ub and lb cells to a vector that says what
+%fraction of the time the moments are binding at the optimum
+convertToMat = @(c) cell2mat(c');
+approxZero = @(x) (abs(x) <= 10^(-6) );
+summariseBindingMoments = @(c) mean( approxZero( convertToMat(c) ) , 2); 
 
+ub_bindingMoments_meanweight = summariseBindingMoments(ub_slackCell_meanweight);
+lb_bindingMoments_meanweight = summariseBindingMoments(lb_slackCell_meanweight);
+
+ub_bindingMoments_thetag = summariseBindingMoments(ub_slackCell_thetag);
+lb_bindingMoments_thetag = summariseBindingMoments(lb_slackCell_thetag);
+
+
+toc;
