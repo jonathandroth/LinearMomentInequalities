@@ -147,9 +147,8 @@ display('Starting to find identified set');
 
     clear long_ds_object;
     
-    lp_create_moments_for_identified_set;
-    
-    
+    [y_T, X_T] = lp_create_moments_for_identified_set_fn(F_group_cell_moments, F_group_cell_parameters, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, use_basic_moments, lambda, combine_theta_g_moments);
+        
     %We set c_alpha = 0
     identified_set_bounds = cs_linear_delta_lp_fn(y_T,X_T,l,0)';
     

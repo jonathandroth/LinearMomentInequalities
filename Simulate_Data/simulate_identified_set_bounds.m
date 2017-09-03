@@ -36,7 +36,7 @@ lp_set_parameters
 load('../../Output/Simulated_Data/all_simulation_params')
 
 
-numSimulations = 2;
+numSimulations = 100;
 
 boundsMat_meanweight = NaN(numSimulations,2);
 ub_slackCell_meanweight = cell(numSimulations,1);
@@ -47,9 +47,12 @@ lb_slackCell_thetag = cell(numSimulations,1);
 
 
 for(sim = 1:numSimulations)
-[J_t_array, J_tminus1_array, Pi_array, F_array, G_array, Pi_star_array, Eta_jt_shocks_array, Eta_t_vec] = simulate_data(1, F , J ,T, burnout, sigma_nu, sigma_eps, sigma_w, sigma_zetaj, sigma_zetajft, rho, lambda,theta_c,theta_g, g_vec, mu_f);
 
-lp_create_moments_for_identified_set;
+sim
+
+[J_t_array, J_tminus1_array, Pi_array, F_array, G_array, Pi_star_array, Eta_jt_shocks_array, Eta_t_vec] = simulate_data(sim, F , J ,T, burnout, sigma_nu, sigma_eps, sigma_w, sigma_zetaj, sigma_zetajft, rho, lambda,theta_c,theta_g, g_vec, mu_f);
+
+[y_T, X_T] = lp_create_moments_for_identified_set_fn(F_group_cell_moments, F_group_cell_parameters, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, use_basic_moments, lambda, combine_theta_g_moments);
 
 %Compute ID set for meanweight
 mean_g = mean(G_array(1,:,1));
@@ -85,5 +88,69 @@ lb_bindingMoments_meanweight = summariseBindingMoments(lb_slackCell_meanweight);
 ub_bindingMoments_thetag = summariseBindingMoments(ub_slackCell_thetag);
 lb_bindingMoments_thetag = summariseBindingMoments(lb_slackCell_thetag);
 
+
+save( strcat(data_output_dir,'identified_set_results.mat'), ...
+    'ub_bindingMoments_meanweight', 'ub_bindingMoments_thetag',...
+    'lb_bindingMoments_meanweight', 'lb_bindingMoments_thetag',...
+    'ub_slackCell_meanweight', 'ub_slackCell_thetag',...
+    'lb_slackCell_meanweight', 'lb_slackCell_thetag',...
+    'boundsMat_meanweight', 'boundsMat_thetag')
+
+
+addpath('./swtest')
+addpath('./export-fig')
+addpath('./matrix2latex')
+%%Histograms of bounds
+%%Graphs of q-q plots with Shapiro-Wilk Test for Normality
+clf
+hist(boundsMat_thetag(:,1) );
+title('Lower Bound for Thetag');
+export_fig(strcat(figures_output_dir, 'histogram_lb_thetag.pdf') )
+clf
+
+hist(boundsMat_thetag(:,2) );
+title('Upper Bound for Thetag');
+export_fig(strcat(figures_output_dir, 'histogram_ub_thetag.pdf') )
+clf
+
+hist(boundsMat_meanweight(:,1) );
+title('Lower Bound for Mean-Weight Cost');
+export_fig(strcat(figures_output_dir, 'histogram_lb_meanweight.pdf') )
+clf
+
+hist(boundsMat_meanweight(:,2) );
+title('Upper Bound for Mean-Weight Cost');
+export_fig(strcat(figures_output_dir, 'histogram_ub_meanweight.pdf') )
+clf
+
+
+%%Graphs of q-q plots with Shapiro-Wilk Test for Normality
+clf
+qqplot_with_pvalue(boundsMat_thetag(:,1) );
+title('Lower Bound for Thetag');
+export_fig(strcat(figures_output_dir, 'qqplot_lb_thetag.pdf') )
+clf
+
+qqplot_with_pvalue(boundsMat_thetag(:,2) );
+title('Upper Bound for Thetag');
+export_fig(strcat(figures_output_dir, 'qqplot_ub_thetag.pdf') )
+clf
+
+qqplot_with_pvalue(boundsMat_meanweight(:,1) );
+title('Lower Bound for Mean-Weight Cost');
+export_fig(strcat(figures_output_dir, 'qqplot_lb_meanweight.pdf') )
+clf
+
+qqplot_with_pvalue(boundsMat_meanweight(:,2) );
+title('Upper Bound for Mean-Weight Cost');
+export_fig(strcat(figures_output_dir, 'qqplot_ub_meanweight.pdf') )
+clf
+
+
+matrix2latex( [(1:size(lb_bindingMoments_thetag,1))',...
+               lb_bindingMoments_thetag, ub_bindingMoments_thetag , ...
+               lb_bindingMoments_meanweight, ub_bindingMoments_meanweight] ,...
+               strcat( figures_output_dir, "binding_moments.tex" ),...
+               'columnLabels', {'Moment \#','LB Thetag', 'UB Thetag', 'LB Meanweight', 'UB Meanweight'});
 
 toc;
