@@ -107,7 +107,7 @@ if(~fullrank || degenerate)
         return;
     else
         pval = Truncated_normal_p_value_by_simulation(max_stat,zlo_dual,zup_dual);
-        alpha_tilde = (alpha - beta) / (1 - beta);
+        alpha_tilde = (alpha - gamma) / (1 - gamma);
         reject = pval < alpha_tilde;
     return;
     end
@@ -178,7 +178,7 @@ if( ~ (z_lo <= max_stat && max_stat <= z_up) )
 
 else
     pval = Truncated_normal_p_value_by_simulation(max_stat,z_lo,z_up);
-    alpha_tilde = (alpha - beta) / (1 - beta);
+    alpha_tilde = (alpha - gamma) / (1 - gamma);
     reject = pval < alpha_tilde;
 
 end
