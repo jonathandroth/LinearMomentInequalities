@@ -21,3 +21,6 @@ xlim_graph_meanweight = [-10,100]
 run_lp_cs_1thetac_interactedmoments
 run_lp_cs_3thetacs_interactedmoments
 run_lp_cs_9thetacs_interactedmoments
+
+make_power_table
+make_excess_length_table
