@@ -11,19 +11,21 @@
 %It returns:
 % cs: which is a vector of the upper and lower bounds of the CS: [ub, lb] 
 
-function cs = cs_linear_delta_lp_fn( y_T, X_T, l, c_alpha) 
+function [cs, slack_lb, slack_ub] = cs_linear_delta_lp_fn( y_T, X_T, l, c_alpha) 
 
 
 A = -X_T;
 b = c_alpha - y_T;
 
-[~,lb] = linprog(l , A, b, [], [], [], [],  optimoptions('linprog','TolFun', 10^(-8), 'Display','off')) ; 
-[~,ub] = linprog(-l, A, b, [], [], [], [],  optimoptions('linprog','TolFun', 10^(-8), 'Display','off'));
+[delta_lb,lb] = linprog(l , A, b, [], [], [], [],  optimoptions('linprog','TolFun', 10^(-8), 'Display','off')) ; 
+[delta_ub,ub] = linprog(-l, A, b, [], [], [], [],  optimoptions('linprog','TolFun', 10^(-8), 'Display','off'));
 ub = -ub; %Need to take negative of the minimum to get the max
 
 cs = [lb; ub];
 
-
+%Compute slack at upper and lower bound solutions
+slack_lb = A * delta_lb - b;
+slack_ub = A * delta_ub - b;
 
 
 end

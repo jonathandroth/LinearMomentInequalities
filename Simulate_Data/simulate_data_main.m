@@ -1,31 +1,31 @@
 
 
 %% Set the parameter values
-global theta_c;
+%global theta_c;
 theta_c = 129.73;
 
-global lambda;
+%global lambda;
 lambda = 0.386; %should this be negative? Should this be one-over this? %Think we are good.
 %lambda = 1;
 
-global theta_g;
+%global theta_g;
 theta_g = -21.38;
 
 
-global burnout;
+%global burnout;
 burnout = 1000;
 
 
-global T;
+%global T;
 T = 27*1000 + burnout;
 
 %g_vec = [31.818; 12.7; 21.495; 31.494; 43.462; 51.616; 54.277]/10;
 g_vec = linspace(12.7, 54.277, 22)'/10; %Divide by 10 to put into 10k lb units
 
-global J;
+%global J;
 J = size(g_vec,1);
  
-global F;
+%global F;
 F = 9;
 
 
@@ -41,7 +41,7 @@ f_share = [5.56; 12.5; 12.5+4.17 + 1.39; 6.94; 4.17; 16.67; 6.94; 6.94+11.11; 2.
 mu_f_vec = [repmat(100,F-1,1); 50];
 
 
-global avg_total_yearly_products;
+%global avg_total_yearly_products;
 avg_total_yearly_products = 48;
 
 avg_products_per_firm = f_share * avg_total_yearly_products;
@@ -154,7 +154,7 @@ end
 %    
 %  
 % [mu_f, J_t, J_tm1] = mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu_vec(s), ...
-%     sigma_eps_vec(sprime), zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, G_array);
+%     sigma_eps_vec(sprime), zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, G_array, burnout, T, F, J, theta_c, theta_g, lambda);
 % 
 % var_vec(s,sprime) = nineyr_variance(J_t,burnout);
 % 
@@ -184,7 +184,7 @@ sigma_nu = 30;
 sigma_eps = 30;
 
  [mu_f, J_t, J_tm1, Pi_star_array] = mu_f_optimal( avg_products_per_firm, mu_f_vec, sigma_nu, ...
-     sigma_eps, zeros(F,J) , Epsilon_shocks_array, Eta_jt_shocks_array, Eta_t_vec, G_array);
+     sigma_eps, zeros(F,J) , Epsilon_shocks_array, Eta_jt_shocks_array, Eta_t_vec, G_array, burnout, T, F, J, theta_c, theta_g, lambda);
 
 %This function returns the pi_star array as a function of sigma_z. It sets
 %sigma_zetaj= sigma_zetajft, and uses the shocks and the pi_star already
@@ -234,90 +234,13 @@ rho = 0.9;
 %Re-set T
 
 T = 50000 + burnout;
-%T = 50 + burnout;
  
 
-%MAKE G_VEC BIGGER
-%g_vec = 2 * g_vec;
+save('../../Output/Simulated_Data/all_simulation_params',...
+'F' , 'J' ,'T', 'burnout', 'sigma_nu', 'sigma_eps', 'sigma_w', 'sigma_zetaj',...
+'sigma_zetajft', 'rho', 'lambda','theta_c','theta_g', 'g_vec', 'mu_f');
 
-
-    %Reset F and G
-    F_array = repmat( (1:F)',1, J, T);
-    G_array = repmat( g_vec',F,1,T);
-     %G_array = repmat( 10*g_vec',F,1,T); %Make G larger than in the calibration
-
-    % Re-draw the shocks for this simulation
-    
-        Eta_jt_shocks_array = NaN(F,J,T);
-        Eta_t_vec = NaN(T,1);
-        Epsilon_shocks_array = NaN(F,J,T);
-        Zetaj_shocks_array = NaN(F,J,T);
-        Zetajft_shocks_array = NaN(F,J,T);
-
-        rng(1);
-        
-        
-        eta_tminus1 = 0;
-        
-        for t= 1:T
-            %For eta, take one draw for each j for period t
-            %Right now, assuming that the shocks are uncorrelated across J. Could
-            %relax this (change away from eye(J) )
-            eta_jt_shocks_t = mvnrnd( zeros(1,J), eye(J) ); 
-
-            
-            %Draw the innovation in eta_t, i.e. the market-wide time shock
-            w_t = sigma_w * randn(1);
-            
-            %Update eta_t
-            eta_t = rho * eta_tminus1 + w_t;
-            eta_tminus1 = eta_t;
-            
-            %Draw zeta_j
-            zetaj_shocks_t = mvnrnd( zeros(1,J), eye(J) );
-
-            %Create and store the eta draw matrix for period t.
-            %The eta draw is the same for product j for each firm, so the eta_shocks
-            %matrix for period t has constant columns (this is done in the repmat)
-            Eta_jt_shocks_array(:,:,t) = repmat( eta_jt_shocks_t, F, 1);
-
-            %Do the same for zeta_j
-            Zetaj_shocks_array(:,:,t) = repmat( zetaj_shocks_t, F, 1);
-
-            %Draw the epsilon_tfj. These are assumed to be independent across all
-            %draws
-            Epsilon_shocks_array(:,:,t) = randn(F,J);
-
-            %Do the same for zeta_jft
-            Zetajft_shocks_array(:,:,t) = randn(F,J);
-            
-            %Store the eta_t shocks in a vector
-            Eta_t_vec(t,1) = eta_t;
- 
-        end
-    
-     
-    % Draw product offerings and pi_star
-        [J_t_array, J_tminus1_array, Pi_star_array] = calculate_offerings( sigma_nu, ...
-        sigma_eps, zeros(F,J) , Epsilon_shocks_array, Eta_jt_shocks_array, Eta_t_vec, mu_f, G_array );
-    
-    
-    % Construct pi from pi_star
-        Pi_array = pi_array_fn( Pi_star_array, Zetaj_shocks_array, Zetajft_shocks_array, sigma_zetaj, sigma_zetajft);
-    
-    %Take burnout
-        take_burnout_fn = @(X) X(:,:,(burnout+1):(size(X,3)) );
-        
-        J_t_array = take_burnout_fn(J_t_array);
-        J_tminus1_array = take_burnout_fn(J_tminus1_array);
-        Pi_star_array = take_burnout_fn(Pi_star_array);
-        Pi_array = take_burnout_fn(Pi_array);
-        Eta_jt_shocks_array = take_burnout_fn( Eta_jt_shocks_array);
-        Eta_t_vec = Eta_t_vec( (burnout+1):end) ;
-        
-        F_array = repmat( (1:F)',1, J, T-burnout);
-        G_array = repmat( g_vec',F,1,T-burnout);
-    
+[J_t_array, J_tminus1_array, Pi_array, F_array, G_array, Pi_star_array, Eta_jt_shocks_array, Eta_t_vec] = simulate_data(1, F , J ,T, burnout, sigma_nu, sigma_eps, sigma_w, sigma_zetaj, sigma_zetajft, rho, lambda,theta_c,theta_g, g_vec, mu_f);
     
     % Save the desired values
         ds_name = '../../Output/Simulated_Data/Calibrated_SigmaZeta/ds_long';

@@ -1,13 +1,7 @@
 function [J_t_array, J_tminus1_array, Pi_star_array] = calculate_offerings( sigma_nu, ...
-    sigma_epsilon, J_0 , Epsilon_shocks_array, Eta_jt_shocks_array, Eta_t_vec, mu_f_vec, G_array )
+    sigma_epsilon, J_0 , Epsilon_shocks_array, Eta_jt_shocks_array, Eta_t_vec, mu_f_vec, G_array,...
+    T,F,J,lambda,theta_c,theta_g)
 
-global T;
-global J;
-global F;
-
-global lambda;
-global theta_c;
-global theta_g;
 
 
 Mu_f_array = repmat(mu_f_vec, 1,J,T);

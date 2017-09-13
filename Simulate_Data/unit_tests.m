@@ -15,10 +15,12 @@ cov_mat = 1/J * cov_mat
 %% Check mean occurrences of products, convergence from starting with all products in and all products out
 
 [J_t_startat1, J_tm1_startat1] = calculate_offerings( sigma_nu, ...
-    sigma_epsilon, ones(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, Mu_f_array, G_array, F_array );
+    sigma_epsilon, ones(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, Mu_f_array, G_array, F_array ,...
+    T,F,J,lambda,theta_c,theta_g);
 
 [J_t_startat0, J_tm1_startat0] = calculate_offerings( sigma_nu, ...
-    sigma_epsilon, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, Mu_f_array, G_array, F_array );
+    sigma_epsilon, zeros(F,J) , Epsilon_shocks_array, Eta_shocks_array, Zetaj_shocks_array,Zetajft_shocks_array, Mu_f_array, G_array, F_array,...
+    T,F,J,lambda,theta_c,theta_g);
 
 
 mean(J_t_startat1(:))

@@ -1,14 +1,12 @@
 function [mu_f,J,J_tminus1, Pi_star] = mu_f_optimal( avg_products_per_firm, mu_f_guess, sigma_nu, ...
-    sigma_epsilon, J_0 , Epsilon_shocks_array, Eta_shocks_array, Eta_t_array,  G_array)
+    sigma_epsilon, J_0 , Epsilon_shocks_array, Eta_shocks_array, Eta_t_array,  G_array, burnout, T, F, J, theta_c, theta_g, lambda)
 
-global burnout;
-global F;
-global theta_c;
 
 %Create a function that computes the J_array for a given value of mu_f,
 %holding constant all the other parameters
 J_array_muf = @(mu_f) calculate_offerings( sigma_nu, ...
-    sigma_epsilon, J_0 , Epsilon_shocks_array, Eta_shocks_array, Eta_t_array,  mu_f, G_array);
+    sigma_epsilon, J_0 , Epsilon_shocks_array, Eta_shocks_array, Eta_t_array,  mu_f, G_array,...
+    T,F,J,lambda,theta_c,theta_g);
 
 %Create a function that computes the mean products by firm using the output
 %from the J_array_muf function
@@ -33,7 +31,7 @@ mu_f = NaN(F,1);
 theta_c_local = theta_c;
 for f = 1:F
    
-    obj_f = @(mu_f) mean_products_firm_f( f, mu_f, mean_by_firm_muf ) - avg_products_per_firm(f);
+    obj_f = @(mu_f) mean_products_firm_f( f, mu_f, mean_by_firm_muf, F ) - avg_products_per_firm(f);
     myopts = optimset('TolX', 10^(-4), 'TolFun', 10^(-4) );
     mu_f(f) = fzero( obj_f, [theta_c_local - 2*sigma_nu - 2*sigma_epsilon ;theta_c_local + 2*sigma_nu + 2*sigma_epsilon],myopts );
     
@@ -48,8 +46,8 @@ end
 %mu_f for firm f. It takes as arguments the firm number f, the mean mu_f,
 %and the function mean_by_firm_muf, which takes a mean for all of the firms
 %and returns the market share for all of the firms
-function firmf_mean = mean_products_firm_f( f, mu_f, mean_by_firm_muf )
-    global F;
+function firmf_mean = mean_products_firm_f( f, mu_f, mean_by_firm_muf , F )
+    
 
     e_f = zeros(F,1);
     e_f(f) = mu_f;

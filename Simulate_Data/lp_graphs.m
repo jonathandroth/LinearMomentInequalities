@@ -117,12 +117,19 @@ identified_set_length = identified_set_bounds(2) - identified_set_bounds(1);
 excess_lengths_lf = (confidence_sets_using_c_alpha(:,2) - confidence_sets_using_c_alpha(:,1)) - identified_set_length;
 excess_lengths_lfn = (confidence_sets_using_c_lp_alpha(:,2) - confidence_sets_using_c_lp_alpha(:,1)) - identified_set_length;
 
-%For the conditional and hybrid approaches, we sum the number of accepted
-%points times the space between gridpoints to obtain the area
-stepsize = beta0_grid(2) - beta0_grid(1);
+%For the conditional and hybrid approaches, we compute the area by
+%assigning the rejection value at each number to the closest point in the
+%grid. The weight for each point is thus half the distance of the gap
+%between the point on the left plus half the distance to the point on the
+%right (the end points only get weight towards the interior, but this
+%shouldn't matter since if set properly, the rejection probability is 1 at
+%the endpoint)
 
-excess_lengths_conditional =  sum( stepsize * (1 - full_rejection_grid_conditional ), 2) - identified_set_length;
-excess_lengths_hybrid =  sum( stepsize * (1 - full_rejection_grid_hybrid ), 2) - identified_set_length;
+gridWeightsVec = 0.5 * ([0,diff(beta0_grid)] + [diff(beta0_grid),0] );
+gridWeightsMat = repmat( gridWeightsVec, size(full_rejection_grid_conditional,1), 1);
+
+excess_lengths_conditional =  sum( gridWeightsMat .* (1 - full_rejection_grid_conditional ), 2) - identified_set_length;
+excess_lengths_hybrid =  sum( gridWeightsMat .* (1 - full_rejection_grid_hybrid ), 2) - identified_set_length;
 
 row_mean = cellfun( @(x) mean(x), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
 row_05 = cellfun( @(x) quantile(x,.05), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
