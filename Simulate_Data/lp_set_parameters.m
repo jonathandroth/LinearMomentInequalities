@@ -17,7 +17,7 @@ if( isempty(getenv('SLURM_CPUS_PER_TASK')) )
    else
        working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
    end
-   numdatasets = 2;
+   numdatasets = 100;
 
     
 else

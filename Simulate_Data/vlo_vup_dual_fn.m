@@ -26,7 +26,10 @@ high = highinitial;
 check_if_solution = @(c) check_if_solution_helper(c, tol_equality, s_T, gamma_tilde,Sigma,W_T);
 
 if(~ check_if_solution(eta) )
-    error('The user-supplied eta does not appear to be a solution');
+    warning('The user-supplied eta does not appear to be a solution. Not rejecting automatically');
+    vlo = eta; 
+    vup = Inf;
+    return;
 end
 
 if( check_if_solution( highinitial) )

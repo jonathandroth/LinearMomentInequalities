@@ -41,8 +41,8 @@ nummoments = size( y_T_cell{ds,1} , 1);
 Z_draws_interacted = randn(nummoments, 10000);
 
 %%CHANGE THIS BACK WHEN DONE DEBUGGING
-parfor ds = 1:numdatasets
-%for ds = 1:numdatasets    
+%parfor ds = 1:numdatasets
+for ds = 1:numdatasets    
    X_T = X_T_cell{ds,1};
    y_T = y_T_cell{ds,1};
    Sigma = Sigma_conditional_cell{ds,1}; 

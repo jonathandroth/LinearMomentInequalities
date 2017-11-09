@@ -40,7 +40,7 @@ M = size(Sigma,1);
 k = size(X_T, 2);
 
 %Compute eta, and the argmin delta
-[eta, delta, lambda,error_flag] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','dual-simplex', 'Display', 'off', 'MaxIter', 100000));
+[eta, delta, lambda,error_flag] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','dual-simplex','TolFun', 10^-8, 'Display', 'off', 'MaxIter', 100000));
 
 if(error_flag > 0)
     reject = 0;
@@ -81,13 +81,12 @@ fullrank = rank(X_TB) == min( size(X_TB) );
 
 
 if(~fullrank || degenerate)
-    %warning('In hybrid: Primal LP non-unique or degenerate. Using dual approach.');
-    [vlo_dual,vup_dual,eta_dual,gamma_tilde, error_in_lp] = lp_dual_fn( y_T, X_T, Sigma);
-    if(error_in_lp == 1)
-         reject =0;
-         warning('Dual LP for eta did not converge properly. Not rejecting');
-         return;
-    end
+    
+    %Calculate vlo and vup using the bisection approach that conditions on
+    %having a gamma_tilde - a vertex of the dual (note that since matlab
+    %implements the dual-simplex method, lambda is guaranteed to be such a
+    %gamme_tilde
+    [vlo_dual,vup_dual,eta_dual,gamma_tilde] = lp_dual_fn( y_T, X_T, eta,lambda, Sigma);
 
     vup_dual = min([vup_dual, c_gamma]); %this conditions on having not rejected the LF test 
     
