@@ -10,4 +10,5 @@ F_group_cell_moments = {1;2;3;4;5;6;7;8;9};
 use_basic_moments = 1;
 combine_theta_g_moments = 1;
 
+lambda_vec = (0.01:100:10)';
 lp_lambda_inference_script

@@ -8,7 +8,7 @@
 %broke it out so that we can run it multiple times with different l's,
 %after loading the data
 
-%% Confidence sets for linear combination of theta's
+
 G_array = G_array_cell{1};
 mean_g = mean(G_array(1,:,1));
 
@@ -20,6 +20,52 @@ end
 
 delta_true = [repmat(theta_c_true,num_F_groups_parameters,1);  theta_g_true];
 l'*delta_true
+
+
+%% Compute identified set
+
+load( char(strcat( data_input_dir, dirname, 'all_simulation_params') ) ) %load the parameters needed to simulate the data
+
+
+%%Remove this when done debuggin
+%%T = 1000 + burnout;
+
+numSimulations = 1;
+
+
+for(sim = 1:numSimulations)
+
+
+[J_t_array, J_tminus1_array, Pi_array, F_array, G_array, Pi_star_array, Eta_jt_shocks_array, Eta_t_vec] = simulate_data(sim, F , J ,T, burnout, sigma_nu, sigma_eps, sigma_w, sigma_zetaj, sigma_zetajft, rho, lambda,theta_c,theta_g, g_vec, mu_f);
+
+[~, ~, y_bar_s, X_bar_s] = lp_create_moments_for_identified_set_fn(F_group_cell_moments, F_group_cell_parameters, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, use_basic_moments, lambda, combine_theta_g_moments);
+
+if(sim == 1)
+    y_bar = y_bar_s/ numSimulations;
+    X_bar = X_bar_s / numSimulations;
+else
+    y_bar = y_bar_s/ numSimulations + y_bar;
+    X_bar = X_bar_s / numSimulations + X_bar;
+end
+    
+end
+
+
+
+N = (T - burnout) * numSimulations;
+cutoff = log(N)/sqrt(N);
+
+%Compute ID set bounds
+identified_set_bounds = cs_linear_delta_lp_fn(y_bar,X_bar,l,cutoff)';
+
+ds_name = strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds');
+    mkdir(ds_name);
+    save( ds_name, 'identified_set_bounds');
+
+display('Finished identified set calc');
+
+
+%% Confidence sets for linear combination of theta's
 
 %load( strcat( data_output_dir, dirname, 'Interacted_Moments/values_for_lp') )
 %load( strcat( data_output_dir, dirname, 'Interacted_Moments/grid_cell') )
@@ -33,6 +79,9 @@ confidence_sets_using_c_lp_alpha = NaN(numdatasets,2);
 %grid of values for l*theta. So we initialize those grids here
 num_beta0_gridpoints = 1001;
 beta0_grid = linspace( xlim_graph(1), xlim_graph(2), num_beta0_gridpoints);
+beta0_grid = sort([beta0_grid, identified_set_bounds]); %add ID set endpoints
+num_beta0_gridpoints = num_beta0_gridpoints + 2; %add 2 for the id set endpoints
+
 rejection_grid_conditional = NaN(numdatasets, num_beta0_gridpoints);
 rejection_grid_hybrid = NaN(numdatasets, num_beta0_gridpoints);
 
@@ -41,8 +90,8 @@ nummoments = size( y_T_cell{ds,1} , 1);
 Z_draws_interacted = randn(nummoments, 10000);
 
 %%CHANGE THIS BACK WHEN DONE DEBUGGING
-%parfor ds = 1:numdatasets
-for ds = 1:numdatasets    
+%for ds = 1:numdatasets
+parfor ds = 1:numdatasets    
    X_T = X_T_cell{ds,1};
    y_T = y_T_cell{ds,1};
    Sigma = Sigma_conditional_cell{ds,1}; 
@@ -128,32 +177,3 @@ end
     
     
     
-%% Estimate the bounds of the identified set by taking the whole chain and setting critical value to 0
-
-
-display('Starting to find identified set');
-
-    long_ds_object = load( char(strcat( data_input_dir, dirname, 'ds_long.mat') )) ;
-    
-    
-    F_array = long_ds_object.F_array;
-    G_array = long_ds_object.G_array;
-    Eta_jt_shocks_array = long_ds_object.Eta_jt_shocks_array;
-    Eta_t_vec = long_ds_object.Eta_t_vec;
-    %Pi_star_array = long_ds_object.Pi_star_array;
-    J_t_array = long_ds_object.J_t_array;
-    J_tminus1_array = long_ds_object.J_tminus1_array;
-    Pi_array = long_ds_object.Pi_array;
-
-    clear long_ds_object;
-    
-    [y_T, X_T] = lp_create_moments_for_identified_set_fn(F_group_cell_moments, F_group_cell_parameters, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, use_basic_moments, lambda, combine_theta_g_moments);
-        
-    %We set c_alpha = 0
-    identified_set_bounds = cs_linear_delta_lp_fn(y_T,X_T,l,0)';
-    
-    ds_name = strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds');
-    mkdir(ds_name);
-    save( ds_name, 'identified_set_bounds');
-
-  display('Done with identified set calc');

@@ -7,10 +7,13 @@ load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds
 addpath('./breakxaxis')
 addpath('./export-fig')
 
-gridpoints = 5000;
-l_theta_grid = linspace(min(confidence_sets_using_c_alpha(:,1)) -1 ,...
-                        max(confidence_sets_using_c_alpha(:,2)) + 1, gridpoints );
-                    
+%gridpoints = 5000;
+%l_theta_grid = linspace(min(confidence_sets_using_c_alpha(:,1)) -1 ,...
+%                        max(confidence_sets_using_c_alpha(:,2)) + 1, gridpoints );
+
+gridpoints = length(beta0_grid);
+l_theta_grid = beta0_grid;
+
 rejection_grid_c_alpha = NaN(gridpoints,1);
 rejection_grid_c_lp_alpha = NaN(gridpoints,1);
 
@@ -138,6 +141,24 @@ row_95 = cellfun( @(x) quantile(x,.95), {excess_lengths_lf, excess_lengths_lfn, 
 
 save( strcat(data_output_folder, filename_graph,'_', 'rows_for_excess_length_table'),...
     'row_05', 'row_50', 'row_95', 'row_mean') ;                                              
+
+
+
+%% Extract size at the upper and lower bound
+upper_bound_index = find(beta0_grid == identified_set_bounds(2) );
+lower_bound_index = find(beta0_grid == identified_set_bounds(1) );
+
+
+upper_bound_sizes = cellfun( @(x) x(upper_bound_index), {rejection_grid_c_alpha,...
+                                                     rejection_grid_c_lp_alpha,...
+                                                     rejection_grid_conditional,...
+                                                     rejection_grid_hybrid,});
+lower_bound_sizes = cellfun( @(x) x(lower_bound_index), {rejection_grid_c_alpha,...
+                                                     rejection_grid_c_lp_alpha,...
+                                                     rejection_grid_conditional,...
+                                                     rejection_grid_hybrid});
+save( strcat(data_output_folder, filename_graph,'_', 'upper_and_lower_bound_size'),...
+    'upper_bound_sizes', 'lower_bound_sizes') ;                                              
 
 
 %%

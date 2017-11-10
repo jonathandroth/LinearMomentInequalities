@@ -36,7 +36,7 @@ lp_set_parameters
 load('../../Output/Simulated_Data/all_simulation_params')
 
 
-numSimulations = 100;
+numSimulations = 1;
 
 boundsMat_meanweight = NaN(numSimulations,2);
 ub_slackCell_meanweight = cell(numSimulations,1);

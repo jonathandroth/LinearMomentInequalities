@@ -2,7 +2,7 @@
 lp_set_parameters
 %% Import data and calculate moments and covariance matrices
 
-lambda_vec = (0.01:1:20.01)';
+%lambda_vec = (0.01:10:20.01)';
 %lambda_vec = (0.00:0.01:0.01)';
 %lambda_vec = (0.01:10:10.01)';
 %lambda_vec = (0.01:.2:5.01)';
@@ -53,10 +53,12 @@ end
 
     ds_dir = strcat( data_output_dir, 'Interacted_Moments/');
     mkdir(ds_dir);
-    save( strcat(ds_dir, 'lambda_results'), 'conditional_test', 'lf_test_original', 'lf_test_modified', 'hybrid_test');
+    save( strcat(ds_dir, 'lambda_results'), 'conditional_test', 'lf_test_original', 'lf_test_modified', 'hybrid_test', 'lambda_vec');
+
+    
 
 
- %% Estimate the identified set for lambda using a large chain and seeing where the moments are <= 0
+ %% Estimate the identified set for lambda using a large chain and seeing where the moments are <= log(T)/sqrt(T)
     display('Starting to find identified set for lambda');
 
     
@@ -192,22 +194,19 @@ lambda_index = 1;
     % WE construct these so that they are less than 0 in expectation (the
     % moment fns are constructed so that y_T + X_T * delta is greater than 0 in expectation)
   T = size(A_g,1);
+  
+  X_bar = X_T / T;
+  y_bar = y_T / T;
+  
   X_T = X_T / sqrt( T ); 
   y_T = y_T / sqrt(T);
   
-    %Transform the moments to add 10^(-5) times the mean
-    c = 0.00001;    
-    k = size(X_T,1);
-    A = ( eye(k,k) + c*ones(k,k) );
-
-    X_T = A * X_T;
-    y_T = A * y_T;
-
   
   %We say lambda is in the identified set if there is any delta such that
-  %the moments hold in our long chain, i.e. if eta <= 0
-  eta  = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','dual-simplex', 'Display', 'off'));
-  identified_set(lambda_index) = (eta <= 0 );
+  %the moments hold in our long chain, i.e. if eta <= log(T)/sqrt(T)
+  cutoff = log(T)/sqrt(T);
+  eta  = test_delta_lp_fn( y_bar, X_bar, optimoptions('linprog','Algorithm','dual-simplex', 'Display', 'off'));
+  identified_set(lambda_index) = (eta <= cutoff );
   
   lambda_index = lambda_index+1;
  end
@@ -229,11 +228,17 @@ lambda_index = 1;
 
 
 identified_set_max = max( lambda_vec( identified_set == 1) );
+identified_set_min = min( lambda_vec( identified_set == 1) );
+
 
 if(~isempty(identified_set_max) )
     line( [identified_set_max; identified_set_max], [0;1], 'LineStyle', '--', 'Color',  'r');
 else
     warning('Didnt find any lambdas in identfied set');
+end
+
+if(~isempty(identified_set_min) && identified_set_min ~= min(lambda_vec)  )
+    line( [identified_set_min; identified_set_min], [0;1], 'LineStyle', '--', 'Color',  'r');
 end
 
 legend( 'Conditional', 'Hybrid', 'LF','LFN', 'Identified Set Bound', 'Location','eastoutside' );
