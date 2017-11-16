@@ -4,7 +4,7 @@
 #SBATCH -p shared
 #SBATCH -c 24 
 #SBATCH -N 1 
-#SBATCH --mem 160000 
+#SBATCH --mem 128000 
 #SBATCH -t 2-01:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=jonathanroth@g.harvard.edu
