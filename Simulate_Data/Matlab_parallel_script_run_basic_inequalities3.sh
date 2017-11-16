@@ -1,7 +1,7 @@
 #!/bin/bash 
 #SBATCH -o ../../Logs/basic_inequalities3.out 
 #SBATCH -e ../../Logs/basic_inequalities3.err 
-#SBATCH -p serial_requeue
+#SBATCH -p shared
 #SBATCH -c 24 
 #SBATCH -N 1 
 #SBATCH --mem 40000 

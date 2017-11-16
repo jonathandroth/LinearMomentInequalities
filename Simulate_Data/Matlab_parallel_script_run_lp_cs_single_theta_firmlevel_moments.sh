@@ -1,7 +1,7 @@
 #!/bin/bash 
 #SBATCH -o ../../Logs/run_lp_cs_single_theta_firmlevel_moments.out
 #SBATCH -e ../../Logs/run_lp_cs_single_theta_firmlevel_moments.err
-#SBATCH -p serial_requeue
+#SBATCH -p shared
 #SBATCH -c 24 
 #SBATCH -N 1 
 #SBATCH --mem 80000 

@@ -1,7 +1,7 @@
 #!/bin/bash 
 #SBATCH -o ../../Logs/differences_grids.out 
 #SBATCH -e ../../Logs/differenes_grids.err 
-#SBATCH -p serial_requeue
+#SBATCH -p shared
 #SBATCH -c 1 
 #SBATCH -N 1 
 #SBATCH --mem 20000 
