@@ -28,10 +28,9 @@ tic;
 load( char(strcat( data_input_dir, dirname, 'all_simulation_params') ) ) %load the parameters needed to simulate the data
 
 
-%%Remove this when done debuggin%
+%Draw 5000 1000-period chains to compute identified set
 T = 1000 + burnout;
-
-numSimulations = 100;
+numSimulations = 5000;
 
 y_bar_cell = cell(numSimulations,1);
 X_bar_cell = cell(numSimulations,1);
@@ -56,13 +55,19 @@ X_bar = cellReduce( X_bar_cell, @(x,d) mean(x,d) );
 N = (T - burnout) * numSimulations;
 cutoff = log(N)/sqrt(N);
 
-%Compute ID set bounds
+%Compute ID set bounds with log(N)/sqrt(N) cutoff
 identified_set_bounds = cs_linear_delta_lp_fn(y_bar,X_bar,l,cutoff)';
-
 ds_name = strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds');
     mkdir(ds_name);
     save( ds_name, 'identified_set_bounds');
 
+%Compute ID set bounds with 0 cutoff
+identified_set_bounds_zerocutoff = cs_linear_delta_lp_fn(y_bar,X_bar,l,0)';
+ds_name = strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds_zerocutoff');
+    mkdir(ds_name);
+    save( ds_name, 'identified_set_bounds_zerocutoff');
+    
+    
 display('Finished identified set calc');
 
 toc;
