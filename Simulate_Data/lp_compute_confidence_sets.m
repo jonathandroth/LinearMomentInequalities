@@ -24,32 +24,33 @@ l'*delta_true
 
 %% Compute identified set
 
+tic;
 load( char(strcat( data_input_dir, dirname, 'all_simulation_params') ) ) %load the parameters needed to simulate the data
 
 
-%%Remove this when done debuggin
-%%T = 1000 + burnout;
+%%Remove this when done debuggin%
+T = 1000 + burnout;
 
-numSimulations = 1;
+numSimulations = 100;
 
+y_bar_cell = cell(numSimulations,1);
+X_bar_cell = cell(numSimulations,1);
 
-for(sim = 1:numSimulations)
+parfor(sim = 1:numSimulations)
 
 
 [J_t_array, J_tminus1_array, Pi_array, F_array, G_array, Pi_star_array, Eta_jt_shocks_array, Eta_t_vec] = simulate_data(sim, F , J ,T, burnout, sigma_nu, sigma_eps, sigma_w, sigma_zetaj, sigma_zetajft, rho, lambda,theta_c,theta_g, g_vec, mu_f);
 
 [~, ~, y_bar_s, X_bar_s] = lp_create_moments_for_identified_set_fn(F_group_cell_moments, F_group_cell_parameters, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, use_basic_moments, lambda, combine_theta_g_moments);
 
-if(sim == 1)
-    y_bar = y_bar_s/ numSimulations;
-    X_bar = X_bar_s / numSimulations;
-else
-    y_bar = y_bar_s/ numSimulations + y_bar;
-    X_bar = X_bar_s / numSimulations + X_bar;
-end
+y_bar_cell{sim,1} = y_bar_s;
+X_bar_cell{sim,1} = X_bar_s;
+
     
 end
 
+y_bar = cellReduce( y_bar_cell, @(x,d) mean(x,d) );
+X_bar = cellReduce( X_bar_cell, @(x,d) mean(x,d) );
 
 
 N = (T - burnout) * numSimulations;
@@ -64,7 +65,7 @@ ds_name = strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_b
 
 display('Finished identified set calc');
 
-
+toc;
 %% Confidence sets for linear combination of theta's
 
 %load( strcat( data_output_dir, dirname, 'Interacted_Moments/values_for_lp') )
