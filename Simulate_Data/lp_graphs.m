@@ -4,6 +4,9 @@
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp'));
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds'));
 
+%load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds_zerocutoff'));
+%identified_set_bounds = identified_set_bounds_zerocutoff;
+
 addpath('./breakxaxis')
 addpath('./export-fig')
 
