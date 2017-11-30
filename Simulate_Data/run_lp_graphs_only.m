@@ -24,3 +24,4 @@ run_lp_cs_9thetacs_interactedmoments
 
 make_power_table
 make_excess_length_table
+make_size_table
