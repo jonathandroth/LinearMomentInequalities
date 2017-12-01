@@ -12,7 +12,8 @@ hybrid_test = NaN(size(conditional_test));
 lf_test_original = NaN(size(conditional_test));
 lf_test_modified = NaN(size(conditional_test));
 
-identified_set = NaN( size(lambda_vec) );
+lambda_identified_set = NaN( size(lambda_vec) );
+lambda_identified_set_zerocutoff = NaN( size(lambda_vec) );
 
 i = 1;
 
@@ -57,162 +58,64 @@ end
 
     
 
+%% Compute identified set
 
- %% Estimate the identified set for lambda using a large chain and seeing where the moments are <= log(T)/sqrt(T)
-    display('Starting to find identified set for lambda');
+tic;
+load( char(strcat( data_input_dir, dirname, 'all_simulation_params') ) ) %load the parameters needed to simulate the data
 
+
+%Draw 5000 1000-period chains to compute identified set
+T = 1000 + burnout;
+%numSimulations = 5000; %CHANGE ME BACK
+numSimulations = 50;
+
+y_bar_cell = cell(numSimulations,1);
+X_bar_cell = cell(numSimulations,length(lambda_vec));
+
+parfor(sim = 1:numSimulations)
+%for(sim = 1:numSimulations)
+
+[J_t_array, J_tminus1_array, Pi_array, F_array, G_array, Pi_star_array, Eta_jt_shocks_array, Eta_t_vec] = simulate_data(sim, F , J ,T, burnout, sigma_nu, sigma_eps, sigma_w, sigma_zetaj, sigma_zetajft, rho, lambda_true,theta_c,theta_g, g_vec, mu_f);
     
-   
-    long_ds_object = load( char(strcat( data_input_dir, dirname, 'ds_long.mat') )) ;
+    X_bar_cell_row = cell(1,length(lambda_vec) );
+    
+    for lambda_index = 1:length(lambda_vec)
+        lambda = lambda_vec(lambda_index);
+        
+        [~, ~, y_bar_s, X_bar_s] = lp_create_moments_for_identified_set_fn(F_group_cell_moments, F_group_cell_parameters, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, use_basic_moments, lambda, combine_theta_g_moments);
+        
+        X_bar_cell_row{1,lambda_index} = X_bar_s;
+
+        
+    end
+    
+        y_bar_cell{sim,1} = y_bar_s;
+        X_bar_cell(sim,:) = X_bar_cell_row;
+end
+
+y_bar = cellReduce( y_bar_cell, @(x,d) mean(x,d) );
+X_bar_collapsed_cell = cell(1, length(lambda_vec));
+
+for lambda_index = 1:length(lambda_vec)
+    X_bar_collapsed_cell{1,lambda_index} = cellReduce( X_bar_cell(:,lambda_index), @(x,d) mean(x,d) );
+end
+
+N = (T - burnout) * numSimulations;
+
+for lambda_index = 1:length(lambda_vec)
+    X_bar_lambda = X_bar_collapsed_cell{lambda_index};
+    lambda_identified_set(lambda_index) = ( test_delta_lp_fn(y_bar, X_bar_lambda) <= (log(N)/sqrt(N)) );
+    lambda_identified_set_zerocutoff(lambda_index) = ( test_delta_lp_fn(y_bar, X_bar_lambda) <= 0 );
+end
+
+save( strcat(ds_dir, 'lambda_identified_set'), ...
+    'lambda_identified_set', 'lambda_identified_set_zerocutoff', 'lambda_vec');
     
     
-    F_array = long_ds_object.F_array;
-    G_array = long_ds_object.G_array;
-    Eta_jt_shocks_array = long_ds_object.Eta_jt_shocks_array;
-    Eta_t_vec = long_ds_object.Eta_t_vec;
-    %Pi_star_array = long_ds_object.Pi_star_array;
-    J_t_array = long_ds_object.J_t_array;
-    J_tminus1_array = long_ds_object.J_tminus1_array;
-    Pi_array = long_ds_object.Pi_array;
+display('Finished identified set calc');
 
-    clear long_ds_object;
-    
-     [A_g_cell, A_c_cell, Y_cell] = generate_moment_fn_multiple_thetacs( F_group_cell_moments, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, use_basic_moments);
+toc;
 
-lambda_index = 1;
-
- for lambda = lambda_vec'
-        lambda
-        
-        first_iter = 1;
-        parameter_number = 1;
-         for(i = 1:num_F_groups_moments)
-           
-            %Update parameter number
-            if( ~ismember( F_group_cell_moments{i},...
-                           F_group_cell_parameters{parameter_number} ) )
-                       parameter_number = parameter_number + 1;
-            end
-                
-                
-            %Get A_g and A_c as a function of lambda from the cell
-            A_g_fn = A_g_cell{i,1};
-            A_c_fn = A_c_cell{i,1};
-            
-            %Evaluate at lambda (default is true lambda)
-            A_g = A_g_fn(lambda);
-            A_c = A_c_fn(lambda);
-
-            %Get Y from the cell
-            Y = Y_cell{i,1};
-            
-            
-            % To get the conditional matrix, we want to construct a matrix
-            % A so that each row is all of the relevant weights on theta_g
-            % and the theta_c's for a given market.
-            % We construct the parts related to theta_c and theta_g
-            % separately
-            if(first_iter == 1)
-                A_c_combined = A_c;
-                A_g_combined = A_g;
-                
-            else
-                A_c_combined = [A_c_combined, A_c];
-                A_g_combined = [A_g_combined, A_g];
-            end
-            
-            
-            %We want to be able to write the moments as y_T - X_T * delta
-            
-            %Let Ybar_i be the sum (down columns) of Y for F-group i (that
-            %is, summing the Y's for each moment over all of the markets)
-            
-            %Similarly, let X_i be the sum down columns for any variable X
-            %from F-group i
-            
-            % We create two matrices:
-           
-            % Y = [ Ybar_1;...
-            %      ;Ybar_NF]
-            % X = [ Abar_c1, 0 ..., Abar_g1,
-            %       0      , Abar_c2,...,Abar_g1 ...]
-            
-            A_c_bar = sum( A_c, 1)';
-            A_g_bar = sum( A_g, 1)';
-            Y_bar = sum(Y, 1)';
-            
-            length_A = size(A_c_bar,1);
-            num_remaining_groups = num_F_groups_parameters - parameter_number;
-            if(first_iter ==1)
-                X_T = [ A_c_bar, zeros(length_A, num_remaining_groups), A_g_bar];
-                
-                y_T = -Y_bar;
-                
-                Y_wide = Y;
-                
-            else
-                num_previous_groups = parameter_number -1;
-                new_row_X = [zeros(length_A, num_previous_groups), A_c_bar, zeros(length_A, num_remaining_groups), A_g_bar];
-                X_T = [X_T;new_row_X];
-                
-                y_T = [y_T;-Y_bar];
-                
-                Y_wide = [Y_wide, Y];
-            end
-            
-            
-            first_iter = 0;
-        end
-         
-          
-       
-        %If combined_theta_g_moments, combined all of the theta_g moments
-        %in to one set, rather than having one for each firm group
-        
-        if( combine_theta_g_moments == 1)        
-            
-            moment_nums = 1:size(X_T,1);
-            moment_num_in_group = mod2( moment_nums, size(X_T,1) / num_F_groups_moments );
-            theta_g_cols = moment_num_in_group == 5 | moment_num_in_group == 6;            
-            moment_nums( theta_g_cols ) = moment_num_in_group( theta_g_cols);
-
-            A_c_combined = grpstats2( A_c_combined' , moment_nums')';
-            A_g_combined = grpstats2( A_g_combined' , moment_nums')';
-            Y_wide = grpstats2( Y_wide', moment_nums')'; 
-            X_T = grpstats2( X_T , moment_nums');
-            y_T = grpstats2( y_T , moment_nums');
-            
-        end
-        
-        A = [A_c_combined , A_g_combined];
-        %Remove any all zero columns
-        A= A(:,any(A));
-        
-        
-    
-  %y_T and x_T are constructed so that population moments = y_T - X_T * delta
-    % WE construct these so that they are less than 0 in expectation (the
-    % moment fns are constructed so that y_T + X_T * delta is greater than 0 in expectation)
-  T = size(A_g,1);
-  
-  X_bar = X_T / T;
-  y_bar = y_T / T;
-  
-  X_T = X_T / sqrt( T ); 
-  y_T = y_T / sqrt(T);
-  
-  
-  %We say lambda is in the identified set if there is any delta such that
-  %the moments hold in our long chain, i.e. if eta <= log(T)/sqrt(T)
-  cutoff = log(T)/sqrt(T);
-  eta  = test_delta_lp_fn( y_bar, X_bar, optimoptions('linprog','Algorithm','dual-simplex', 'Display', 'off'));
-  identified_set(lambda_index) = (eta <= cutoff );
-  
-  lambda_index = lambda_index+1;
- end
- 
- 
- save( strcat(ds_dir, 'lambda_identified_set'), 'identified_set', 'lambda_vec');
 
  %% Plot
 
@@ -227,8 +130,8 @@ lambda_index = 1;
                   mean(lf_test_modified)] ) 
 
 
-identified_set_max = max( lambda_vec( identified_set == 1) );
-identified_set_min = min( lambda_vec( identified_set == 1) );
+identified_set_max = max( lambda_vec( lambda_identified_set == 1) );
+identified_set_min = min( lambda_vec( lambda_identified_set == 1) );
 
 
 if(~isempty(identified_set_max) )

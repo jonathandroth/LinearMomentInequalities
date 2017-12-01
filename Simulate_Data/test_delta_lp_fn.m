@@ -53,22 +53,30 @@ end
 
 [delta_star,eta_star,flag,~,lambda] = linprog( f, A, b ,[],[],[],[],[], options);
 
+
 if(isstruct(lambda) )
-    lambda = lambda.ineqlin;
-else
+    lambda = lambda.ineqlin;% we put this in an if statement since lambda not defined if there are errors in lp 
+end
+
+
+%Deal with infinite case
+if(flag == -3)
+    eta_star = inf;
+    error_flag = 2;
+    warning('Warning: linear program diverged. Setting eta to inf');
+    return;
+end
+
+%Deal with other errors in LP
+if( flag < 0)
     eta_star = Inf;
-    warning('Warning: linear program did not converge. Setting eta to inf');
+    warning(strcat('Warning: error linear program (flag ', num2str(flag),'). Setting eta to inf'));
     error_flag = 1;
     return;
 end
 
 delta_star = delta_star(2:end); %Remove eta, which is the first element
 
-%Deal with infinite cases
-if(flag == -2 || flag == -4 || flag == -5)
-    eta_star = inf;
-    error_flag = 2;
-end
 
 end
 
