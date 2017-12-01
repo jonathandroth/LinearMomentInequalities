@@ -48,10 +48,12 @@ b = - y_T;
 if( isempty(varargin) == 0)
     options = varargin{1};
 else
-    options = optimoptions('linprog','Algorithm','interior-point', 'MaxIter', 2000,'Display', 'off');
+    options = optimoptions('linprog','Algorithm','interior-point', 'MaxIter', 20000,'Display', 'off');
 end
 
 [delta_star,eta_star,flag,~,lambda] = linprog( f, A, b ,[],[],[],[],[], options);
+
+delta_star = delta_star(2:end); %Remove eta, which is the first element
 
 
 if(isstruct(lambda) )
@@ -61,21 +63,18 @@ end
 
 %Deal with infinite case
 if(flag == -3)
-    eta_star = inf;
+    eta_star = Inf;
     error_flag = 2;
     warning('Warning: linear program diverged. Setting eta to inf');
     return;
-end
-
 %Deal with other errors in LP
-if( flag < 0)
+elseif( flag < 0)
     eta_star = Inf;
     warning(strcat('Warning: error linear program (flag ', num2str(flag),'). Setting eta to inf'));
     error_flag = 1;
     return;
 end
 
-delta_star = delta_star(2:end); %Remove eta, which is the first element
 
 
 end
