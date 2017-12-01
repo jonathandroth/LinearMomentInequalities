@@ -70,7 +70,7 @@ end
 %Deal with other errors in LP
 if( flag < 0)
     eta_star = Inf;
-    warning('Warning: error linear program. Setting eta to inf');
+    warning(strcat('Warning: error linear program (flag ', num2str(flag),'). Setting eta to inf'));
     error_flag = 1;
     return;
 end
