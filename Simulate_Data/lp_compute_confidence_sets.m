@@ -85,8 +85,10 @@ confidence_sets_using_c_lp_alpha = NaN(numdatasets,2);
 %grid of values for l*theta. So we initialize those grids here
 num_beta0_gridpoints = 1001;
 beta0_grid = linspace( xlim_graph(1), xlim_graph(2), num_beta0_gridpoints);
-beta0_grid = sort([beta0_grid, identified_set_bounds]); %add ID set endpoints
-num_beta0_gridpoints = num_beta0_gridpoints + 2; %add 2 for the id set endpoints
+
+%Add ID set endpoints using both methods to the grid
+beta0_grid = sort([beta0_grid, identified_set_bounds, identified_set_bounds_zerocutoff]); 
+num_beta0_gridpoints = length(beta0_grid); %update length for the id set endpoints
 
 rejection_grid_conditional = NaN(numdatasets, num_beta0_gridpoints);
 rejection_grid_hybrid = NaN(numdatasets, num_beta0_gridpoints);
