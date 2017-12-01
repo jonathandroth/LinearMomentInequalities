@@ -68,7 +68,7 @@ if(flag == -3)
     warning('Warning: linear program diverged. Setting eta to inf');
     return;
 %Deal with other errors in LP
-elseif( flag < 0)
+elseif( flag <= 0)
     eta_star = Inf;
     warning(strcat('Warning: error linear program (flag ', num2str(flag),'). Setting eta to inf'));
     error_flag = 1;
