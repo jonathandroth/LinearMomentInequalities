@@ -30,12 +30,17 @@ load( char(strcat( data_input_dir, dirname, 'all_simulation_params') ) ) %load t
 
 %Draw 5000 1000-period chains to compute identified set
 T = 1000 + burnout;
-numSimulations = 5000;
 
-y_bar_cell = cell(numSimulations,1);
-X_bar_cell = cell(numSimulations,1);
+if(onLaptop == 0)
+    numSimulationsIDSet = 5000;
+else
+    numSimulationsIDSet = 2;
+end
 
-parfor(sim = 1:numSimulations)
+y_bar_cell = cell(numSimulationsIDSet,1);
+X_bar_cell = cell(numSimulationsIDSet,1);
+
+parfor(sim = 1:numSimulationsIDSet)
 
 
 [J_t_array, J_tminus1_array, Pi_array, F_array, G_array, Pi_star_array, Eta_jt_shocks_array, Eta_t_vec] = simulate_data(sim, F , J ,T, burnout, sigma_nu, sigma_eps, sigma_w, sigma_zetaj, sigma_zetajft, rho, lambda,theta_c,theta_g, g_vec, mu_f);
@@ -52,7 +57,7 @@ y_bar = cellReduce( y_bar_cell, @(x,d) mean(x,d) );
 X_bar = cellReduce( X_bar_cell, @(x,d) mean(x,d) );
 
 
-N = (T - burnout) * numSimulations;
+N = (T - burnout) * numSimulationsIDSet;
 cutoff = log(N)/sqrt(N);
 
 %Compute ID set bounds with log(N)/sqrt(N) cutoff
