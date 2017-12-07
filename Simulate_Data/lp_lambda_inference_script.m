@@ -1,10 +1,11 @@
 %% Specify parameters
 lp_set_parameters
 
-%% Import data and calculate moments and covariance matrices and accept/reject over grid
-lp_lambda_moments_and_covariances
 
-    
+
+%% Import data and calculate moments and covariance matrices and accept/reject over grid
+if( graphs_only == 0 )
+lp_lambda_moments_and_covariances    
 
 %% Compute identified set
 
@@ -18,6 +19,7 @@ display('Finished identified set calc');
 
 toc;
 
+end
 
  %% Plot
 

@@ -1,38 +1,4 @@
- ds_dir = strcat( data_output_dir, 'Interacted_Moments/');
- load(  strcat(ds_dir, 'lambda_identified_set') );
- load(  strcat(ds_dir, 'lambda_results') );
- 
-  
- plot(lambda_vec, [mean(conditional_test);...
-                  mean(hybrid_test);...
-                  mean(lf_test_original);...
-                  mean(lf_test_modified)] ) 
-
-
-identified_set_max = max( lambda_vec( lambda_identified_set == 1) );
-identified_set_min = min( lambda_vec( lambda_identified_set == 1) );
-
-
-if(~isempty(identified_set_max) )
-    line( [identified_set_max; identified_set_max], [0;1], 'LineStyle', '--', 'Color',  'r');
-else
-    warning('Didnt find any lambdas in identfied set');
-end
-
-if(~isempty(identified_set_min) && identified_set_min ~= min(lambda_vec)  )
-    line( [identified_set_min; identified_set_min], [0;1], 'LineStyle', '--', 'Color',  'r');
-end
-
-legend( 'Conditional', 'Hybrid', 'LF','LFN', 'Identified Set Bound', 'Location','eastoutside' );
-ylabel('Rejection Probability');
-xlabel('Lambda');
-title('Rejection Probabilities for Lambda');
-saveas( gcf, strcat(figures_output_dir,filename_graph ), 'epsc');
-
-display( strcat(figures_output_dir,filename_graph ) )
-
-
-%% Make rows for excess length table
+%% Create excess length table
 
 full_rejection_grid_lf = lf_test_original;
 full_rejection_grid_lfn = lf_test_modified;
@@ -92,6 +58,4 @@ row_95_with_infs = cellfun( @(x) quantile(x,.95), {excess_lengths_lf_with_infs, 
 save( strcat(data_output_folder, filename_graph,'_', 'rows_for_excess_length_table_lambda'),...
     'row_05', 'row_50', 'row_95', 'row_mean',...
     'row_05_with_infs', 'row_50_with_infs', 'row_95_with_infs', 'row_mean_with_infs') ;                                              
-
-
 
