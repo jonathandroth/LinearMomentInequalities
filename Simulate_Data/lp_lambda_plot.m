@@ -37,7 +37,7 @@ display( strcat(figures_output_dir,filename_graph ) )
 full_rejection_grid_lf = lf_test_original;
 full_rejection_grid_lfn = lf_test_modified;
 full_rejection_grid_conditional = conditional_test;
-full_rejection_grid_test = hybrid_test;
+full_rejection_grid_hybrid = hybrid_test;
 
 
 %For the conditional and hybrid approaches, we compute the area by
@@ -48,14 +48,14 @@ full_rejection_grid_test = hybrid_test;
 %shouldn't matter since if set properly, the rejection probability is 1 at
 %the endpoint)
 
-gridWeightsVec = 0.5 * ([0,diff(lambda_grid)] + [diff(lambda_grid),0] );
+gridWeightsVec = 0.5 * ([0,diff(lambda_vec')] + [diff(lambda_vec'),0] );
 gridWeightsMat = repmat( gridWeightsVec, size(full_rejection_grid_conditional,1), 1);
 
 
+
+identified_set_length = sum( gridWeightsVec .* lambda_identified_set');
+
 acceptedAreaFn = @(grid) sum( gridWeightsMat .* (1 - grid ), 2);
-
-identified_set_length = acceptedAreaFn(lambda_identified_set);
-
 excessLengthFn = @(grid) acceptedAreaFn(grid) - identified_set_length ;
 
 excess_lengths_lf = excessLengthFn(full_rejection_grid_lf);
