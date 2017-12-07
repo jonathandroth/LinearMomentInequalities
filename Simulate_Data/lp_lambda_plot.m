@@ -1,3 +1,6 @@
+ 
+ data_output_folder = strcat( data_output_dir, dirname, 'Interacted_Moments/');
+
  ds_dir = strcat( data_output_dir, 'Interacted_Moments/');
  load(  strcat(ds_dir, 'lambda_identified_set') );
  load(  strcat(ds_dir, 'lambda_results') );
