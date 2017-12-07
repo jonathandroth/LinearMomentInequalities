@@ -31,8 +31,9 @@ data_output_folder = strcat( data_output_dir, dirname, 'Interacted_Moments/');
 size_table_file = strcat(data_output_folder, filename_graph,'_', 'upper_and_lower_bound_size','.mat');
 load(size_table_file)
 
-mat_ub_sizes = [mat_ub_sizes; upper_bound_sizes];
-mat_lb_sizes = [mat_lb_sizes; lower_bound_sizes];
+mat_ub_sizes = round([mat_ub_sizes; upper_bound_sizes],2);
+mat_lb_sizes = round([mat_lb_sizes; lower_bound_sizes],2);
+
 
 filename_vec = [filename_vec ; filename_graph];
 moment_type_cell{end+1} = moment_type{1}; 

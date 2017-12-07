@@ -1,5 +1,5 @@
 %filename_graph = 'Theta_g_Rejection_Probabilities';
-for filename_graph = {'Mean_Weight_Rejection_Probabilities','Theta_g_Rejection_Probabilities'};
+for filename_graph = {'lambda_rejection_probabilities'}
 
 filename_graph = filename_graph{1};
 
