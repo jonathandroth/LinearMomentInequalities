@@ -2,7 +2,9 @@
 
 %% Create graphs
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp'));
+load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds_zerocutoff'));
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds'));
+
 
 %load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds_zerocutoff'));
 %identified_set_bounds = identified_set_bounds_zerocutoff;
@@ -84,7 +86,7 @@ clf
 %options = optimoptions('linprog', 'Display', 'final' );
 %linprog( 1, [1;-1], [2,-3],[],[],[],[], [],options )
 
-%%
+%% Create rows for table that shows where we achieve various power thresholds
 
 [lb_row_05,ub_row_05] = ub_and_lb_row_for_table( beta0_grid, l_theta_grid,...
                                                      rejection_grid_c_alpha,...
@@ -117,6 +119,7 @@ save( strcat(data_output_folder, filename_graph,'_', 'rows_for_power_table'),...
 
 %% Create excess length table
 identified_set_length = identified_set_bounds(2) - identified_set_bounds(1);
+identified_set_length_zerocutoff = identified_set_bounds_zerocutoff(2) - identified_set_bounds_zerocutoff(1);
 
 %For the LF approaches, where we have a CS already, just take its length
 %and subtract the identified set length
@@ -145,8 +148,13 @@ row_95 = cellfun( @(x) quantile(x,.95), {excess_lengths_lf, excess_lengths_lfn, 
 save( strcat(data_output_folder, filename_graph,'_', 'rows_for_excess_length_table'),...
     'row_05', 'row_50', 'row_95', 'row_mean') ;                                              
 
+row_mean_zerocutoff = row_mean - (identified_set_length_zerocutoff - identified_set_length);
+row_05_zerocutoff = row_05 - (identified_set_length_zerocutoff - identified_set_length);
+row_50_zerocutoff = row_50 - (identified_set_length_zerocutoff - identified_set_length);
+row_95_zerocutoff = row_95 - (identified_set_length_zerocutoff - identified_set_length);
 
-
+save( strcat(data_output_folder, filename_graph,'_', 'rows_for_excess_length_table_zerocutoff'),...
+    'row_05_zerocutoff', 'row_50_zerocutoff', 'row_95_zerocutoff', 'row_mean_zerocutoff') ;                                              
 %% Extract size at the upper and lower bound
 upper_bound_index = find(beta0_grid == identified_set_bounds(2) );
 lower_bound_index = find(beta0_grid == identified_set_bounds(1) );
@@ -162,6 +170,22 @@ lower_bound_sizes = cellfun( @(x) x(lower_bound_index), {rejection_grid_c_alpha,
                                                      rejection_grid_hybrid});
 save( strcat(data_output_folder, filename_graph,'_', 'upper_and_lower_bound_size'),...
     'upper_bound_sizes', 'lower_bound_sizes') ;                                              
+
+%% Extract size at the upper and lower bound using zerocutoff
+upper_bound_index_zerocutoff = find(beta0_grid == identified_set_bounds_zerocutoff(2) );
+lower_bound_index_zerocutoff = find(beta0_grid == identified_set_bounds_zerocutoff(1) );
+
+
+upper_bound_sizes_zerocutoff = cellfun( @(x) x(upper_bound_index_zerocutoff), {rejection_grid_c_alpha,...
+                                                     rejection_grid_c_lp_alpha,...
+                                                     rejection_grid_conditional,...
+                                                     rejection_grid_hybrid,});
+lower_bound_sizes_zerocutoff = cellfun( @(x) x(lower_bound_index_zerocutoff), {rejection_grid_c_alpha,...
+                                                     rejection_grid_c_lp_alpha,...
+                                                     rejection_grid_conditional,...
+                                                     rejection_grid_hybrid});
+save( strcat(data_output_folder, filename_graph,'_', 'upper_and_lower_bound_size_zerocutoff'),...
+    'upper_bound_sizes_zerocutoff', 'lower_bound_sizes_zerocutoff') ;                                              
 
 
 %%

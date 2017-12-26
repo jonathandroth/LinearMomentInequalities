@@ -57,6 +57,7 @@ gridWeightsMat = repmat( gridWeightsVec, size(full_rejection_grid_conditional,1)
 
 
 identified_set_length = sum( gridWeightsVec .* lambda_identified_set');
+identified_set_length_zerocutof = sum( gridWeightsVec .* lambda_identified_set_zerocutoff');
 
 acceptedAreaFn = @(grid) sum( gridWeightsMat .* (1 - grid ), 2);
 excessLengthFn = @(grid) acceptedAreaFn(grid) - identified_set_length ;
@@ -72,6 +73,12 @@ row_mean = cellfun( @(x) mean(x), {excess_lengths_lf, excess_lengths_lfn, excess
 row_05 = cellfun( @(x) quantile(x,.05), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
 row_50 = cellfun( @(x) quantile(x,.50), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
 row_95 = cellfun( @(x) quantile(x,.95), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
+
+
+row_mean_zerocutoff = row_mean - (identified_set_length_zerocutoff - identified_set_length);
+row_05_zerocutoff = row_05 - (identified_set_length_zerocutoff - identified_set_length);
+row_50_zerocutoff = row_50 - (identified_set_length_zerocutoff - identified_set_length);
+row_95_zerocutoff = row_95 - (identified_set_length_zerocutoff - identified_set_length);
 
 %Compute the various statistics treating unbounded instances as infinity,
 %rather than truncated at the endpoint, as done above
@@ -94,6 +101,7 @@ row_95_with_infs = cellfun( @(x) quantile(x,.95), {excess_lengths_lf_with_infs, 
 
 save( strcat(data_output_folder, filename_graph,'_', 'rows_for_excess_length_table_lambda'),...
     'row_05', 'row_50', 'row_95', 'row_mean',...
+    'row_05_zerocutoff', 'row_50_zerocutoff', 'row_95_zerocutoff', 'row_mean_zerocutoff',...
     'row_05_with_infs', 'row_50_with_infs', 'row_95_with_infs', 'row_mean_with_infs') ;                                              
 
 
