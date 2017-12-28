@@ -26,7 +26,8 @@ make_power_table
 
 use_zero_cutoff = 0;
 make_excess_length_table;
+make_size_table;
+
 use_zero_cutoff =1;
 make_excess_length_table;
-
 make_size_table
