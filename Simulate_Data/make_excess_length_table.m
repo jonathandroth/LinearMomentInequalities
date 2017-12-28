@@ -39,11 +39,18 @@ data_output_folder = strcat( data_output_dir, dirname, 'Interacted_Moments/');
 excess_length_table_file = strcat(data_output_folder, filename_graph,'_', 'rows_for_excess_length_table', suffix);
 load(excess_length_table_file)
 
-mat_05 = [mat_05; row_05];
-mat_50 = [mat_50; row_50];
-mat_95 = [mat_95; row_95];
-mat_mean = [mat_mean; row_mean];
-
+if(use_zero_cutoff == 0)
+    mat_05 = [mat_05; row_05];
+    mat_50 = [mat_50; row_50];
+    mat_95 = [mat_95; row_95];
+    mat_mean = [mat_mean; row_mean];
+else
+    mat_05 = [mat_05; row_05_zerocutoff];
+    mat_50 = [mat_50; row_50_zerocutoff];
+    mat_95 = [mat_95; row_95_zerocutoff];
+    mat_mean = [mat_mean; row_mean_zerocutoff];
+end
+    
 filename_vec = [filename_vec ; filename_graph];
 moment_type_cell{end+1} = moment_type{1}; 
     end
