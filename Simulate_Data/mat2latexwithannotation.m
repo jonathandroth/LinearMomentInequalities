@@ -8,14 +8,18 @@ txt = '';
 for(row = 1:numRows)
     for(col = 1:numCols)
         
-        dataEntryString = ['$', num2str( mat(row,col) ), '$'];
+        %Load the relevant entry in mat, round to two decimals, convert to string
+        dataEntryString = num2str( round( mat(row,col), 2) );
         
+        %If we should annotate, add the annotation as a superscript
         if( annotationMat(row,col) == 1)
-            dataEntryString = [dataEntryString, '^{', annotationTxt, '}'];
+            dataEntryString = [dataEntryString, '\\rlap{$^{', annotationTxt, '}$}'];
         end
-                
-        %Convert the relevant matrix entry to a string and add to txt,
-        %bracketed by $ signs
+        
+     
+        %Convert the relevant matrix entry to a string and add to txt
+        
+        %txt = [txt, ['$', dataEntryString, '$']];
         txt = [txt, dataEntryString];
         
         %If not last column, add spaces and alignment sign

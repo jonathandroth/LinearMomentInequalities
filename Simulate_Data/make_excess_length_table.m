@@ -1,5 +1,11 @@
 %filename_graph = 'Theta_g_Rejection_Probabilities';
-for filename_graph = {'Mean_Weight_Rejection_Probabilities','Theta_g_Rejection_Probabilities'};
+if(use_zero_cutoff == 1)
+    suffix = "_zerocutoff";
+else
+    suffix = '';
+end
+
+for filename_graph = {'Mean_Weight_Rejection_Probabilities','Theta_g_Rejection_Probabilities'}
 
 filename_graph = filename_graph{1};
 
@@ -30,7 +36,7 @@ if( strcmp(filename_graph ,'Theta_g_Rejection_Probabilities') )
 end
 
 data_output_folder = strcat( data_output_dir, dirname, 'Interacted_Moments/');
-excess_length_table_file = strcat(data_output_folder, filename_graph,'_', 'rows_for_excess_length_table');
+excess_length_table_file = strcat(data_output_folder, filename_graph,'_', 'rows_for_excess_length_table', suffix);
 load(excess_length_table_file)
 
 mat_05 = [mat_05; row_05];
@@ -52,23 +58,23 @@ mat_mean = [ [2;2;4;4;10;10], [6;14;14;38;38;110], mat_mean];
 
 
 fid = fopen(strcat('/Volumes/jonathanroth/Moment_Inequalities_Ariel/Output/',...
-                    filename_graph,'_excess_length_table','05','.tex') ,'wt');
+                    filename_graph,'_excess_length_table','05',suffix,'.tex') ,'wt');
 fprintf(fid,clean_latex(mat_05));
 fclose(fid);
 
 
 fid = fopen(strcat('/Volumes/jonathanroth/Moment_Inequalities_Ariel/Output/',...
-                    filename_graph,'_excess_length_table','50','.tex') ,'wt');
+                    filename_graph,'_excess_length_table','50',suffix,'.tex') ,'wt');
 fprintf(fid,clean_latex(mat_50));
 fclose(fid);
 
 fid = fopen(strcat('/Volumes/jonathanroth/Moment_Inequalities_Ariel/Output/',...
-                    filename_graph,'_excess_length_table','95','.tex') ,'wt');
+                    filename_graph,'_excess_length_table','95',suffix,'.tex') ,'wt');
 fprintf(fid,clean_latex(mat_95));
 fclose(fid);
 
 fid = fopen(strcat('/Volumes/jonathanroth/Moment_Inequalities_Ariel/Output/',...
-                    filename_graph,'_excess_length_table','mean','.tex') ,'wt');
+                    filename_graph,'_excess_length_table','mean',suffix,'.tex') ,'wt');
 fprintf(fid,clean_latex(mat_mean));
 fclose(fid);
 

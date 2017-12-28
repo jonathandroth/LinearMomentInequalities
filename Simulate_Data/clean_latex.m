@@ -8,11 +8,13 @@
 
 function txt = clean_latex( mat)
 
-if(isnumeric(mat) )
-    
+if(isnumeric(mat) )    
     %txt = latex(mat);
     txt = mat2latex(mat);
+else
+    txt = mat;
 end
+
 txt = regexprep(txt,'\.(\d\d)\d(\d)*\$','\.$1\$'); %convert to two decimal places
 txt = regexprep(txt,'\.00\$','\$'); %convert two 0's after decimal to nothing
 txt = regexprep(txt,'\\','\\\\'); %double backslashes

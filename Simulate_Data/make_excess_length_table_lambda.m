@@ -56,10 +56,10 @@ end
 %%
 
 %Create a matrix that's one for entries that are affected by infinities
-annonate_mat_05 = (mat_05 == mat_05_with_infs);
-annonate_mat_50 = (mat_50 == mat_50_with_infs);
-annonate_mat_95 = (mat_95 == mat_95_with_infs);
-annonate_mat_mean = (mat_mean == mat_mean_with_infs);
+annotate_mat_05 = (Inf == mat_05_with_infs);
+annotate_mat_50 = (Inf == mat_50_with_infs);
+annotate_mat_95 = (Inf == mat_95_with_infs);
+annotate_mat_mean = (Inf == mat_mean_with_infs);
 
 
 mat_05 = [ [2;2;4;4;10;10]+1, [6;14;14;38;38;110], mat_05];
