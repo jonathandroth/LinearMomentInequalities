@@ -5,6 +5,7 @@ filename_graph = filename_graph{1};
 
 mat_ub_sizes = [];
 mat_lb_sizes = [];
+mat_max_sizes = [];
 
 filename_vec = [];
 numthetha_vec = [];
@@ -33,7 +34,7 @@ load(size_table_file)
 
 mat_ub_sizes = round([mat_ub_sizes; upper_bound_sizes],2);
 mat_lb_sizes = round([mat_lb_sizes; lower_bound_sizes],2);
-
+mat_max_sizes = round([mat_max_sizes; max_size_in_id_set],2);
 
 filename_vec = [filename_vec ; filename_graph];
 moment_type_cell{end+1} = moment_type{1}; 
@@ -55,5 +56,9 @@ fid = fopen(strcat('../../Output/',...
 fprintf(fid,clean_latex(mat_lb_sizes));
 fclose(fid);
 
+fid = fopen(strcat('../../Output/',...
+                    filename_graph,'_max_size_in_id_set','.tex') ,'wt');
+fprintf(fid,clean_latex(mat_max_sizes));
+fclose(fid);
 
 end
