@@ -57,7 +57,7 @@ gridWeightsMat = repmat( gridWeightsVec, size(full_rejection_grid_conditional,1)
 
 
 identified_set_length = sum( gridWeightsVec .* lambda_identified_set');
-identified_set_length_zerocutof = sum( gridWeightsVec .* lambda_identified_set_zerocutoff');
+identified_set_length_zerocutoff = sum( gridWeightsVec .* lambda_identified_set_zerocutoff');
 
 acceptedAreaFn = @(grid) sum( gridWeightsMat .* (1 - grid ), 2);
 excessLengthFn = @(grid) acceptedAreaFn(grid) - identified_set_length ;
