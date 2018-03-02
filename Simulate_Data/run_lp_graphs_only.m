@@ -1,7 +1,7 @@
 
 
 graphs_only = 1
-%remote_to_server = 1
+remote_to_server = 1
 
 xsplit_graph_meanweight = [10,80]
 xlim_graph_meanweight = [-10,100]

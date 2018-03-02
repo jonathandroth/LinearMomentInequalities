@@ -28,8 +28,8 @@ end
 
 legend( 'LFP','LF', 'Conditional', 'Hybrid', 'Identified Set Bound', 'Location','eastoutside' );
 ylabel('Rejection Probability');
-xlabel('Lambda');
-title('Rejection Probabilities for Lambda');
+xlabel('Beta');
+%title('Rejection Probabilities for Beta');
 
 %saveas( gcf, strcat(figures_output_dir,filename_graph ), 'epsc');
 export_fig(strcat(figures_output_dir,filename_graph,'.pdf'));
