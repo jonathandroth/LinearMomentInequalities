@@ -30,7 +30,9 @@ legend( 'LFP','LF', 'Conditional', 'Hybrid', 'Identified Set Bound', 'Location',
 ylabel('Rejection Probability');
 xlabel('Lambda');
 title('Rejection Probabilities for Lambda');
-saveas( gcf, strcat(figures_output_dir,filename_graph ), 'epsc');
+
+%saveas( gcf, strcat(figures_output_dir,filename_graph ), 'epsc');
+export_fig(strcat(figures_output_dir,filename_graph,'.pdf'));
 
 display( strcat(figures_output_dir,filename_graph ) )
 
