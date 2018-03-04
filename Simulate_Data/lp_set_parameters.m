@@ -48,7 +48,7 @@ num_F_groups_moments = size(F_group_cell_moments,1);
 num_F_groups_parameters = size(F_group_cell_parameters,1);
 
 
-numsims_lp = 200;
+numsims_lp = 1000;
 
 
 if( exist( 'combine_theta_g_moments') == 0)

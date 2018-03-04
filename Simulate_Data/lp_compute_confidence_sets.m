@@ -115,11 +115,11 @@ parfor ds = 1:numdatasets
 %    X_T = D_sigma_minushalf * X_T;
 %    
    
-   %Do the LF test and store the resulting confidence set
+   %Do the LF (aka LFP) test and store the resulting confidence set
    c_alpha = c_lf(Sigma, alpha, Z_draws_interacted); 
    confidence_sets_using_c_alpha(ds,:) = cs_linear_delta_lp_fn(y_T,X_T,l,c_alpha)';
    
-   %Do the modified least favorable test and store the resulting confidence
+   %Do the modified least favorable test (aka LF) and store the resulting confidence
    %set
    c_lp_alpha = c_lf_lp(X_T,Z_draws_interacted(:,1:numsims_lp),Sigma,alpha);
    confidence_sets_using_c_lp_alpha(ds,:) = cs_linear_delta_lp_fn(y_T,X_T,l,c_lp_alpha)';

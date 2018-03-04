@@ -31,17 +31,17 @@ X_T = X_T_cell{ds};
 y_T = y_T_cell{ds};
 Sigma = Sigma_conditional_cell{ds};
 
-
-conditional_test(ds,i) = lp_conditional_test_fn( y_T, X_T, Sigma, alpha);
-hybrid_test(ds,i) = lp_hybrid_test_fn( y_T, X_T, Sigma, alpha, alpha/10);
-
 %Do non-conditional tests
 c_alpha = c_lf(Sigma, alpha, Z_draws_interacted);
-c_lp_alpha = c_lf_lp(X_T,Z_draws_interacted(:,1:numsims_lp),Sigma,alpha);
+[c_lp_alpha, eta_draws] = c_lf_lp(X_T,Z_draws_interacted(:,1:numsims_lp),Sigma,alpha);
 eta = test_delta_lp_fn( y_T, X_T);
 
 lf_test_original(ds,i) = eta > c_alpha;
 lf_test_modified(ds,i) = eta > c_lp_alpha;
+
+conditional_test(ds,i) = lp_conditional_test_fn( y_T, X_T, Sigma, alpha);
+hybrid_test(ds,i) = lp_hybrid_test_fn( y_T, X_T, Sigma, alpha, alpha/10, eta_draws);
+
 
 end
 
