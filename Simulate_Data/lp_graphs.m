@@ -80,6 +80,7 @@ if( exist('filename_graph') ==0)
        filename_graph =  'Mean_Weight_Rejection_Probabilities';
 end
 
+set(findall(gcf,'-property','FontSize'),'FontSize',14);
 
 export_fig(strcat(figures_output_dir,filename_graph,'.pdf'));
 clf
