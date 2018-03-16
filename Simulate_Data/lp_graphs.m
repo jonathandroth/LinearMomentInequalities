@@ -35,14 +35,23 @@ end
 
 getrow = @(x,row) x(row,:);
 
-plot( repmat( l_theta_grid', 1, 2), [rejection_grid_c_alpha, rejection_grid_c_lp_alpha ]);
+hold('on');
 
-line( beta0_grid , rejection_grid_conditional, 'Color', getrow( get(gca,'colororder'),3 ) )
-line( beta0_grid , rejection_grid_hybrid, 'Color', getrow( get(gca,'colororder'),4 ) )
+%p = plot( repmat( l_theta_grid', 1, 2), [rejection_grid_c_alpha, rejection_grid_c_lp_alpha ]);
 
-line( [identified_set_bounds(1);identified_set_bounds(1)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
-line( [identified_set_bounds(2);identified_set_bounds(2)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
+l1 = plot(l_theta_grid', rejection_grid_c_alpha, 'Color', getrow( get(gca,'colororder'),1 ) )
+l2 = plot(l_theta_grid', rejection_grid_c_lp_alpha, 'Color', getrow( get(gca,'colororder'),2 ) )
+l3 = plot( beta0_grid , rejection_grid_conditional, 'Color', getrow( get(gca,'colororder'),3 ) )
+l4 = plot( beta0_grid , rejection_grid_hybrid, 'Color', getrow( get(gca,'colororder'),4 ) )
 
+l5 = plot( [identified_set_bounds(1);identified_set_bounds(1)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
+l6 = plot( [identified_set_bounds(2);identified_set_bounds(2)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
+
+%p.Color(4) = 0.7;
+l1.Color(4) = 0.7;
+l2.Color(4) = 0.7;
+l3.Color(4) = 0.7;
+l4.Color(4) = 0.7;
 
 legend( 'LFP','LF', 'Conditional', 'Hybrid', 'Identified Set Boundary',  'Location',....
     'southoutside', 'Orientation', 'horizontal' );
