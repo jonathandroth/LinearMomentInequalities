@@ -82,6 +82,8 @@ end
 
 set(findall(gcf,'-property','FontSize'),'FontSize',14);
 
+set(findall(gcf, 'Type', 'Line'),'LineWidth',2); %Linewidth for plot lines
+
 export_fig(strcat(figures_output_dir,filename_graph,'.pdf'));
 clf
 
