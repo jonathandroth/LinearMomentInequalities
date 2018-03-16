@@ -45,7 +45,8 @@ line( [identified_set_bounds(1);identified_set_bounds(1)] ,[0;1], 'LineStyle', '
 line( [identified_set_bounds(2);identified_set_bounds(2)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
 
 
-legend( 'LFP','LF', 'Conditional', 'Hybrid', 'Identified Set Boundary',  'Location','eastoutside' );
+legend( 'LFP','LF', 'Conditional', 'Hybrid', 'Identified Set Boundary',  'Location',....
+    'southoutside', 'Orientation', 'horizontal' );
 ylabel('Rejection Probability');
 
 
