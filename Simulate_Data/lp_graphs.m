@@ -11,7 +11,6 @@ load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds
 
 addpath('./breakxaxis')
 addpath('./export-fig')
-
 %gridpoints = 5000;
 %l_theta_grid = linspace(min(confidence_sets_using_c_alpha(:,1)) -1 ,...
 %                        max(confidence_sets_using_c_alpha(:,2)) + 1, gridpoints );
@@ -49,6 +48,15 @@ legend( 'LFP','LF', 'Conditional', 'Hybrid', 'Identified Set Boundary',  'Locati
     'southoutside', 'Orientation', 'horizontal' );
 ylabel('Rejection Probability');
 
+%set(gcf,'PaperUnits','inches','PaperPosition',[0 0 3 2.5]);  
+
+% %If no xlabel specified, do 'l * theta*
+% if( exist('xlabel_graph') == 0)
+%     xlabel_graph = 'l * theta';    
+% end
+% 
+% xlabel(xlabel_graph);
+
 
 if( exist('xlim_graph') ==1)
     %If manual bounds are specified for the x-axis limit, impose these
@@ -68,12 +76,7 @@ end
     end
 
     
-%If no xlabel specified, do 'l * theta*
-if( exist('xlabel_graph') == 0)
-    xlabel_graph = 'l * theta';    
-end
 
-xlabel(xlabel_graph);
 
 %If filename not specified, assume it's means
 if( exist('filename_graph') ==0)
@@ -85,6 +88,7 @@ set(findall(gcf,'-property','FontSize'),'FontSize',14);
 set(findall(gcf, 'Type', 'Line'),'LineWidth',2); %Linewidth for plot lines
 
 export_fig(strcat(figures_output_dir,filename_graph,'.pdf'));
+
 clf
 
 %options = optimoptions('linprog', 'Display', 'final' );
