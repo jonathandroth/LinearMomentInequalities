@@ -41,8 +41,8 @@ hold('on');
 
 l1 = plot(l_theta_grid', rejection_grid_c_alpha, 'Color', getrow( get(gca,'colororder'),1 ) )
 l2 = plot(l_theta_grid', rejection_grid_c_lp_alpha, 'Color', getrow( get(gca,'colororder'),2 ) )
-l3 = plot( beta0_grid , rejection_grid_conditional, 'Color', getrow( get(gca,'colororder'),3 ) )
-l4 = plot( beta0_grid , rejection_grid_hybrid, 'Color', getrow( get(gca,'colororder'),4 ) )
+l3 = plot( beta0_grid , rejection_grid_conditional, 'Color', getrow( get(gca,'colororder'),4 ), 'LineStyle', ':')
+l4 = plot( beta0_grid , rejection_grid_hybrid, 'Color', getrow( get(gca,'colororder'),3 ), 'LineStyle', '-.' )
 
 l5 = plot( [identified_set_bounds(1);identified_set_bounds(1)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
 l6 = plot( [identified_set_bounds(2);identified_set_bounds(2)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
