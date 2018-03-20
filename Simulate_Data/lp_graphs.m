@@ -48,10 +48,10 @@ l5 = plot( [identified_set_bounds(1);identified_set_bounds(1)] ,[0;1], 'LineStyl
 l6 = plot( [identified_set_bounds(2);identified_set_bounds(2)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
 
 %p.Color(4) = 0.7;
-l1.Color(4) = 0.7;
-l2.Color(4) = 0.7;
-l3.Color(4) = 0.7;
-l4.Color(4) = 0.7;
+% l1.Color(4) = 0.7;
+% l2.Color(4) = 0.7;
+% l3.Color(4) = 0.7;
+% l4.Color(4) = 0.7;
 
 legend( 'LFP','LF', 'Conditional', 'Hybrid', 'Identified Set Boundary',  'Location',....
     'southoutside', 'Orientation', 'horizontal' );
@@ -94,7 +94,7 @@ end
 
 set(findall(gcf,'-property','FontSize'),'FontSize',14);
 
-set(findall(gcf, 'Type', 'Line'),'LineWidth',2); %Linewidth for plot lines
+set(findall(gcf, 'Type', 'Line'),'LineWidth',3); %Linewidth for plot lines
 
 export_fig(strcat(figures_output_dir,filename_graph,'.pdf'));
 
