@@ -58,7 +58,7 @@ end
 
 mat_ub_sizes = [ [3;3;5;5;11;11], [6;14;14;38;38;110], mat_ub_sizes];
 %mat_lb_sizes = [ [3;3;5;5;11;11], [6;14;14;38;38;110], mat_lb_sizes];
-mat_max_sizes = [ [3;3;5;5;11;11], [6;14;14;38;38;110], mat_max_sizes];
+%mat_max_sizes = [ [3;3;5;5;11;11], [6;14;14;38;38;110], mat_max_sizes];
 
 fid = fopen(strcat('../../Output/',...
                     filename_graph,'_upper_bound_sizes_lambda',suffix,'.tex') ,'wt');
