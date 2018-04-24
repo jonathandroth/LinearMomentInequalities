@@ -1,7 +1,7 @@
 #!/bin/bash 
 #SBATCH -o ../../Logs/simulate_data.out 
 #SBATCH -e ../../Logs/simulate_data.err 
-#SBATCH -p serial_requeue
+#SBATCH -p shared
 #SBATCH -c 1 
 #SBATCH -N 1 
 #SBATCH --mem 16000 

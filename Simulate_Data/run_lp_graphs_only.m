@@ -23,4 +23,11 @@ run_lp_cs_3thetacs_interactedmoments
 run_lp_cs_9thetacs_interactedmoments
 
 make_power_table
-make_excess_length_table
+
+use_zero_cutoff = 0;
+make_excess_length_table;
+make_size_table;
+
+use_zero_cutoff =1;
+make_excess_length_table;
+make_size_table

@@ -1,7 +1,7 @@
 #!/bin/bash 
 #SBATCH -o ../../Logs/FILENAME.out
 #SBATCH -e ../../Logs/FILENAME.err
-#SBATCH -p serial_requeue
+#SBATCH -p shared
 #SBATCH -c 24 
 #SBATCH -N 1 
 #SBATCH --mem 80000 

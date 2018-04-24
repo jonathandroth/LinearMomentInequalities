@@ -72,7 +72,7 @@ tic;
     J_tminus1_array = J_tminus1_array_cell{ds};
     Pi_array = Pi_array_cell{ds};
    
-    ds
+    %ds
     
     [A_g_cell, A_c_cell, Y_cell] = generate_moment_fn_multiple_thetacs( F_group_cell_moments, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, use_basic_moments);
 

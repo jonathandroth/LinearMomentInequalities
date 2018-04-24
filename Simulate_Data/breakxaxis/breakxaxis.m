@@ -259,7 +259,10 @@ function breakInfo = breakxaxis(varargin)
     
     
     %Make the old main axes invisiable
-    invisibleObjects = RecursiveSetVisibleOff(mainAxes);
+        %This is where the old legend becomes faded
+    %invisibleObjects = RecursiveSetVisibleOff(mainAxes);
+    set(mainAxes,'Visible','off');
+    invisibleObjects = mainAxes;
 
     %Preserve the z-order of the figure
     uistack([leftAxes rightAxes breakAxes annotationAxes],'down',zOrder-1)

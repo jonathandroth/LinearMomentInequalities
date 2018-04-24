@@ -5,55 +5,15 @@
 %Outputs
 % index_vec: the indices indicating the row that is closest to row i in
 % terms of normalized distance
-function index_vec = closest_neighbor_indices( Z_mat , Sigma)
+function index_vec = closest_neighbor_indices2( Z_mat , Sigma)
 
-numrows = size(Z_mat,1);
-index_vec = NaN( numrows,1 );
+%Compute Mahalanobis distance btwn the vectors in Z 
+distanceMat = squareform( pdist( Z_mat, 'mahalanobis', Sigma) );
 
-Sigma_inv = Sigma^(-1);
+%Replace the diagonol with Inf, so that when we take the min we don't get
+%the point itself back
+distanceMat( logical(eye(size(distanceMat) ) ) ) = Inf;
 
-for row = 1:size(Z_mat,1)
-   
-    
-    Z_t = Z_mat(row,:);
-    Z_minus_t = Z_mat( (1:numrows) ~= row, :) ; %all rows of z except for t
-    
-    
-    %Compute the row the minimizes the distance. This row is the row of
-    %Z_minus_t
-    Z_minus_t_min_row = closest_neighbor_index_helper( Z_t, Z_minus_t, Sigma_inv); 
-    
-    %Convert the row into a row of Z_mat. In particular, since we omitted
-    %the "row"th row, we add 1 if the min row is >= row
-    if Z_minus_t_min_row >= row
-        Z_minus_t_min_row = Z_minus_t_min_row + 1;
-    end
-    
-    index_vec(row) = Z_minus_t_min_row;
-end
-
-
-end
-
-
-
-
-
-
-%Inputs:
-%Z_t a row vector (1 x k)
-%Z_mat: a (mxk) matrix where each row is a vector to be compared to Z_t
-% Sigma_inv: the inverse of a kxk covariance matrix
-
-%Output
-% i: the index of the row of z_mat with the shortest normalized distance to
-% Z_t
-
-function i = closest_neighbor_index_helper( Z_t, Z_mat, Sigma_inv)
-
-distance_fn = @(Z_s) (Z_t - Z_s) * Sigma_inv * (Z_t - Z_s)' ;
-Z_cell = num2cell( Z_mat, 2);
-distance = cellfun( distance_fn, Z_cell);
-[~,i] = min(distance);
+[~,index_vec] = min(distanceMat, [] ,2);
 
 end

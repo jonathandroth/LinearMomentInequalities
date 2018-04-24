@@ -17,13 +17,15 @@ if( isempty(getenv('SLURM_CPUS_PER_TASK')) )
    else
        working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
    end
-   numdatasets = 100;
+   numdatasets = 2;
+   onLaptop =1;
 
     
 else
    working_dir = '/n/home12/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data';
    parpool('local', str2num(getenv('SLURM_CPUS_PER_TASK')));
    numdatasets = 500;
+   onLaptop =0 ;
 end
 
 cd( working_dir);
@@ -46,7 +48,7 @@ num_F_groups_moments = size(F_group_cell_moments,1);
 num_F_groups_parameters = size(F_group_cell_parameters,1);
 
 
-numsims_lp = 200;
+numsims_lp = 1000;
 
 
 if( exist( 'combine_theta_g_moments') == 0)

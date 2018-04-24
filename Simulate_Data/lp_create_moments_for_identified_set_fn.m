@@ -1,4 +1,4 @@
-function [y_T, X_T] = lp_create_moments_for_identified_set_fn(F_group_cell_moments, F_group_cell_parameters, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, use_basic_moments, lambda, combine_theta_g_moments)
+function [y_T, X_T, y_bar, X_bar] = lp_create_moments_for_identified_set_fn(F_group_cell_moments, F_group_cell_parameters, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, use_basic_moments, lambda, combine_theta_g_moments)
 
         [A_g_cell, A_c_cell, Y_cell] = generate_moment_fn_multiple_thetacs( F_group_cell_moments, F_array, G_array, Eta_jt_shocks_array, Eta_t_vec, Pi_array, J_t_array, J_tminus1_array, use_basic_moments);
 
@@ -115,6 +115,10 @@ function [y_T, X_T] = lp_create_moments_for_identified_set_fn(F_group_cell_momen
     % WE construct these so that they are less than 0 in expectation (the
     % moment fns are constructed so that y_T + X_T * delta is greater than 0 in expectation)
   T = size(A_g,1);
+  
+  y_bar = y_T / T;
+  X_bar = X_T / T;
+  
   X_T = X_T / sqrt( T ); 
   y_T = y_T / sqrt(T);
   
