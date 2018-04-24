@@ -4,36 +4,49 @@
  ds_dir = strcat( data_output_dir, 'Interacted_Moments/');
  load(  strcat(ds_dir, 'lambda_identified_set') );
  load(  strcat(ds_dir, 'lambda_results') );
+
+addpath('./export-fig')
+
+getrow = @(x,row) x(row,:);
+
+clf
+hold('on');
+
+pbaspect([1.2 1 1])
+l1 = plot(lambda_vec, mean(lf_test_original), 'Color', getrow( get(gca,'colororder'),1 ) )
+l2 = plot(lambda_vec, mean(lf_test_modified), 'Color', getrow( get(gca,'colororder'),2 ) )
+l3 = plot(lambda_vec , mean(conditional_test), 'Color', getrow( get(gca,'colororder'),4 ), 'LineStyle', ':')
+l4 = plot(lambda_vec , mean(hybrid_test), 'Color', getrow( get(gca,'colororder'),3 ), 'LineStyle', '-.' )
+
  
-  
- plot(lambda_vec, [mean(lf_test_original);...
-                  mean(lf_test_modified);...
-                  mean(conditional_test);...
-                  mean(hybrid_test)]) 
-
-
 identified_set_max = max( lambda_vec( lambda_identified_set == 1) );
 identified_set_min = min( lambda_vec( lambda_identified_set == 1) );
 
 
 if(~isempty(identified_set_max) )
-    line( [identified_set_max; identified_set_max], [0;1], 'LineStyle', '--', 'Color',  'r');
+    l5 = plot( [identified_set_max; identified_set_max], [0;1], 'LineStyle', '--', 'Color',  'r');
 else
     warning('Didnt find any lambdas in identfied set');
 end
 
 if(~isempty(identified_set_min) && identified_set_min ~= min(lambda_vec)  )
-    line( [identified_set_min; identified_set_min], [0;1], 'LineStyle', '--', 'Color',  'r');
+   l6 = plot( [identified_set_min; identified_set_min], [0;1], 'LineStyle', '--', 'Color',  'r');
 end
 
-legend( 'LFP','LF', 'Conditional', 'Hybrid', 'Identified Set Bound', 'Location','eastoutside' );
+legend( 'LFP','LF', 'Conditional', 'Hybrid', 'Identified Set Bound', 'Location',....
+    'southoutside', 'Orientation', 'horizontal' );
 ylabel('Rejection Probability');
-xlabel('Beta');
+%xlabel('Beta');
 %title('Rejection Probabilities for Beta');
 
-saveas( gcf, strcat(figures_output_dir,filename_graph ), 'epsc');
-%export_fig(strcat(figures_output_dir,filename_graph,'.pdf'));
+set(findall(gcf,'-property','FontSize'),'FontSize',32);
+set(findall(gcf, 'Type', 'Line'),'LineWidth',4); %Linewidth for plot lines
 
+
+%saveas( gcf, strcat(figures_output_dir,filename_graph ), 'epsc');
+export_fig(strcat(figures_output_dir,filename_graph,'.pdf'));
+
+clf
 display( strcat(figures_output_dir,filename_graph ) )
 
 
