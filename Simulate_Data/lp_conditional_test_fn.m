@@ -1,4 +1,4 @@
-function reject = lp_conditional_test_fn( y_T, X_T, Sigma, alpha, ds)
+function reject = lp_conditional_test_fn( y_T, X_T, Sigma, alpha)
 %Store number of parameters and moments
 M = size(Sigma,1);
 k = size(X_T, 2);
