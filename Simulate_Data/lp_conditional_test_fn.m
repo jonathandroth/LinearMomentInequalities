@@ -1,4 +1,4 @@
-function reject = lp_conditional_test_fn( y_T, X_T, Sigma, alpha)
+function [reject, eta, delta, lambda, pval] = lp_conditional_test_fn( y_T, X_T, Sigma, alpha)
 %Store number of parameters and moments
 M = size(Sigma,1);
 k = size(X_T, 2);
@@ -13,7 +13,7 @@ k = size(X_T, 2);
 
 
 %Compute eta, and the argmin delta
-[eta, delta, lambda,error_flag] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','dual-simplex','TolFun', 10^-8, 'Display', 'off', 'MaxIter', 100000));
+[eta, delta, lambda, error_flag] = test_delta_lp_fn( y_T, X_T, Sigma, optimoptions('linprog','Algorithm','dual-simplex','TolFun', 10^-8, 'Display', 'off', 'MaxIter', 100000));
 
 if(error_flag > 0)
     reject = 0;
@@ -41,16 +41,17 @@ degenerate = sum( lambda>tol_lambda ) ~= (k+1) ;
  
 %Check whether X_T,B has full rank
 X_TB = X_T(B_index,:);
-fullrank = rank(X_TB) == min( size(X_TB) );
+fullrank = rank(X_TB) == min( size(X_TB));
 
 
 if( (~fullrank) || degenerate)
-    
+%if(true)
+    warning('Using dual approach');
     %Calculate vlo and vup using the bisection approach that conditions on
     %having a gamma_tilde - a vertex of the dual (note that since matlab
     %implements the dual-simplex method, lambda is guaranteed to be such a
     %gamme_tilde
-    [vlo_dual,vup_dual,eta_dual,gamma_tilde] = lp_dual_fn( y_T, X_T, eta,lambda, Sigma);
+    [vlo_dual,vup_dual,eta_dual,gamma_tilde] = lp_dual_fn( y_T, X_T, eta, lambda, Sigma);
     
     sigma_B_dual = sqrt( gamma_tilde' * Sigma * gamma_tilde);
     maxstat = eta_dual ./ sigma_B_dual;
@@ -71,9 +72,6 @@ if( (~fullrank) || degenerate)
         reject = pval < alpha;
     return;
     end
-
-
- 
 end
 
 %warning('Things look good. Using primal');
@@ -94,6 +92,10 @@ size_Bc = sum(B_index == 0);
 i_B = ones(size_B,1);
 i_Bc = ones(size_Bc,1);
 
+sdVec = sqrt(diag(Sigma));
+sdVec_B = sdVec(B_index);
+sdVec_Bc = sdVec(Bc_index);
+
 %X_TB = X_T(B_index,:); %this is now done earlier
 X_TBc = X_T(Bc_index,:);
 
@@ -104,11 +106,11 @@ S_Bc = eye(M);
 S_Bc = S_Bc(Bc_index, :);
 
 
-Gamma_B  = [i_Bc , X_TBc] * [i_B , X_TB]^(-1) * S_B - S_Bc;
+Gamma_B  = [sdVec_Bc , X_TBc] * [sdVec_B , X_TB]^(-1) * S_B - S_Bc;
 
 e1 = [1 ; zeros(size_B - 1 ,1) ];
 
-v_B = ( e1' * [i_B , X_TB]^(-1) * S_B )';
+v_B = ( e1' * [sdVec_B , X_TB]^(-1) * S_B )';
 sigma2_B = v_B' * Sigma * v_B;
 sigma_B = sqrt(sigma2_B);
 
@@ -138,7 +140,7 @@ if( ~ (z_lo <= max_stat && max_stat <= z_up) )
     warning(strcat('max_stat (', num2str(max_stat), ')',...
                    'is not between z_lo (', num2str(z_lo), ')',...
                    'and z_up (', num2str(z_up), ...
-                   ') in the primal approach in dataset ', num2str(ds)) );
+                   ') in the primal approach ') );
     reject = 0;
 
 else

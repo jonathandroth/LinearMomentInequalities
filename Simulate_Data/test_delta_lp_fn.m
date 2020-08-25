@@ -2,7 +2,7 @@
 
 % min_{eta,delta} eta
 
-%s.t. Y_T - X_T * delta <= eta
+%s.t. Y_T - X_T * delta <= eta * diag(sigma)
 
 % for the provided y_T and x_T
 
@@ -16,13 +16,13 @@
 % delta-star = the value of delta at the optimum
 % lambda = the lagrange multipliers at the optimum
 
-function [eta_star, delta_star, lambda, error_flag] = test_delta_lp_fn( y_T, X_T, varargin)
+function [eta_star, delta_star, lambda, error_flag] = test_delta_lp_fn( y_T, X_T, Sigma, varargin)
 
 
 %Run the linear program
 
 % min_{eta , delta} eta 
-% s.t. Y_T -X_T delta <= repmat(eta
+% s.t. Y_T -X_T delta <= repmat(eta) * sds
 
 %To do this, need to put into the form
 
@@ -39,9 +39,9 @@ f = [1; zeros(k_delta, 1) ];
 %A_delta = X_T * [zeros(k_delta,1), eye(k_delta)] ;
 % A = - (A_eta + A_delta);
 
-A = - [ones( size(X_T,1) , 1), X_T]; %This is equivalent to the three lines above
-
-
+sdVec = sqrt(diag(Sigma));
+%A = - [ones( size(X_T,1) , 1), X_T]; %This is equivalent to the three lines above
+A = - [sdVec , X_T];
 b = - y_T;
 
 %If options provided, use those; otherwise, set default
@@ -51,13 +51,13 @@ else
     options = optimoptions('linprog','Algorithm','interior-point', 'MaxIter', 20000,'Display', 'off');
 end
 
-[delta_star,eta_star,flag,~,lambda] = linprog( f, A, b ,[],[],[],[],[], options);
+[delta_star, eta_star,flag,~,lambda] = linprog( f, A, b ,[],[],[],[],[], options);
 
 delta_star = delta_star(2:end); %Remove eta, which is the first element
 
 
-if(isstruct(lambda) )
-    lambda = lambda.ineqlin;% we put this in an if statement since lambda not defined if there are errors in lp 
+if( isstruct(lambda) )
+    lambda = lambda.ineqlin; % we put this in an if statement since lambda not defined if there are errors in lp 
 end
 
 
