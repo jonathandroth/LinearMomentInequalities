@@ -98,13 +98,18 @@ num_beta0_gridpoints = length(beta0_grid); %update length for the id set endpoin
 rejection_grid_conditional = NaN(numdatasets, num_beta0_gridpoints);
 rejection_grid_hybrid = NaN(numdatasets, num_beta0_gridpoints);
 
+rejection_grid_rcc = NaN(numdatasets, num_beta0_gridpoints);
+rejection_grid_cc = NaN(numdatasets, num_beta0_gridpoints);
+
 
 nummoments = size( y_T_cell{ds,1} , 1);
 Z_draws_interacted = randn(nummoments, 10000);
 
 %%CHANGE THIS BACK WHEN DONE DEBUGGING
-%for ds = 1:numdatasets
-parfor ds = 1:numdatasets    
+for ds = 1:numdatasets
+%parfor ds = 1:numdatasets
+
+ds
    X_T = X_T_cell{ds,1};
    y_T = y_T_cell{ds,1};
    Sigma = Sigma_conditional_cell{ds,1}; 
@@ -139,6 +144,9 @@ parfor ds = 1:numdatasets
     
     conditional_rejection_vec = NaN(num_beta0_gridpoints,1);
     hybrid_rejection_vec = NaN(num_beta0_gridpoints,1);
+    rcc_rejection_vec = NaN(num_beta0_gridpoints,1);
+    cc_rejection_vec = NaN(num_beta0_gridpoints,1);
+
     
     %Prior to looping through all of the value for l*theta, compute the
     %least-favorable critical values, since this doens't depend on the
@@ -159,13 +167,18 @@ parfor ds = 1:numdatasets
         conditional_rejection_vec(count,1) = lp_conditional_test_fn( y_T_tilde, X_T_tilde, Sigma, alpha);
         hybrid_rejection_vec(count,1) = lp_hybrid_test_fn( y_T_tilde, X_T_tilde, Sigma, alpha, alpha/10, lf_simulated_draws);
         
-        
+        [T_CC, c_RCC, c_CC] = rcc_test_fn(sqrt(nummarkets) * y_T_tilde, eye(size(y_T_tilde,1)), X_T_tilde, zeros(size(y_T_tilde,1),1) , Sigma, nummarkets, 0, alpha);
+        rcc_rejection_vec(count,1) = T_CC > c_RCC;
+        cc_rejection_vec(count,1) = T_CC > c_CC;
         
         count = count +1;
     end
     
     rejection_grid_conditional(ds,:) = conditional_rejection_vec;
     rejection_grid_hybrid(ds,:) = hybrid_rejection_vec;
+    
+    rejection_grid_rcc(ds,:) = rcc_rejection_vec;
+    rejection_grid_cc(ds,:) = cc_rejection_vec;
     
 end
 
@@ -180,12 +193,21 @@ end
     rejection_grid_conditional = mean(rejection_grid_conditional,1);
     rejection_grid_hybrid = mean(rejection_grid_hybrid,1);
     
+    
+    full_rejection_grid_rcc = rejection_grid_rcc;
+    full_rejection_grid_cc = rejection_grid_cc;
+    
+    rejection_grid_rcc = mean(rejection_grid_rcc,1);
+    rejection_grid_cc = mean(rejection_grid_cc,1);
+    
 
     ds_name = strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp');
     mkdir(ds_name);
     save( ds_name, 'confidence_sets_using_c_alpha', 'confidence_sets_using_c_lp_alpha',...
                    'rejection_grid_hybrid', 'rejection_grid_conditional','beta0_grid' ,...
-                   'full_rejection_grid_conditional','full_rejection_grid_hybrid');
+                   'full_rejection_grid_conditional','full_rejection_grid_hybrid',...
+                   'rejection_grid_rcc', 'rejection_grid_cc', ...
+                   'full_rejection_grid_rcc', 'full_rejection_grid_cc');
 
     
     

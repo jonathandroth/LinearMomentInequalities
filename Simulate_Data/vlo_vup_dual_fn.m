@@ -40,7 +40,7 @@ else
     %low-value is a solution
     
     %If the midpoint between them is a solution, then we set low to the
-    %midpoint; otherwise, we set high to the midpoint.
+    %midpoint; otherwise, we set
     while( dif>tol_c && iters < maxiters)
         
         c = 1/2 * (low + high);

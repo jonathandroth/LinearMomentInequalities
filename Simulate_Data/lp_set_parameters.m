@@ -15,7 +15,8 @@ if( isempty(getenv('SLURM_CPUS_PER_TASK')) )
    if(exist('remote_to_server') && remote_to_server == 1)
        working_dir = '/Volumes/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data/';
    else
-       working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
+   %    working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
+       working_dir = 'C:\Users\jorot\Dropbox\GoogleDrive_Harvard\Google Drive - Harvard\Research Projects\Moment_Inequalities_Ariel\Code\Simulate_Data';
    end
    numdatasets = 2;
    onLaptop =1;
