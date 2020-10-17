@@ -39,7 +39,7 @@ ylabel('Rejection Probability');
 %xlabel('Beta');
 %title('Rejection Probabilities for Beta');
 
-set(findall(gcf,'-property','FontSize'),'FontSize',32);
+set(findall(gcf,'-property','FontSize'),'FontSize',18);
 set(findall(gcf, 'Type', 'Line'),'LineWidth',4); %Linewidth for plot lines
 
 
