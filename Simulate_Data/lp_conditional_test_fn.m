@@ -45,7 +45,7 @@ fullrank = rank(X_TB) == min( size(X_TB) );
 
 
 if( (~fullrank) || degenerate)
-    
+    warning('Using dual approach');
     %Calculate vlo and vup using the bisection approach that conditions on
     %having a gamma_tilde - a vertex of the dual (note that since matlab
     %implements the dual-simplex method, lambda is guaranteed to be such a
@@ -138,7 +138,7 @@ if( ~ (z_lo <= max_stat && max_stat <= z_up) )
     warning(strcat('max_stat (', num2str(max_stat), ')',...
                    'is not between z_lo (', num2str(z_lo), ')',...
                    'and z_up (', num2str(z_up), ...
-                   ') in the primal approach in dataset ', num2str(ds)) );
+                   ') in the primal approach ') );
     reject = 0;
 
 else
