@@ -11,4 +11,4 @@
 
 source new-modules.sh
 module load matlab
-srun -n 1 -c 24 matlab-default -nodisplay -nosplash <run_lp_cs_1thetac_basicmoments.m
+srun -n 1 -c 24 matlab -nodisplay -nosplash <run_lp_cs_1thetac_basicmoments.m
