@@ -11,4 +11,4 @@
 
 source new-modules.sh
 module load matlab
-srun -n 1 -c 24 matlab-default -nodisplay -nosplash <FILENAME.m
+srun -n 1 -c 24 matlab -nodisplay -nosplash <FILENAME.m

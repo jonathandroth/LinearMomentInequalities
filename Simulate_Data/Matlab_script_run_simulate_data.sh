@@ -9,4 +9,4 @@
 
 source new-modules.sh
 module load matlab
-srun -n 1 -c 1 matlab-default -nodisplay -nosplash <run_simulate_data.m
+srun -n 1 -c 1 matlab -nodisplay -nosplash <run_simulate_data.m

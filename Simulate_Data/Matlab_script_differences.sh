@@ -9,4 +9,4 @@
 
 source new-modules.sh
 module load matlab
-srun -n 1 -c 1  matlab-default -nodisplay -nosplash < rejection_grids_differences.m
+srun -n 1 -c 1  matlab -nodisplay -nosplash < rejection_grids_differences.m
