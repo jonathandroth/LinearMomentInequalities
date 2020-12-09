@@ -167,7 +167,7 @@ ds
         conditional_rejection_vec(count,1) = lp_conditional_test_fn( y_T_tilde, X_T_tilde, Sigma, alpha);
         hybrid_rejection_vec(count,1) = lp_hybrid_test_fn( y_T_tilde, X_T_tilde, Sigma, alpha, alpha/10, lf_simulated_draws);
         
-        [T_CC, c_RCC, c_CC] = rcc_test_fn(sqrt(nummarkets) * y_T_tilde, eye(size(y_T_tilde,1)), X_T_tilde, zeros(size(y_T_tilde,1),1) , Sigma, nummarkets, 0, alpha);
+        [T_CC, c_RCC, c_CC] = rcc_test_fn(sqrt(nummarkets)^(-1) * y_T_tilde, eye(size(y_T_tilde,1)), X_T_tilde, zeros(size(y_T_tilde,1),1) , Sigma, nummarkets, 0, alpha);
         rcc_rejection_vec(count,1) = T_CC > c_RCC;
         cc_rejection_vec(count,1) = T_CC > c_CC;
         
