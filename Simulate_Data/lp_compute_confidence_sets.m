@@ -167,9 +167,11 @@ ds
         conditional_rejection_vec(count,1) = lp_conditional_test_fn( y_T_tilde, X_T_tilde, Sigma, alpha);
         hybrid_rejection_vec(count,1) = lp_hybrid_test_fn( y_T_tilde, X_T_tilde, Sigma, alpha, alpha/10, lf_simulated_draws);
         
-        [T_CC, c_RCC, c_CC] = rcc_test_fn(sqrt(nummarkets)^(-1) * y_T_tilde, eye(size(y_T_tilde,1)), X_T_tilde, zeros(size(y_T_tilde,1),1) , Sigma, nummarkets, 0, alpha);
-        rcc_rejection_vec(count,1) = T_CC > c_RCC;
-        cc_rejection_vec(count,1) = T_CC > c_CC;
+        %[T_CC, c_RCC, c_CC] = rcc_test_fn(sqrt(nummarkets)^(-1) * y_T_tilde, eye(size(y_T_tilde,1)), X_T_tilde, zeros(size(y_T_tilde,1),1) , Sigma, nummarkets, 0, alpha);
+        [T_CC,cv_CC, dof_n] = func_subCC(X_T_tilde, -y_T+tilde, Sigmahat, alpha);
+        cc_rejection_vec(count,1) = (dof_n > 0) * (T_CC > cv_CC);
+        rcc_rejection_vec(count,1) = (T_CC > c_RCC) | ( (dof_n ==1) & (T_CC > chi2inv(1-2*alpha,dof_n)) ); %right now set RCC to 1 if dof_n == 1 and T_CC is above the 1-2*alpha cv
+        
         
         count = count +1;
     end
