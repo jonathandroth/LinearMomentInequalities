@@ -103,6 +103,67 @@ clf
 %options = optimoptions('linprog', 'Display', 'final' );
 %linprog( 1, [1;-1], [2,-3],[],[],[],[], [],options )
 
+%% Create plot comparing sCC and rCC test of Cox & Shi to hybrid
+
+hold('on');
+
+%p = plot( repmat( l_theta_grid', 1, 2), [rejection_grid_c_alpha, rejection_grid_c_lp_alpha ]);
+
+l1 = plot( beta0_grid , rejection_grid_hybrid, 'Color', getrow( get(gca,'colororder'),3 ), 'LineStyle', '-.' )
+l2 = plot( beta0_grid , rejection_grid_cc, 'Color', getrow( get(gca,'colororder'),6 ), 'LineStyle', '-' )
+l3 = plot( beta0_grid , rejection_grid_rcc, 'Color', getrow( get(gca,'colororder'),7 ), 'LineStyle', ':' )
+
+l4 = plot( [identified_set_bounds(1);identified_set_bounds(1)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
+l5 = plot( [identified_set_bounds(2);identified_set_bounds(2)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
+
+legend( 'Hybrid', 'sCC', 'sRCC', 'Identified Set Boundary',  'Location',....
+    'southoutside', 'Orientation', 'horizontal' );
+ylabel('Rejection Probability');
+
+%set(gcf,'PaperUnits','inches','PaperPosition',[0 0 3 2.5]);  
+
+% %If no xlabel specified, do 'l * theta*
+% if( exist('xlabel_graph') == 0)
+%     xlabel_graph = 'l * theta';    
+% end
+% 
+% xlabel(xlabel_graph);
+
+
+if( exist('xlim_graph') ==1)
+    %If manual bounds are specified for the x-axis limit, impose these
+    xlim( xlim_graph )    
+    
+    %Impose tick width if specified; otherwise 5
+    if(exist('xtick_width'))
+        set(gca,'XTick',[xlim_graph(1):xtick_width:xlim_graph(2)])
+    end
+
+end
+
+    
+%Create a break in the x-axis if specified
+    if(exist('xsplit_graph'))
+        breakxaxis(xsplit_graph)
+    end
+
+    
+
+
+%If filename not specified, assume it's means
+if( exist('filename_graph') ==0)
+       filename_graph =  'Mean_Weight_Rejection_Probabilities';
+end
+
+set(findall(gcf,'-property','FontSize'),'FontSize',14);
+
+set(findall(gcf, 'Type', 'Line'),'LineWidth',3); %Linewidth for plot lines
+
+export_fig(strcat(figures_output_dir,filename_graph, '_compare_to_Cox_and_Shi','.pdf'));
+
+clf
+
+
 %% Create rows for table that shows where we achieve various power thresholds
 
 [lb_row_05,ub_row_05] = ub_and_lb_row_for_table( beta0_grid, l_theta_grid,...
