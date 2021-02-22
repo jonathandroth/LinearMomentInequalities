@@ -11,6 +11,7 @@ filename_graph = filename_graph{1};
 mat_ub_sizes = [];
 mat_lb_sizes = [];
 mat_max_sizes = [];
+mat_max_sizes_coxandshi = [];
 
 filename_vec = [];
 numthetha_vec = [];
@@ -42,10 +43,13 @@ if(use_zero_cutoff == 0 )
     mat_ub_sizes = round([mat_ub_sizes; upper_bound_sizes],2);
     mat_lb_sizes = round([mat_lb_sizes; lower_bound_sizes],2);
     mat_max_sizes = round([mat_max_sizes; max_size_in_id_set],2);
+    mat_max_sizes_coxandshi = round([mat_max_sizes_coxandshi; max_size_in_id_set_coxandshi],2);
+    
 else
     mat_ub_sizes = round([mat_ub_sizes; upper_bound_sizes_zerocutoff],2);
     mat_lb_sizes = round([mat_lb_sizes; lower_bound_sizes_zerocutoff],2);
     mat_max_sizes = round([mat_max_sizes; max_size_in_id_set_zerocutoff],2);
+    mat_max_sizes_coxandshi = round([mat_max_sizes_coxandshi; max_size_in_id_set_zerocutoff_coxandshi],2);
 end
 
 
@@ -72,6 +76,11 @@ fclose(fid);
 fid = fopen(strcat('../../Output/',...
                     filename_graph,'_max_size_in_id_set', suffix, '.tex') ,'wt');
 fprintf(fid,clean_latex(mat_max_sizes));
+fclose(fid);
+
+fid = fopen(strcat('../../Output/',...
+                    filename_graph,'_max_size_in_id_set', suffix, '_coxandshi', '.tex') ,'wt');
+fprintf(fid,clean_latex([mat_max_sizes, mat_max_sizes_coxandshi]));
 fclose(fid);
 
 end
