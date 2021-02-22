@@ -10,6 +10,9 @@ hybrid_test = NaN(size(conditional_test));
 lf_test_original = NaN(size(conditional_test));
 lf_test_modified = NaN(size(conditional_test));
 
+cc_test = NaN(size(conditional_test));
+rcc_test = NaN(size(conditional_test));
+
 lambda_identified_set = NaN( size(lambda_vec) );
 lambda_identified_set_zerocutoff = NaN( size(lambda_vec) );
 
@@ -31,7 +34,7 @@ X_T = X_T_cell{ds};
 y_T = y_T_cell{ds};
 Sigma = Sigma_conditional_cell{ds};
 
-%Do non-conditional tests
+%Do LF-based tests
 c_alpha = c_lf(Sigma, alpha, Z_draws_interacted);
 [c_lp_alpha, eta_draws] = c_lf_lp(X_T,Z_draws_interacted(:,1:numsims_lp),Sigma,alpha);
 eta = test_delta_lp_fn( y_T, X_T);
@@ -43,6 +46,12 @@ conditional_test(ds,i) = lp_conditional_test_fn( y_T, X_T, Sigma, alpha);
 hybrid_test(ds,i) = lp_hybrid_test_fn( y_T, X_T, Sigma, alpha, alpha/10, eta_draws);
 
 
+[T_CC,cv_CC, dof_n] = func_subCC(X_T, -y_T, Sigma, alpha);
+cc_test(ds,i) = (dof_n > 0) * (T_CC > cv_CC);
+rcc_test(ds,i) = ((dof_n > 0) * (T_CC > cv_CC)) | ( (dof_n ==1) & (T_CC > chi2inv(1-2*alpha,dof_n)) ); %right now set RCC to 1 if dof_n == 1 and T_CC is above the 1-2*alpha cv
+
+
+
 end
 
 i = i+1;
@@ -52,4 +61,6 @@ end
 
     ds_dir = strcat( data_output_dir, 'Interacted_Moments/');
     mkdir(ds_dir);
-    save( strcat(ds_dir, 'lambda_results'), 'conditional_test', 'lf_test_original', 'lf_test_modified', 'hybrid_test', 'lambda_vec');
+    save( strcat(ds_dir, 'lambda_results'), ...
+        'conditional_test', 'lf_test_original', 'lf_test_modified', ...
+        'hybrid_test', 'lambda_vec', 'cc_test', 'rcc_test');
