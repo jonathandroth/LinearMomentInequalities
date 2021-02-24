@@ -49,7 +49,44 @@ export_fig(strcat(figures_output_dir,filename_graph,'.pdf'));
 clf
 display( strcat(figures_output_dir,filename_graph ) )
 
+%% Make plot for sCC and sRCC test 
 
+
+hold('on');
+
+pbaspect([1.4 1 1])
+l1 = plot(lambda_vec , mean(hybrid_test), 'Color', getrow( get(gca,'colororder'),3 ), 'LineStyle', '-.' )
+l2 = plot(lambda_vec , mean(cc_test), 'Color', getrow( get(gca,'colororder'),6 ), 'LineStyle', '-' )
+l3 = plot(lambda_vec , mean(rcc_test), 'Color', getrow( get(gca,'colororder'),7 ), 'LineStyle', ':' )
+ 
+identified_set_max = max( lambda_vec( lambda_identified_set == 1) );
+identified_set_min = min( lambda_vec( lambda_identified_set == 1) );
+
+
+if(~isempty(identified_set_max) )
+    l5 = plot( [identified_set_max; identified_set_max], [0;1], 'LineStyle', '--', 'Color',  'r');
+else
+    warning('Didnt find any lambdas in identfied set');
+end
+
+if(~isempty(identified_set_min) && identified_set_min ~= min(lambda_vec)  )
+   l6 = plot( [identified_set_min; identified_set_min], [0;1], 'LineStyle', '--', 'Color',  'r');
+end
+
+legend( 'Hybrid', 'sCC', 'sRCC', 'ID Set Bound', 'Location',....
+    'southoutside', 'Orientation', 'horizontal' );
+ylabel('Rejection Probability');
+%xlabel('Beta');
+%title('Rejection Probabilities for Beta');
+
+set(findall(gcf,'-property','FontSize'),'FontSize',12);
+set(findall(gcf, 'Type', 'Line'),'LineWidth',4); %Linewidth for plot lines
+
+
+%saveas( gcf, strcat(figures_output_dir,filename_graph ), 'epsc');
+export_fig(strcat(figures_output_dir,filename_graph,'_compare_to_Cox_and_Shi','.pdf'));
+
+clf
 %% Make rows for excess length table
 
 full_rejection_grid_lf = lf_test_original;
@@ -57,10 +94,16 @@ full_rejection_grid_lfn = lf_test_modified;
 full_rejection_grid_conditional = conditional_test;
 full_rejection_grid_hybrid = hybrid_test;
 
+full_rejection_grid_cc = cc_test;
+full_rejection_grid_rcc = rcc_test;
+
 rejection_grid_lf = mean(lf_test_original,1);
 rejection_grid_lfn = mean(lf_test_modified,1);
 rejection_grid_conditional = mean(conditional_test,1);
 rejection_grid_hybrid = mean(hybrid_test,1);
+
+rejection_grid_cc = mean(cc_test,1);
+rejection_grid_rcc = mean(rcc_test,1);
 
 %For the conditional and hybrid approaches, we compute the area by
 %assigning the rejection value at each number to the closest point in the
@@ -86,6 +129,8 @@ excess_lengths_lfn = excessLengthFn(full_rejection_grid_lfn);
 excess_lengths_conditional =  excessLengthFn(full_rejection_grid_conditional);
 excess_lengths_hybrid =  excessLengthFn(full_rejection_grid_hybrid);
 
+excess_lengths_cc =  sum( gridWeightsMat .* (1 - full_rejection_grid_cc ), 2) - identified_set_length;
+excess_lengths_rcc =  sum( gridWeightsMat .* (1 - full_rejection_grid_rcc ), 2) - identified_set_length;
 
 
 row_mean = cellfun( @(x) mean(x), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
@@ -94,10 +139,23 @@ row_50 = cellfun( @(x) quantile(x,.50), {excess_lengths_lf, excess_lengths_lfn, 
 row_95 = cellfun( @(x) quantile(x,.95), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
 
 
+row_mean_coxandshi = cellfun( @(x) mean(x), {excess_lengths_cc, excess_lengths_rcc});
+row_05_coxandshi = cellfun( @(x) quantile(x,.05), {excess_lengths_cc, excess_lengths_rcc});
+row_50_coxandshi = cellfun( @(x) quantile(x,.50), {excess_lengths_cc, excess_lengths_rcc});
+row_95_coxandshi = cellfun( @(x) quantile(x,.95), {excess_lengths_cc, excess_lengths_rcc});
+
+
 row_mean_zerocutoff = row_mean - (identified_set_length_zerocutoff - identified_set_length);
 row_05_zerocutoff = row_05 - (identified_set_length_zerocutoff - identified_set_length);
 row_50_zerocutoff = row_50 - (identified_set_length_zerocutoff - identified_set_length);
 row_95_zerocutoff = row_95 - (identified_set_length_zerocutoff - identified_set_length);
+
+row_mean_zerocutoff_coxandshi = row_mean_coxandshi - (identified_set_length_zerocutoff - identified_set_length);
+row_05_zerocutoff_coxandshi = row_05_coxandshi - (identified_set_length_zerocutoff - identified_set_length);
+row_50_zerocutoff_coxandshi = row_50_coxandshi - (identified_set_length_zerocutoff - identified_set_length);
+row_95_zerocutoff_coxandshi = row_95_coxandshi - (identified_set_length_zerocutoff - identified_set_length);
+
+
 
 %Compute the various statistics treating unbounded instances as infinity,
 %rather than truncated at the endpoint, as done above
@@ -106,10 +164,17 @@ unbounded_lfn = full_rejection_grid_lfn(:,end) < 1;
 unbounded_conditional = full_rejection_grid_conditional(:,end) < 1;
 unbounded_hybrid = full_rejection_grid_hybrid(:,end) < 1;
 
+unbounded_cc = full_rejection_grid_cc(:,end) < 1;
+unbounded_rcc = full_rejection_grid_rcc(:,end) < 1;
+
 excess_lengths_lf_with_infs = ifelse( unbounded_lf, Inf , excess_lengths_lf);
 excess_lengths_lfn_with_infs = ifelse( unbounded_lfn, Inf , excess_lengths_lfn);
 excess_lengths_conditional_with_infs = ifelse( unbounded_conditional, Inf , excess_lengths_conditional);
 excess_lengths_hybrid_with_infs = ifelse( unbounded_hybrid, Inf , excess_lengths_hybrid);
+
+excess_lengths_cc_with_infs = ifelse( unbounded_cc, Inf , excess_lengths_cc);
+excess_lengths_rcc_with_infs = ifelse( unbounded_rcc, Inf , excess_lengths_rcc);
+
 
 row_mean_with_infs = cellfun( @(x) mean(x), {excess_lengths_lf_with_infs, excess_lengths_lfn_with_infs, excess_lengths_conditional_with_infs, excess_lengths_hybrid_with_infs});
 row_05_with_infs = cellfun( @(x) quantile(x,.05), {excess_lengths_lf_with_infs, excess_lengths_lfn_with_infs, excess_lengths_conditional_with_infs, excess_lengths_hybrid_with_infs});
@@ -117,11 +182,19 @@ row_50_with_infs = cellfun( @(x) quantile(x,.50), {excess_lengths_lf_with_infs, 
 row_95_with_infs = cellfun( @(x) quantile(x,.95), {excess_lengths_lf_with_infs, excess_lengths_lfn_with_infs, excess_lengths_conditional_with_infs, excess_lengths_hybrid_with_infs});
 
 
+row_mean_with_infs_coxandshi = cellfun( @(x) mean(x), {excess_lengths_cc_with_infs, excess_lengths_rcc_with_infs});
+row_05_with_infs_coxandshi = cellfun( @(x) quantile(x,.05), {excess_lengths_cc_with_infs, excess_lengths_rcc_with_infs});
+row_50_with_infs_coxandshi = cellfun( @(x) quantile(x,.50), {excess_lengths_cc_with_infs, excess_lengths_rcc_with_infs});
+row_95_with_infs_coxandshi = cellfun( @(x) quantile(x,.95), {excess_lengths_cc_with_infs, excess_lengths_rcc_with_infs});
+
 
 save( strcat(data_output_folder, filename_graph,'_', 'rows_for_excess_length_table_lambda'),...
     'row_05', 'row_50', 'row_95', 'row_mean',...
     'row_05_zerocutoff', 'row_50_zerocutoff', 'row_95_zerocutoff', 'row_mean_zerocutoff',...
-    'row_05_with_infs', 'row_50_with_infs', 'row_95_with_infs', 'row_mean_with_infs') ;                                              
+    'row_05_with_infs', 'row_50_with_infs', 'row_95_with_infs', 'row_mean_with_infs',...
+    'row_05_coxandshi', 'row_50_coxandshi', 'row_95_coxandshi', 'row_mean_coxandshi',...
+    'row_05_zerocutoff_coxandshi', 'row_50_zerocutoff_coxandshi', 'row_95_zerocutoff_coxandshi', 'row_mean_zerocutoff_coxandshi',...
+    'row_05_with_infs_coxandshi', 'row_50_with_infs_coxandshi', 'row_95_with_infs_coxandshi', 'row_mean_with_infs_coxandshi') ;                                              
 
 
 %% Make row for size table
@@ -140,9 +213,12 @@ max_size_in_id_set = cellfun( @(x) max( x(id_set_indices)), {rejection_grid_lf,.
                                                      rejection_grid_conditional,...
                                                      rejection_grid_hybrid});
 
+max_size_in_id_set_coxandshi = cellfun( @(x) max( x(id_set_indices)), ...
+                                                    {rejection_grid_cc,...
+                                                     rejection_grid_rcc});     
                                                  
 save( strcat(data_output_folder, filename_graph,'_', 'upper_bound_size_lambda'),...
-    'upper_bound_sizes', 'max_size_in_id_set') ;                                              
+    'upper_bound_sizes', 'max_size_in_id_set', 'max_size_in_id_set_coxandshi') ;                                              
 
 
 %% Make row for size table - zerocutoff
@@ -160,6 +236,12 @@ max_size_in_id_set_zerocutoff = cellfun( @(x) max( x(id_set_indices_zerocutoff))
                                                      rejection_grid_conditional,...
                                                      rejection_grid_hybrid});
                                                  
+max_size_in_id_set_zerocutoff_coxandshi = cellfun( @(x) max( x(id_set_indices_zerocutoff)), ...
+                                                    {rejection_grid_cc,...
+                                                     rejection_grid_rcc});                                                 
+                                                 
+                                                 
 save( strcat(data_output_folder, filename_graph,'_', 'upper_bound_size_lambda_zerocutoff'),...
-    'upper_bound_sizes_zerocutoff', 'max_size_in_id_set_zerocutoff') ;                                              
+    'upper_bound_sizes_zerocutoff', 'max_size_in_id_set_zerocutoff','max_size_in_id_set_zerocutoff_coxandshi') ; 
+
 

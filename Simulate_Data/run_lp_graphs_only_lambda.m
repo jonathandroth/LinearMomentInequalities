@@ -1,7 +1,7 @@
 
 
 graphs_only = 1
-remote_to_server = 1
+%remote_to_server = 1
 
 
 run_lp_lambda_inference_1thetac_basicmoments
