@@ -13,6 +13,10 @@ mat_ub_sizes = [];
 mat_lb_sizes = [];
 mat_max_sizes = [];
 
+mat_ub_sizes_coxandshi = [];
+mat_lb_sizes_coxandshi = [];
+mat_max_sizes_coxandshi = [];
+
 filename_vec = [];
 numthetha_vec = [];
 moment_type_cell = {};
@@ -43,10 +47,14 @@ if(use_zero_cutoff == 0 )
     mat_ub_sizes = round([mat_ub_sizes; upper_bound_sizes],2);
     %mat_lb_sizes = round([mat_lb_sizes; lower_bound_sizes],2);
     mat_max_sizes = round([mat_max_sizes; max_size_in_id_set],2);
+    
+    %mat_ub_sizes_coxandshi = round([mat_ub_sizes_coxandshi; upper_bound_sizes_coxandshi],2);
+    %mat_lb_sizes_coxandshi = round([mat_lb_sizes_coxandshi; lower_bound_sizes_coxandshi],2);
+    mat_max_sizes_coxandshi = round([mat_max_sizes_coxandshi; max_size_in_id_set_coxandshi],2);
 else
-    mat_ub_sizes = round([mat_ub_sizes; upper_bound_sizes_zerocutoff],2);
-    %mat_lb_sizes = round([mat_lb_sizes; lower_bound_sizes_zerocutoff],2);
-    mat_max_sizes = round([mat_max_sizes; max_size_in_id_set_zerocutoff],2);
+    %mat_ub_sizes_coxandshi = round([mat_ub_sizes_coxandshi; upper_bound_sizes_zerocutoff_coxandshi],2);
+    %mat_lb_sizes_coxandshi = round([mat_lb_sizes_coxandshi; lower_bound_sizes_zerocutoff_coxandshi],2);
+    mat_max_sizes_coxandshi = round([mat_max_sizes_coxandshi; max_size_in_id_set_zerocutoff_coxandshi],2);
 end
 
 filename_vec = [filename_vec ; filename_graph];
@@ -74,6 +82,24 @@ fclose(fid);
 fid = fopen(strcat('../../Output/',...
                     filename_graph,'_max_size_in_id_set', suffix, '.tex') ,'wt');
 fprintf(fid,clean_latex(mat_max_sizes));
+fclose(fid);
+
+
+
+% fid = fopen(strcat('../../Output/',...
+%                     filename_graph,'_upper_bound_sizes_lambda',suffix, '_coxandshi', '.tex') ,'wt');
+% fprintf(fid,clean_latex(mat_ub_sizes_coxandshi));
+% fclose(fid);
+
+% fid = fopen(strcat('../../Output/',...
+%                     filename_graph,'_lower_bound_sizes',suffix,  '_coxandshi', '.tex') ,'wt');
+% fprintf(fid,clean_latex(mat_lb_sizes_coxandshi));
+% fclose(fid);
+
+
+fid = fopen(strcat('../../Output/',...
+                    filename_graph,'_max_size_in_id_set', suffix,  '_coxandshi', '.tex') ,'wt');
+fprintf(fid,clean_latex(mat_max_sizes_coxandshi));
 fclose(fid);
 
 
