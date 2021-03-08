@@ -14,7 +14,7 @@ function [AS_CI, KMS_output] = projected_AS_or_KMS(y_T, X_T, T, Sigma, l, W, met
 %% Set up KMS options
 
 %method      = 'AS';    % Method - either AS or KMS
-%method      = 'KMS';    % Method - either AS or KMS
+method      = 'KMS';    % Method - either AS or KMS
 alpha       = 0.05;     % Significance level
 KMSopts  = KMSoptions();
 

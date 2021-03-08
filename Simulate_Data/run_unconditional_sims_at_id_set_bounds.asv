@@ -54,11 +54,8 @@ id_set = cs_linear_delta_lp_fn(Y_bar,X_bar,l,0);
  as_test_rejection_vec_unconditional1 = nan(numsims,1);
  as_test_rejection_vec_unconditional2 = nan(numsims,1);
  as_test_rejection_vec_unconditional3 = nan(numsims,1);
- kms_test_rejection_vec_unconditional = nan(numsims,1);
  %Simulations using unconditional moments 
  parfor s = 1:numsims
-%for s = 1:numsims
-%    s
     rng(s);
     rand_index = randi(size(Y_tilde_mat,1), nummarkets, 1);
     Y_mat_sample = Y_tilde_mat(rand_index, :);
@@ -94,8 +91,7 @@ id_set = cs_linear_delta_lp_fn(Y_bar,X_bar,l,0);
     %as_test_rejection_vec_unconditional2(s) = AS_interval2(1) > theta_ub | AS_interval2(2) < theta_ub;
     %as_test_rejection_vec_unconditional3(s) = AS_interval3(1) > theta_ub | AS_interval3(2) < theta_ub;
     
-     kms_interval = projected_AS(y_T, D*X_tilde_bar, nummarkets, Sigmahat,[0;1], NaN, 'KMS'); %KMS interval with standardized moments
-     kms_test_rejection_vec_unconditional(s) = kms_interval(1) > theta_ub | kms_interval(2) < theta_ub; 
+     KMS_interval = projected_AS(y_T, D*X_tilde_bar, nummarkets, Sigmahat,[0;1], NaN, 'AS'); %AS interval with standardized moments
  end    
  
  mean(hybrid_test_rejection_vec_unconditional)
@@ -104,9 +100,9 @@ id_set = cs_linear_delta_lp_fn(Y_bar,X_bar,l,0);
  mean(cc_test_rejection_vec_cox_and_shi_code_unconditional)
 % mean(as_test_rejection_vec_unconditional)
  mean(as_test_rejection_vec_unconditional1)
-% mean(as_test_rejection_vec_unconditional2)
-% mean(as_test_rejection_vec_unconditional3)
- mean(kms_test_rejection_vec_unconditional)
+ mean(as_test_rejection_vec_unconditional2)
+ mean(as_test_rejection_vec_unconditional3)
+
  %% Simulations using conditional moments
  
  hybrid_test_rejection_vec = nan(numsims,1);
