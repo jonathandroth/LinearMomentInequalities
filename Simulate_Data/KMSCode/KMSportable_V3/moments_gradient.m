@@ -43,9 +43,9 @@ DGP = KMSoptions.DGP;
 
 if DGP == -1
    %If DGP == -1, we assume that KMS options has a parameter X that is
-   %saved, and the moments are of the form E[-Y + X theta] >= 0
-   %This function returns the gradient of X theta wrt theta, i.e. X
-   Dg_ineq = KMSoptions.X;
+   %saved, and the moments are of the form E[Y - X theta] <= 0
+   %This function returns the gradient of g(theta) = -X theta wrt theta, i.e. -X
+   Dg_ineq = -KMSoptions.X;
    Dg_eq = [];
 end
 

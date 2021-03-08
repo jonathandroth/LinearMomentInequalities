@@ -48,9 +48,9 @@ DGP = KMSoptions.DGP;
 
 if DGP == -1
    %If DGP == -1, we assume that KMS options has a parameter X that is
-   %saved, and the moments are of the form E[-Y + X theta] >= 0
-   %This function returns g(theta) = X* theta
-   g_ineq = KMSoptions.X * theta;
+   %saved, and the moments are of the form E[Y - X theta] >= 0
+   %This function returns g(theta) = -X* theta
+   g_ineq = -KMSoptions.X * theta;
    g_eq = [];
 end
 

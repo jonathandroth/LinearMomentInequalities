@@ -1,4 +1,4 @@
-function [AS_CI, KMS_output] = projected_AS(y_T, X_T, T, Sigma, l) 
+function [AS_CI, KMS_output] = projected_AS(y_T, X_T, T, Sigma, l, W) 
 
 % This function computes projected AS intervals for moment inequalities of
 % the form E[Y_t - X_t delta| X_t ] >=0, where the goal is inference on l'delta
@@ -32,8 +32,11 @@ phi   = NaN;              % Default GMS function
 % Draw T normal draws from a Normal with mean yBar and variance Sigma
 %This makes the internal bootstrap in KMS code approximate the cond'l
 %distribution
+if(isnan(W))
 yBar = 1/sqrt(T) * y_T;
+rng(0); 
 W = mvnrnd(yBar, Sigma, T);
+end
 
 theta_0 = zeros(size(X_T,2),1);%inital guess is theta =0
 
@@ -44,9 +47,13 @@ UB_theta = repmat(100,size(X_T,2),1);
 %Store X in KMSoption
 KMSopts.X = X_T;
 
+%Turn off parallelization
+KMSopts.parallel = 0;
+
+
+
 %Compute the AS confidence interval
-    %Note that we pass -W, since KMS uses E[Y + X theta] >= 0
-[AS_CI,KMS_output] = KMS_0_Main(-W,theta_0,...
+[AS_CI,KMS_output] = KMS_0_Main(W,theta_0,...
     l,[],LB_theta,UB_theta,[],[],alpha,type,method,kappa,phi,CVXGEN_name,KMSopts);
 
 
