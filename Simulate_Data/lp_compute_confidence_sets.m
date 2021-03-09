@@ -8,6 +8,7 @@
 %broke it out so that we can run it multiple times with different l's,
 %after loading the data
 
+addpath(genpath(pwd))
 
 G_array = G_array_cell{1};
 mean_g = mean(G_array(1,:,1));
@@ -86,6 +87,11 @@ toc;
 confidence_sets_using_c_alpha = NaN(numdatasets,2);
 confidence_sets_using_c_lp_alpha = NaN(numdatasets,2);
 
+%We do the same thing for the projection methods using the KMS package
+confidence_sets_using_as = NaN(numdatasets,2);
+confidence_sets_using_kms = NaN(numdatasets,2);
+
+
 %For the conditional/hybrid methods, we get rejection probabilities over a
 %grid of values for l*theta. So we initialize those grids here
 num_beta0_gridpoints = 1001;
@@ -128,19 +134,23 @@ ds
    %set
    c_lp_alpha = c_lf_lp(X_T,Z_draws_interacted(:,1:numsims_lp),Sigma,alpha);
    confidence_sets_using_c_lp_alpha(ds,:) = cs_linear_delta_lp_fn(y_T,X_T,l,c_lp_alpha)';
-   
-   %%%Do the conditional and hybrid tests treating l as a non-linear
-   %parameter
-   
+      
+ 
 
-   %We do a change of basis such that M*theta yields l*theta in the first
+   %For the KMS/AMS and cond'l/hybrid, 
+   %we do a change of basis such that M*theta yields l*theta in the first
    %row (I construct an orthonormal basis for the rest of the basis
    %vectors, although this is not strictly necessary)
    M = [l' ; null( repmat(l',size(l)) )'];
    X_T = X_T * M^(-1);
    
    
+   %Do AS and KMS
+   confidence_sets_using_as(ds,:) = projected_AS_or_KMS(y_T, X_T, 500, Sigma,[1;zeros(size(X_T,2)-1,1)], NaN, 'AS');
+   confidence_sets_using_kms(ds,:) = projected_AS_or_KMS(y_T, X_T, 500, Sigma,[1;zeros(size(X_T,2)-1,1)], NaN, 'KMS');
     
+   %%%Do the conditional and hybrid tests treating l as a non-linear
+   %parameter
     
     conditional_rejection_vec = NaN(num_beta0_gridpoints,1);
     hybrid_rejection_vec = NaN(num_beta0_gridpoints,1);
@@ -209,7 +219,8 @@ end
                    'rejection_grid_hybrid', 'rejection_grid_conditional','beta0_grid' ,...
                    'full_rejection_grid_conditional','full_rejection_grid_hybrid',...
                    'rejection_grid_rcc', 'rejection_grid_cc', ...
-                   'full_rejection_grid_rcc', 'full_rejection_grid_cc');
+                   'full_rejection_grid_rcc', 'full_rejection_grid_cc',...
+                   'confidence_sets_using_as', 'confidence_sets_using_kms');
 
     
     
