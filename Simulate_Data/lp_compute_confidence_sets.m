@@ -146,9 +146,15 @@ ds
    
    
    %Do AS and KMS
+   try
    confidence_sets_using_as(ds,:) = projected_AS_or_KMS(y_T, X_T, 500, Sigma,[1;zeros(size(X_T,2)-1,1)], NaN, 'AS');
+   catch
+   end
+   
+   try
    confidence_sets_using_kms(ds,:) = projected_AS_or_KMS(y_T, X_T, 500, Sigma,[1;zeros(size(X_T,2)-1,1)], NaN, 'KMS');
-    
+   catch
+   end
    %%%Do the conditional and hybrid tests treating l as a non-linear
    %parameter
     
