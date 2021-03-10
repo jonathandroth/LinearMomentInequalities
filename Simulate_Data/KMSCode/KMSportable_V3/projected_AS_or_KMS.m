@@ -47,7 +47,7 @@ LB_theta = repmat(-10^5,size(X_T,2),1);
 UB_theta = repmat(10^5,size(X_T,2),1);
 
 %Store X in KMSoption
-KMSopts.X = X_T;
+KMSopts.X = 1/sqrt(T)* X_T;
 
 %Turn off parallelization
 KMSopts.parallel = 0;
@@ -74,6 +74,9 @@ else
     KMSopts.CVXGEN = 0;
     CVXGEN_name = [];
 end        
+
+%Increase the # of iterations for KMS
+KMSopts.EAM_maxit=200;
 
 %Compute the AS confidence interval
 [AS_CI,KMS_output] = KMS_0_Main(W,theta_0,...

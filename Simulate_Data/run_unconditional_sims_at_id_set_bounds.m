@@ -89,14 +89,15 @@ id_set = cs_linear_delta_lp_fn(Y_bar,X_bar,l,0);
     D = diag(diag(Sigmahat))^(-0.5);
     y_T = D * y_T;
     Sigmahat = D*Sigmahat*D;
-    AS_interval1 = projected_AS_or_KMS(y_T, D*X_tilde_bar, nummarkets, Sigmahat,[0;1], NaN, 'AS'); %AS interval with standardized moments
+    X_tilde_T = sqrt(nummarkets)* X_tilde_bar;
+    AS_interval1 = projected_AS_or_KMS(y_T, D*X_tilde_T, nummarkets, Sigmahat,[0;1], NaN, 'AS'); %AS interval with standardized moments
     %AS_interval2 = projected_AS_or_KMS(mean(Y_mat_sample)'*sqrt(nummarkets), X_tilde_bar, nummarkets, cov(Y_mat_sample), [0;1], NaN) %AS interval with non-standardized moments
     %AS_interval3 = projected_AS_or_KMS(NaN, X_tilde_bar, NaN, NaN, [0;1], Y_mat_sample); %use the original data rather than sims based off the y_T, X_T
     as_test_rejection_vec_unconditional1(s) = AS_interval1(1) > theta_ub | AS_interval1(2) < theta_ub;
     %as_test_rejection_vec_unconditional2(s) = AS_interval2(1) > theta_ub | AS_interval2(2) < theta_ub;
     %as_test_rejection_vec_unconditional3(s) = AS_interval3(1) > theta_ub | AS_interval3(2) < theta_ub;
     
-     kms_interval = projected_AS_or_KMS(y_T, D*X_tilde_bar, nummarkets, Sigmahat,[0;1], NaN, 'KMS'); %KMS interval with standardized moments
+     kms_interval = projected_AS_or_KMS(y_T, D*X_tilde_T, nummarkets, Sigmahat,[0;1], NaN, 'KMS'); %KMS interval with standardized moments
      kms_test_rejection_vec_unconditional(s) = kms_interval(1) > theta_ub | kms_interval(2) < theta_ub; 
  end    
  
