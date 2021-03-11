@@ -20,6 +20,8 @@ l_theta_grid = beta0_grid;
 
 rejection_grid_c_alpha = NaN(gridpoints,1);
 rejection_grid_c_lp_alpha = NaN(gridpoints,1);
+rejection_grid_kms = NaN(gridpoints,1);
+rejection_grid_as = NaN(gridpoints,1);
 
 for i = 1:gridpoints
     
@@ -30,6 +32,12 @@ for i = 1:gridpoints
     rejection_grid_c_lp_alpha(i,1) = 1 -mean( (confidence_sets_using_c_lp_alpha(:,1) <= l_theta) & ... 
                                    (l_theta <= confidence_sets_using_c_lp_alpha(:,2)) );
     
+    rejection_grid_kms(i,1) = 1 -mean( (confidence_sets_using_kms(:,1) <= l_theta) & ... 
+                                   (l_theta <= confidence_sets_using_kms(:,2)), 'omitnan' );
+                              
+    rejection_grid_as(i,1) = 1 -mean( (confidence_sets_using_as(:,1) <= l_theta) & ... 
+                                   (l_theta <= confidence_sets_using_as(:,2)), 'omitnan' );
+                       
                                
 end
 
