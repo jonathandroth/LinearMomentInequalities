@@ -76,7 +76,7 @@ else
 end        
 
 %Increase the # of iterations for KMS
-KMSopts.EAM_maxit=200;
+KMSopts.EAM_maxit=1000;
 
 %Compute the AS confidence interval
 [AS_CI,KMS_output] = KMS_0_Main(W,theta_0,...
