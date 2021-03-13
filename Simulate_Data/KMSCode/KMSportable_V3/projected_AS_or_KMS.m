@@ -28,6 +28,7 @@ KMSopts.n = T;
 %% Parameters
 type = 'two-sided';       % Two-sided or one sided test?  Set to 'one-sided-UB' or 'one-sided-LB' or 'two-sided'
 kappa = NaN;              % Default kappa function
+%kappa = @(n) 10^6; % REMOVE ME
 phi   = NaN;              % Default GMS function      
 
 
@@ -36,8 +37,15 @@ phi   = NaN;              % Default GMS function
 %distribution
 if(isnan(W))
 yBar = 1/sqrt(T) * y_T;
-rng(0); 
-W = mvnrnd(yBar, Sigma, T);
+%rng(0); 
+%rng(1234); 
+rng(12345); 
+%numDraws = 10^4;
+numDraws = T;
+%W = mvnrnd(yBar, Sigma * (numDraws/T), numDraws);
+W = mvnrnd(0*yBar, Sigma * (numDraws/T), numDraws);
+W = W * cov(W)^(-0.5) * (Sigma * (numDraws/T) ) ^(0.5) ; %rescale W so that they have covariance exactly Sigma * (numDraws/T)
+W = W-mean(W) + yBar'; %center the W so that they have mean exactly Ybar
 end
 
 theta_0 = zeros(size(X_T,2),1);%inital guess is theta =0
@@ -77,7 +85,8 @@ end
 
 %Increase the # of iterations for KMS
 KMSopts.EAM_maxit=1000;
-
+%KMSopts.B = 10001;
+kappa = @(n) sqrt(log(T)) * sqrt(numDraws/T);
 %Compute the AS confidence interval
 [AS_CI,KMS_output] = KMS_0_Main(W,theta_0,...
     l,[],LB_theta,UB_theta,[],[],alpha,type,method,kappa,phi,CVXGEN_name,KMSopts);
