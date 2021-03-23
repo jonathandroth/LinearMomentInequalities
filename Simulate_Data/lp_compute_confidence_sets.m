@@ -147,12 +147,25 @@ ds
    
    %Do AS and KMS
    try
-   confidence_sets_using_as(ds,:) = projected_AS_or_KMS(y_T, X_T, 500, Sigma,[1;zeros(size(X_T,2)-1,1)], NaN, 'AS');
+       [as_ci,as_output] = projected_AS_or_KMS(y_T, X_T, 500, Sigma,[1;zeros(size(X_T,2)-1,1)], NaN, 'AS');
+       
+       %If have a convergence error for either bound, set to NaN
+       if (as_output.flagL_EAM ~= 1) || (as_output.flagU_EAM ~= 1)
+           as_ci = [NaN, NaN];
+       end
+       confidence_sets_using_as(ds,:) = as_ci;
    catch
    end
    
    try
-   confidence_sets_using_kms(ds,:) = projected_AS_or_KMS(y_T, X_T, 500, Sigma,[1;zeros(size(X_T,2)-1,1)], NaN, 'KMS');
+   
+       [kms_ci,kms_output] = projected_AS_or_KMS(y_T, X_T, 500, Sigma,[1;zeros(size(X_T,2)-1,1)], NaN, 'KMS');
+       
+       %If have a convergence error for either bound, set to NaN
+       if (kms_output.flagL_EAM ~= 1) || (kms_output.flagU_EAM ~= 1)
+           kms_ci = [NaN, NaN];
+       end
+       confidence_sets_using_kms(ds,:) = kms_ci;
    catch
    end
    %%%Do the conditional and hybrid tests treating l as a non-linear
