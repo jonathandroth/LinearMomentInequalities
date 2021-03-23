@@ -53,9 +53,12 @@ c_theta    = predictor(theta,dmodel);
 
 % Compute s^2(theta) 
 [~,~,mse,~]=predictor(theta,dmodel);
-s = sqrt(mse);
+s = sqrt(max(mse, 10^(-10)));
 
 % Step 3) Compute expected improvement minus gamma
+try
 EI = q.'*(theta - theta_hash)*(-normcdf(-(h_theta-c_theta)/s));
-
+catch
+   warning('blah'); 
+end
 end
