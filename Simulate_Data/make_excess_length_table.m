@@ -20,6 +20,11 @@ mat_50_coxandshi = [];
 mat_95_coxandshi = [];
 mat_mean_coxandshi = [];
 
+mat_05_asandkms = [];
+mat_50_asandkms = [];
+mat_95_asandkms = [];
+mat_mean_asandkms = [];
+
 
 filename_vec = [];
 numthetha_vec = [];
@@ -56,6 +61,14 @@ if(use_zero_cutoff == 0)
     mat_50_coxandshi = [mat_50_coxandshi; row_50_coxandshi];
     mat_95_coxandshi = [mat_95_coxandshi; row_95_coxandshi];
     mat_mean_coxandshi = [mat_mean_coxandshi; row_mean_coxandshi];
+    
+    if(numthetas < 9)
+    mat_05_asandkms = [mat_05_asandkms; row_05_asandkms];
+    mat_50_asandkms = [mat_50_asandkms; row_50_asandkms];
+    mat_95_asandkms = [mat_95_asandkms; row_95_asandkms];
+    mat_mean_asandkms = [mat_mean_asandkms; row_mean_asandkms];
+    end
+    
 else
     mat_05 = [mat_05; row_05_zerocutoff];
     mat_50 = [mat_50; row_50_zerocutoff];
@@ -66,6 +79,15 @@ else
     mat_50_coxandshi = [mat_50_coxandshi; row_50_zerocutoff_coxandshi];
     mat_95_coxandshi = [mat_95_coxandshi; row_95_zerocutoff_coxandshi];
     mat_mean_coxandshi = [mat_mean_coxandshi; row_mean_zerocutoff_coxandshi];
+    
+    
+    if(numthetas < 9)
+    mat_05_asandkms = [mat_05_asandkms; row_05_zerocutoff_asandkms];
+    mat_50_asandkms = [mat_50_asandkms; row_50_zerocutoff_asandkms];
+    mat_95_asandkms = [mat_95_asandkms; row_95_zerocutoff_asandkms];
+    mat_mean_asandkms = [mat_mean_asandkms; row_mean_zerocutoff_asandkms];
+    end
+    
 end
     
 filename_vec = [filename_vec ; filename_graph];
@@ -127,5 +149,27 @@ fid = fopen(strcat('../../Output/',...
                     filename_graph,'_excess_length_table','mean',suffix, '_coxandshi', '.tex') ,'wt');
 fprintf(fid,clean_latex([mat_mean, mat_mean_coxandshi]));
 fclose(fid);
+
+%Print AS/KMS excess length
+fid = fopen(strcat('../../Output/',...
+                    filename_graph,'_excess_length_table','05',suffix, '_asandkms', '.tex') ,'wt');
+fprintf(fid,clean_latex(mat_05_asandkms));
+fclose(fid);
+
+fid = fopen(strcat('../../Output/',...
+                    filename_graph,'_excess_length_table','50',suffix, '_asandkms', '.tex') ,'wt');
+fprintf(fid,clean_latex([mat_50(1:4,:),mat_50_asandkms]));
+fclose(fid);
+
+fid = fopen(strcat('../../Output/',...
+                    filename_graph,'_excess_length_table','95',suffix, '_asandkms', '.tex') ,'wt');
+fprintf(fid,clean_latex(mat_95_asandkms));
+fclose(fid);
+
+fid = fopen(strcat('../../Output/',...
+                    filename_graph,'_excess_length_table','mean',suffix, '_asandkms', '.tex') ,'wt');
+fprintf(fid,clean_latex(mat_mean_asandkms));
+fclose(fid);
+
 
 end

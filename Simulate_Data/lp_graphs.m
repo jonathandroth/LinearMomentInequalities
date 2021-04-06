@@ -277,6 +277,13 @@ identified_set_length_zerocutoff = identified_set_bounds_zerocutoff(2) - identif
 excess_lengths_lf = (confidence_sets_using_c_alpha(:,2) - confidence_sets_using_c_alpha(:,1)) - identified_set_length;
 excess_lengths_lfn = (confidence_sets_using_c_lp_alpha(:,2) - confidence_sets_using_c_lp_alpha(:,1)) - identified_set_length;
 
+
+if(num_F_groups_parameters < 9)    
+excess_lengths_as =  (confidence_sets_using_as(:,2) - confidence_sets_using_as(:,1)) - identified_set_length;
+excess_lengths_kms = (confidence_sets_using_kms(:,2) - confidence_sets_using_kms(:,1)) - identified_set_length;
+end
+
+
 %For the conditional and hybrid approaches, we compute the area by
 %assigning the rejection value at each number to the closest point in the
 %grid. The weight for each point is thus half the distance of the gap
@@ -291,23 +298,38 @@ gridWeightsMat = repmat( gridWeightsVec, size(full_rejection_grid_conditional,1)
 excess_lengths_conditional =  sum( gridWeightsMat .* (1 - full_rejection_grid_conditional ), 2) - identified_set_length;
 excess_lengths_hybrid =  sum( gridWeightsMat .* (1 - full_rejection_grid_hybrid ), 2) - identified_set_length;
 
+
 excess_lengths_cc =  sum( gridWeightsMat .* (1 - full_rejection_grid_cc ), 2) - identified_set_length;
 excess_lengths_rcc =  sum( gridWeightsMat .* (1 - full_rejection_grid_rcc ), 2) - identified_set_length;
+
 
 row_mean = cellfun( @(x) mean(x), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
 row_05 = cellfun( @(x) quantile(x,.05), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
 row_50 = cellfun( @(x) quantile(x,.50), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
 row_95 = cellfun( @(x) quantile(x,.95), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
 
+
 row_mean_coxandshi = cellfun( @(x) mean(x), {excess_lengths_cc, excess_lengths_rcc});
 row_05_coxandshi = cellfun( @(x) quantile(x,.05), {excess_lengths_cc, excess_lengths_rcc});
 row_50_coxandshi = cellfun( @(x) quantile(x,.50), {excess_lengths_cc, excess_lengths_rcc});
 row_95_coxandshi = cellfun( @(x) quantile(x,.95), {excess_lengths_cc, excess_lengths_rcc});
 
+if(num_F_groups_parameters < 9)    
+row_mean_asandkms = cellfun( @(x) mean(x), {excess_lengths_as, excess_lengths_kms});
+row_05_asandkms = cellfun( @(x) quantile(x,.05), {excess_lengths_as, excess_lengths_kms});
+row_50_asandkms = cellfun( @(x) quantile(x,.50), {excess_lengths_as, excess_lengths_kms});
+row_95_asandkms = cellfun( @(x) quantile(x,.95), {excess_lengths_as, excess_lengths_kms});    
+end
+if(num_F_groups_parameters < 9)
+save( strcat(data_output_folder, filename_graph,'_', 'rows_for_excess_length_table'),...
+    'row_05', 'row_50', 'row_95', 'row_mean',...
+    'row_05_coxandshi', 'row_50_coxandshi', 'row_95_coxandshi', 'row_mean_coxandshi',...
+    'row_05_asandkms', 'row_50_asandkms', 'row_95_asandkms', 'row_mean_asandkms') ;    
+else
 save( strcat(data_output_folder, filename_graph,'_', 'rows_for_excess_length_table'),...
     'row_05', 'row_50', 'row_95', 'row_mean',...
     'row_05_coxandshi', 'row_50_coxandshi', 'row_95_coxandshi', 'row_mean_coxandshi') ;                                              
-
+end
 row_mean_zerocutoff = row_mean - (identified_set_length_zerocutoff - identified_set_length);
 row_05_zerocutoff = row_05 - (identified_set_length_zerocutoff - identified_set_length);
 row_50_zerocutoff = row_50 - (identified_set_length_zerocutoff - identified_set_length);
@@ -319,10 +341,24 @@ row_05_zerocutoff_coxandshi = row_05_coxandshi - (identified_set_length_zerocuto
 row_50_zerocutoff_coxandshi = row_50_coxandshi - (identified_set_length_zerocutoff - identified_set_length);
 row_95_zerocutoff_coxandshi = row_95_coxandshi - (identified_set_length_zerocutoff - identified_set_length);
 
+if(num_F_groups_parameters < 9)    
+row_mean_zerocutoff_asandkms = row_mean_asandkms - (identified_set_length_zerocutoff - identified_set_length);
+row_05_zerocutoff_asandkms = row_05_asandkms - (identified_set_length_zerocutoff - identified_set_length);
+row_50_zerocutoff_asandkms = row_50_asandkms - (identified_set_length_zerocutoff - identified_set_length);
+row_95_zerocutoff_asandkms = row_95_asandkms - (identified_set_length_zerocutoff - identified_set_length);
+end
 
+if(num_F_groups_parameters < 9) 
+save( strcat(data_output_folder, filename_graph,'_', 'rows_for_excess_length_table_zerocutoff'),...
+    'row_05_zerocutoff', 'row_50_zerocutoff', 'row_95_zerocutoff', 'row_mean_zerocutoff',...
+    'row_05_zerocutoff_coxandshi', 'row_50_zerocutoff_coxandshi', 'row_95_zerocutoff_coxandshi', 'row_mean_zerocutoff_coxandshi',...
+    'row_05_zerocutoff_asandkms', 'row_50_zerocutoff_asandkms', 'row_95_zerocutoff_asandkms', 'row_mean_zerocutoff_asandkms') ;                                              
+    
+else
 save( strcat(data_output_folder, filename_graph,'_', 'rows_for_excess_length_table_zerocutoff'),...
     'row_05_zerocutoff', 'row_50_zerocutoff', 'row_95_zerocutoff', 'row_mean_zerocutoff',...
     'row_05_zerocutoff_coxandshi', 'row_50_zerocutoff_coxandshi', 'row_95_zerocutoff_coxandshi', 'row_mean_zerocutoff_coxandshi') ;                                              
+end
 %% Extract size at the upper and lower bound
 upper_bound_index = find(beta0_grid == identified_set_bounds(2) );
 lower_bound_index = find(beta0_grid == identified_set_bounds(1) );
@@ -348,9 +384,21 @@ max_size_in_id_set_coxandshi = cellfun( @(x) max( x(id_set_indices)), ...
                                                     {rejection_grid_cc,...
                                                      rejection_grid_rcc});                                                 
                                                  
+if(num_F_groups_parameters < 9)    
+    max_size_in_id_set_asandkms = cellfun( @(x) max( x(id_set_indices)), ...
+                                                    {rejection_grid_as,...
+                                                     rejection_grid_kms});
+end
+                                                 
+if(num_F_groups_parameters < 9) 
+save( strcat(data_output_folder, filename_graph,'_', 'upper_and_lower_bound_size'),...
+    'upper_bound_sizes', 'lower_bound_sizes',...
+    'max_size_in_id_set', 'max_size_in_id_set_coxandshi',...
+    'max_size_in_id_set_asandkms') ;                                                 
+else
 save( strcat(data_output_folder, filename_graph,'_', 'upper_and_lower_bound_size'),...
     'upper_bound_sizes', 'lower_bound_sizes', 'max_size_in_id_set', 'max_size_in_id_set_coxandshi') ;                                              
-
+end
 %% Extract size at the upper and lower bound using zerocutoff
 upper_bound_index_zerocutoff = find(beta0_grid == identified_set_bounds_zerocutoff(2) );
 lower_bound_index_zerocutoff = find(beta0_grid == identified_set_bounds_zerocutoff(1) );
@@ -374,12 +422,25 @@ max_size_in_id_set_zerocutoff = cellfun( @(x) max( x(id_set_indices_zerocutoff))
                                                  
 max_size_in_id_set_zerocutoff_coxandshi = cellfun( @(x) max( x(id_set_indices_zerocutoff)), ...
                                                     {rejection_grid_cc,...
-                                                     rejection_grid_rcc});                                                 
-                                                                                                 
+                                                     rejection_grid_rcc});   
+                                                 
+                                                 
+if(num_F_groups_parameters < 9)    
+    max_size_in_id_set_zerocutoff_asandkms = cellfun( @(x) max( x(id_set_indices_zerocutoff)), ...
+                                                    {rejection_grid_as,...
+                                                     rejection_grid_kms});
+end
+                                                 
+if(num_F_groups_parameters < 9)    
+save( strcat(data_output_folder, filename_graph,'_', 'upper_and_lower_bound_size_zerocutoff'),...
+    'upper_bound_sizes_zerocutoff', 'lower_bound_sizes_zerocutoff', 'max_size_in_id_set_zerocutoff', ...
+    'max_size_in_id_set_zerocutoff_coxandshi','max_size_in_id_set_zerocutoff_asandkms') ;                                              
+
+else
 save( strcat(data_output_folder, filename_graph,'_', 'upper_and_lower_bound_size_zerocutoff'),...
     'upper_bound_sizes_zerocutoff', 'lower_bound_sizes_zerocutoff', 'max_size_in_id_set_zerocutoff', ...
     'max_size_in_id_set_zerocutoff_coxandshi') ;                                              
-
+end
 
 %%
 display('Script complete');

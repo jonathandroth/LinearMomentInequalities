@@ -12,6 +12,7 @@ mat_ub_sizes = [];
 mat_lb_sizes = [];
 mat_max_sizes = [];
 mat_max_sizes_coxandshi = [];
+mat_max_sizes_asandkms = [];
 
 filename_vec = [];
 numthetha_vec = [];
@@ -45,11 +46,18 @@ if(use_zero_cutoff == 0 )
     mat_max_sizes = round([mat_max_sizes; max_size_in_id_set],2);
     mat_max_sizes_coxandshi = round([mat_max_sizes_coxandshi; max_size_in_id_set_coxandshi],2);
     
+    if(numthetas < 9)
+      mat_max_sizes_asandkms = round([mat_max_sizes_asandkms; max_size_in_id_set_asandkms],2);
+    end
 else
     mat_ub_sizes = round([mat_ub_sizes; upper_bound_sizes_zerocutoff],2);
     mat_lb_sizes = round([mat_lb_sizes; lower_bound_sizes_zerocutoff],2);
     mat_max_sizes = round([mat_max_sizes; max_size_in_id_set_zerocutoff],2);
     mat_max_sizes_coxandshi = round([mat_max_sizes_coxandshi; max_size_in_id_set_zerocutoff_coxandshi],2);
+    
+    if(numthetas < 9)
+      mat_max_sizes_asandkms = round([mat_max_sizes_asandkms; max_size_in_id_set_zerofcutoff_asandkms],2);
+    end
 end
 
 
@@ -83,4 +91,9 @@ fid = fopen(strcat('../../Output/',...
 fprintf(fid,clean_latex([mat_max_sizes, mat_max_sizes_coxandshi]));
 fclose(fid);
 
+
+fid = fopen(strcat('../../Output/',...
+                    filename_graph,'_max_size_in_id_set', suffix, '_asandkms', '.tex') ,'wt');
+fprintf(fid,clean_latex([mat_max_sizes(1:4,:),mat_max_sizes_asandkms]));
+fclose(fid);
 end
