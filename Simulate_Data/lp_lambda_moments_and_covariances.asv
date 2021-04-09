@@ -28,9 +28,8 @@ lp_create_moments_and_covariances
 nummoments = size( y_T_cell{ds,1} , 1);
 rng(0);
 Z_draws_interacted = randn(nummoments, 10000);
-%CHANGE THIS BACK WHEN DONE DEBUGGING
-%for ds = 1:numdatasets
-parfor ds = 1:numdatasets
+%CHANGE THIS BACK WHEN DONE DEBUGG
+%parfor ds = 1:numdatasets
 X_T = X_T_cell{ds};
 y_T = y_T_cell{ds};
 Sigma = Sigma_conditional_cell{ds};
@@ -50,7 +49,7 @@ hybrid_test(ds,i) = lp_hybrid_test_fn( y_T, X_T, Sigma, alpha, alpha/10, eta_dra
 %Otherwise, use CC test and give upper bound for RCC based on best
 %refinement
 if size(X_T,2) < 10 || size(X_T,1) < 100
-  [T_RCC,cv_RCC,cv_CC,~,~, dof_n] = func_subRCC(X_T, -y_T, Sigma, alpha);
+  [T_RCC,cv_RCC,~,~,~, dof_n] = func_subRCC(X_T, -y_T, Sigma, alpha);
   cc_test(ds,i) = (dof_n > 0) * (T_RCC > cv_CC);
   rcc_test(ds,i) = (dof_n > 0) * (T_RCC > cv_RCC);
 else

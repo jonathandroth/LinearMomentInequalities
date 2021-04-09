@@ -204,10 +204,10 @@ ds
         %If fewer than 10 params or fewer than 100 moments, do RCC test
             %Otherwise do CC test only and use ub of RCC test based on best
             %possible refinement
-        if size(X_T,2) < 10 || size(X_T,1) < 100
-            [T_RCC,cv_RCC,cv_CC,~,~, dof_n] = func_subRCC(X_T_tilde, -y_T_tilde, Sigma, alpha);
-            cc_rejection_vec(count,1) = (dof_n > 0) * (T_RCC > cv_CC);
-            rcc_rejection_vec(count,1) = (dof_n > 0) * (T_RCC > cv_RCC);
+        if size(X_T,2) < 10 || size(X_T,1)
+            [T_RCC,cv_RCC,cv_CC,cv_CC2,Edim, dof_n] = func_subRCC(X_T_tilde, -y_T_tilde, Sigma, alpha);
+            cc_rejection_vec(count,1) = (dof_n > 0) * (T_CC > cv_CC);
+            cc_rejection_vec(count,1) = (dof_n > 0) * (T_CC > cv_CC);
         else
             [T_CC,cv_CC, dof_n] = func_subCC(X_T_tilde, -y_T_tilde, Sigma, alpha);
             cc_rejection_vec(count,1) = (dof_n > 0) * (T_CC > cv_CC);
