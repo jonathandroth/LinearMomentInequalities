@@ -205,9 +205,15 @@ ds
             %Otherwise do CC test only and use ub of RCC test based on best
             %possible refinement
         if size(X_T,2) < 10 || size(X_T,1) < 100
+            try
             [T_RCC,cv_RCC,cv_CC,~,~, dof_n] = func_subRCC(X_T_tilde, -y_T_tilde, Sigma, alpha);
             cc_rejection_vec(count,1) = (dof_n > 0) * (T_RCC > cv_CC);
             rcc_rejection_vec(count,1) = (dof_n > 0) * (T_RCC > cv_RCC);
+            catch
+            [T_CC,cv_CC, dof_n] = func_subCC(X_T_tilde, -y_T_tilde, Sigma, alpha);
+            cc_rejection_vec(count,1) = (dof_n > 0) * (T_CC > cv_CC);
+            rcc_rejection_vec(count,1) = ((dof_n > 0) * (T_CC > cv_CC)) | ( (dof_n ==1) & (T_CC > chi2inv(1-2*alpha,dof_n)) ); %set RCC to 1 if dof_n == 1 and T_CC is above the 1-2*alpha cv    
+            end
         else
             [T_CC,cv_CC, dof_n] = func_subCC(X_T_tilde, -y_T_tilde, Sigma, alpha);
             cc_rejection_vec(count,1) = (dof_n > 0) * (T_CC > cv_CC);
