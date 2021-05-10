@@ -56,7 +56,7 @@ else
     mat_max_sizes_coxandshi = round([mat_max_sizes_coxandshi; max_size_in_id_set_zerocutoff_coxandshi],2);
     
     if(numthetas < 9)
-      mat_max_sizes_asandkms = round([mat_max_sizes_asandkms; max_size_in_id_set_zerofcutoff_asandkms],2);
+      mat_max_sizes_asandkms = round([mat_max_sizes_asandkms; max_size_in_id_set_zerocutoff_asandkms],2);
     end
 end
 
