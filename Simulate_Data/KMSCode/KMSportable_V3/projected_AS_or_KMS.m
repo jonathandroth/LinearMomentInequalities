@@ -62,6 +62,12 @@ KMSopts.parallel = 0;
 
 KMSopts.S = 0;
 
+
+%Tighten default tolerance by a factor of 2
+KMSopts.EAM_obj_tol  = 0.005/2;
+%Set thetadistort to be equal to objective tolerance, as KMS do
+KMSopts.EAM_thetadistort = KMSopts.EAM_obj_tol;
+
 num_moments = size(X_T,1);
 num_params = size(X_T,2);
 
