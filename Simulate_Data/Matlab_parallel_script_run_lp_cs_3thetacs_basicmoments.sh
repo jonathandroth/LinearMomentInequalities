@@ -5,7 +5,7 @@
 #SBATCH -c 24 
 #SBATCH -N 1 
 #SBATCH --mem 80000 
-#SBATCH -t 7-01:00
+#SBATCH -t 7-00:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=jonathanroth@g.harvard.edu
 
