@@ -126,6 +126,7 @@ ds
 %    X_T = D_sigma_minushalf * X_T;
 %    
    
+if(~ as_kms_only)
    %Do the LF (aka LFP) test and store the resulting confidence set
    c_alpha = c_lf(Sigma, alpha, Z_draws_interacted); 
    confidence_sets_using_c_alpha(ds,:) = cs_linear_delta_lp_fn(y_T,X_T,l,c_alpha)';
@@ -135,7 +136,7 @@ ds
    c_lp_alpha = c_lf_lp(X_T,Z_draws_interacted(:,1:numsims_lp),Sigma,alpha);
    confidence_sets_using_c_lp_alpha(ds,:) = cs_linear_delta_lp_fn(y_T,X_T,l,c_lp_alpha)';
       
- 
+end
 
    %For the KMS/AMS and cond'l/hybrid, 
    %we do a change of basis such that M*theta yields l*theta in the first
@@ -174,6 +175,8 @@ ds
    %%%Do the conditional and hybrid tests treating l as a non-linear
    %parameter
     
+   
+ if(~ as_kms_only)  
     conditional_rejection_vec = NaN(num_beta0_gridpoints,1);
     hybrid_rejection_vec = NaN(num_beta0_gridpoints,1);
     rcc_rejection_vec = NaN(num_beta0_gridpoints,1);
@@ -230,7 +233,7 @@ ds
     rejection_grid_cc(ds,:) = cc_rejection_vec;
     
 end
-
+end
 %Create the confidence sets using the grid search
 %grid_min_max
     
@@ -249,16 +252,18 @@ end
     rejection_grid_rcc = mean(rejection_grid_rcc,1);
     rejection_grid_cc = mean(rejection_grid_cc,1);
     
-
+if(~ as_kms_only)
     ds_name = strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp');
     mkdir(ds_name);
     save( ds_name, 'confidence_sets_using_c_alpha', 'confidence_sets_using_c_lp_alpha',...
                    'rejection_grid_hybrid', 'rejection_grid_conditional','beta0_grid' ,...
                    'full_rejection_grid_conditional','full_rejection_grid_hybrid',...
                    'rejection_grid_rcc', 'rejection_grid_cc', ...
-                   'full_rejection_grid_rcc', 'full_rejection_grid_cc',...
-                   'confidence_sets_using_as', 'confidence_sets_using_kms');
+                   'full_rejection_grid_rcc', 'full_rejection_grid_cc');
+end
 
-    
+    ds_name_askms = strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp_askms');
+    save( ds_name_askms, 'confidence_sets_using_as', 'confidence_sets_using_kms');
+
     
     

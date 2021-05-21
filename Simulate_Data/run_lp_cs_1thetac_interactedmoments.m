@@ -2,6 +2,9 @@
 %ones for each firm
 combine_theta_g_moments = 1;
 
+% Toggle doing only AS/KMS
+as_kms_only = 1;
+
 
 %Specify where the output should go (can be relative to the working  dir)
 data_output_dir = '../../Output/Conditional_FullMatrix/Data/1Thetac/Interacted_Moments/';

@@ -64,3 +64,7 @@ end
 if( exist( 'graphs_only') == 0 )
     graphs_only = 0;
 end
+
+if( exist( 'as_kms_only') == 0)
+    as_kms_only = 0;
+end

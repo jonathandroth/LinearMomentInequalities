@@ -2,6 +2,7 @@
 
 %% Create graphs
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp'));
+load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp_askms'));
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds_zerocutoff'));
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds'));
 
