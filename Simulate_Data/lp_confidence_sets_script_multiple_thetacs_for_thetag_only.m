@@ -4,7 +4,7 @@
 %so does not need to load the moment function
 
 lp_set_parameters;
-numdatasets = 24; %modify the number of simulations since this is slow
+numdatasets = 100; %modify the number of simulations since this is slow
 l = [zeros( num_F_groups_parameters ,1) ; 1];
 
 if( exist('xlim_graph_thetag'))
