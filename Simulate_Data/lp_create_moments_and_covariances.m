@@ -47,7 +47,7 @@ tic;
     %parfor loop below
     for ds = 1:numdatasets
 
-    rng(ds);
+    rng(ds + dsoffset);
     rand_index = randsample( length_long_chain , nummarkets);
     
     F_array_cell{ds} = long_ds_object.F_array(:,:,rand_index);
