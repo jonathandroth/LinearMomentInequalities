@@ -1,6 +1,6 @@
 #!/bin/bash 
-#SBATCH -o ../../Logs/run_lp_cs_3thetacs_interactedmoments_thetag_only.out
-#SBATCH -e ../../Logs/run_lp_cs_3thetacs_interactedmoments_thetag_only.err
+#SBATCH -o ../../Logs/run_lp_cs_3thetacs_interactedmoments_thetag_only_100.out
+#SBATCH -e ../../Logs/run_lp_cs_3thetacs_interactedmoments_thetag_only_100.err
 #SBATCH -p shared
 #SBATCH -c 36 
 #SBATCH -N 1 
