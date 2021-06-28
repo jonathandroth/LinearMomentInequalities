@@ -69,6 +69,6 @@ if( exist( 'as_kms_only') == 0)
     as_kms_only = 0;
 end
 
-if( exist( 'dsoffset') == 0)
+if( exist('dsoffset') == 0)
     dsoffset = 0;
 end

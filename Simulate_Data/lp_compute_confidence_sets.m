@@ -263,7 +263,7 @@ if(~ as_kms_only)
 end
 
     ds_name_askms = strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp_askms');
-    if(dfoffset ~= 0)
+    if(dsoffset ~= 0)
         ds_name_askms = strcat(ds_name_askms,'_ds',dsoffset);
     end
     save( ds_name_askms, 'confidence_sets_using_as', 'confidence_sets_using_kms');
