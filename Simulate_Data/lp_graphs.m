@@ -2,10 +2,27 @@
 
 %% Create graphs
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp'));
-load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp_askms'));
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds_zerocutoff'));
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds'));
 
+%If fewer than 9 parameters load as/kms
+if(num_F_groups_moments < 9)
+    load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp_askms'));
+    
+    if(isfile(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp_askms', '_ds', 100, '.mat')))  
+    %If interacted moments with the 3thetacs, combine the different
+    %results on the server
+    confidence_sets_using_as_combined = confidence_sets_using_as;
+    confidence_sets_using_kms_combined = confidence_sets_using_kms;
+    for(ds = [100 200 300 400]) 
+        load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp_askms', '_ds', ds));
+        confidence_sets_using_as_combined = [confidence_sets_using_as_combined; confidence_sets_using_as];
+        confidence_sets_using_kms_combined = [confidence_sets_using_kms_combined; confidence_sets_using_kms];
+    end    
+    confidence_sets_using_as = confidence_sets_using_as_combined;
+    confidence_sets_using_kms = confidence_sets_using_kms_combined;
+    end
+end
 
 %load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds_zerocutoff'));
 %identified_set_bounds = identified_set_bounds_zerocutoff;
@@ -361,8 +378,10 @@ save( strcat(data_output_folder, filename_graph,'_', 'rows_for_excess_length_tab
     'row_05_zerocutoff_coxandshi', 'row_50_zerocutoff_coxandshi', 'row_95_zerocutoff_coxandshi', 'row_mean_zerocutoff_coxandshi') ;                                              
 end
 %% Extract size at the upper and lower bound
-upper_bound_index = find(beta0_grid == identified_set_bounds(2) );
-lower_bound_index = find(beta0_grid == identified_set_bounds(1) );
+
+upper_bound_index = max( find(beta0_grid <= identified_set_bounds(2)) );
+lower_bound_index = min( find(beta0_grid >= identified_set_bounds(1)) );
+
 
 id_set_indices = find(identified_set_bounds(1) <= beta0_grid & beta0_grid <= identified_set_bounds(2) );
 
@@ -401,8 +420,9 @@ save( strcat(data_output_folder, filename_graph,'_', 'upper_and_lower_bound_size
     'upper_bound_sizes', 'lower_bound_sizes', 'max_size_in_id_set', 'max_size_in_id_set_coxandshi') ;                                              
 end
 %% Extract size at the upper and lower bound using zerocutoff
-upper_bound_index_zerocutoff = find(beta0_grid == identified_set_bounds_zerocutoff(2) );
-lower_bound_index_zerocutoff = find(beta0_grid == identified_set_bounds_zerocutoff(1) );
+upper_bound_index_zerocutoff = max( find(beta0_grid <= identified_set_bounds_zerocutoff(2)) );
+lower_bound_index_zerocutoff = min( find(beta0_grid >= identified_set_bounds_zerocutoff(1)) );
+
 id_set_indices_zerocutoff = find(identified_set_bounds_zerocutoff(1) <= beta0_grid & beta0_grid <= identified_set_bounds_zerocutoff(2) );
 
 
