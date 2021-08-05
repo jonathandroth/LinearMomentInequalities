@@ -10,7 +10,7 @@ for(row = 1:numRows)
         
         %Convert the relevant matrix entry to a string and add to txt,
         %bracketed by $ signs
-        txt = [txt, '$', num2str( mat(row,col) ), '$' ];
+        txt = [txt, '$', num2str( mat(row,col), '%.2f' ), '$' ];
         
         %If not last column, add spaces and alignment sign
         if( col ~= numCols)

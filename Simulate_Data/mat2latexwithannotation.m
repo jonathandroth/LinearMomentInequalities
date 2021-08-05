@@ -9,7 +9,10 @@ for(row = 1:numRows)
     for(col = 1:numCols)
         
         %Load the relevant entry in mat, round to two decimals, convert to string
-        dataEntryString = num2str( round( mat(row,col), 2) );
+        dataEntryString = num2str( num2str( mat(row,col), '%.2f' ) );
+        
+        dataEntryString = regexprep(dataEntryString,'([1-9])\.00','$1'); %convert two 0's after decimal to nothing, unless 0.0
+        dataEntryString = regexprep(dataEntryString,'([1-9]0)\.00','$1'); %this fixes numbers like 10.00 to 10
         
         %If we should annotate, add the annotation as a superscript
         if( annotationMat(row,col) == 1)

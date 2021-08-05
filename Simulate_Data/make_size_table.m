@@ -96,4 +96,11 @@ fid = fopen(strcat('../../Output/',...
                     filename_graph,'_max_size_in_id_set', suffix, '_asandkms', '.tex') ,'wt');
 fprintf(fid,clean_latex([mat_max_sizes(1:4,:),mat_max_sizes_asandkms]));
 fclose(fid);
+
+
+fid = fopen(strcat('../../Output/',...
+                    filename_graph,'_max_size_in_id_set', suffix, '_allcombined', '.tex') ,'wt');
+fprintf(fid,clean_latex([mat_max_sizes, mat_max_sizes_coxandshi, [mat_max_sizes_asandkms; NaN, NaN; NaN, NaN]]));
+fclose(fid);
+
 end
