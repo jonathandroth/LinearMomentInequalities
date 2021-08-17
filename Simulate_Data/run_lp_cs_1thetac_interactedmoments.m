@@ -3,7 +3,7 @@
 combine_theta_g_moments = 1;
 
 % Toggle doing only AS/KMS
-as_kms_only = 1;
+%as_kms_only = 1;
 
 
 %Specify where the output should go (can be relative to the working  dir)

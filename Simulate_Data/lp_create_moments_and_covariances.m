@@ -10,7 +10,14 @@
 
 %% Calculate the moments and conditional variances
 
-
+timing_vec_lf = zeros(numdatasets,1);
+timing_vec_lfp = zeros(numdatasets,1);
+timing_vec_conditional = zeros(numdatasets,1);
+timing_vec_hybrid = zeros(numdatasets,1);
+timing_vec_as = zeros(numdatasets,1);
+timing_vec_kms = zeros(numdatasets,1);
+timing_vec_rcc = zeros(numdatasets,1);
+timing_vec_cc = zeros(numdatasets,1);
 
 
 tic;
@@ -181,9 +188,24 @@ tic;
         %Remove any all zero columns
         A= A(:,any(A));
         
+        startTimeCondVar = tic;
         %Calculate the variance of Y conditional on A using the Abadie et
         %al matched pairs method
         Sigma_conditional = conditional_variance_fn(Y_wide, A, diagonal);
+        runTimeCondVar = toc(startTimeCondVar);
+        
+        
+        
+        %Add time for conditional variance to all the timers
+        timing_vec_lf(ds) = timing_vec_lf(ds) + runTimeCondVar;
+        timing_vec_lfp(ds) = timing_vec_lfp(ds) + runTimeCondVar;
+        timing_vec_conditional(ds) = timing_vec_conditional(ds) + runTimeCondVar;
+        timing_vec_hybrid(ds) = timing_vec_hybrid(ds) + runTimeCondVar;
+        timing_vec_as(ds) = timing_vec_as(ds) + runTimeCondVar;
+        timing_vec_kms(ds) = timing_vec_kms(ds) + runTimeCondVar;
+        timing_vec_rcc(ds) = timing_vec_rcc(ds) + runTimeCondVar;
+        timing_vec_cc(ds) = timing_vec_cc(ds) + runTimeCondVar;
+
         
   %y_T and x_T are constructed so that population moments = y_T - X_T * delta
     % WE construct these so that they are less than 0 in expectation (the

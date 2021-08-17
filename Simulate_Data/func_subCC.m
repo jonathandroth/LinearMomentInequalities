@@ -14,8 +14,9 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [T_CC,cv_CC, dof_n] = func_subCC(C, m, V,alpha)
-  
+function [T_CC,cv_CC, dof_n, toc_CC] = func_subCC(C, m, V,alpha)
+        ticStart = tic;
+        
         d_nuis = size(C,2); %number of nuisance parameters
         d_ineq = length(m); %number of inequalities
         invVar = inv(V);
@@ -99,6 +100,8 @@ function [T_CC,cv_CC, dof_n] = func_subCC(C, m, V,alpha)
             dof_n = d_ineq - rkA + 1;
         end
         cv_CC = chi2inv(1-alpha,dof_n); 
+        
+        toc_CC = toc(ticStart);
 
     end
     

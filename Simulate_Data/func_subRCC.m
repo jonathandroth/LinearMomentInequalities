@@ -23,8 +23,9 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [T_RCC,cv_RCC,cv_CC,cv_CC2,Edim, dof_n] = func_subRCC(C, m, Var,alpha)
-  
+function [T_RCC,cv_RCC,cv_CC,cv_CC2,Edim, dof_n, toc_RCC, toc_CC] = func_subRCC(C, m, Var,alpha)
+        ticStart = tic; 
+        
         d_nuis = size(C,2); %number of nuisance parameters
         d_ineq = length(m); %number of inequalities
         invVar = inv(Var);
@@ -109,12 +110,13 @@ function [T_RCC,cv_RCC,cv_CC,cv_CC2,Edim, dof_n] = func_subRCC(C, m, Var,alpha)
         end
         cv_CC = chi2inv(1-alpha,dof_n); 
 
+        toc_CC = toc(ticStart);
         
         %% The Refinement
         
         if dof_n==1 && T_RCC<=chi2inv(1-alpha,1) && T_RCC> chi2inv(1-2*alpha,1)
             %This is the case where the refinement could make a difference
-            
+
             %We enumerate the vertices of the polyhedron: {eta:eta>=0, C'*eta=0,1'eta=1}
             %The vertices form the rows of the E matrix such that E*m>=0 is the
             %implied set of moment inequalities.
@@ -153,10 +155,12 @@ function [T_RCC,cv_RCC,cv_CC,cv_CC2,Edim, dof_n] = func_subRCC(C, m, Var,alpha)
                 zX = max(0,min(zjX));
                 beta = 2*alpha*normcdf(zX);
                 cv_RCC = chi2inv(1-beta,1);
+                toc_RCC = tic(ticStart);
         else
             cv_RCC = cv_CC;
             Edim = [NaN,NaN];
             cv_CC2 = cv_CC;
+            toc_RCC = toc_CC;
         end
 
         
