@@ -470,8 +470,28 @@ save( strcat(data_output_folder, filename_graph,'_', 'upper_and_lower_bound_size
 end
 
 %% Make row for table of runtimes
-timi[nanmean(timing_vec_lf), nanmean(timing_vec_conditional), ...
+if(exist('timing_vec_lf'))
+timing_row = [nanmean(timing_vec_lf), nanmean(timing_vec_conditional), ...
  nanmean(timing_vec_hybrid), nanmean(timing_vec_lfp)];
+
+timing_row_coxandshi = [nanmean(timing_vec_cc), nanmean(timing_vec_rcc)];
+
+if(num_F_groups_parameters < 9)
+timing_row_asandkms = [nanmean(timing_vec_as), nanmean(timing_vec_kms)];
+end
+
+
+if(num_F_groups_parameters < 9)
+   save( strcat(data_output_folder, filename_graph,'_', 'timing_row'),...
+    'timing_row', 'timing_row_coxandshi', 'timing_row_asandkms') ;                                              
+else
+    save( strcat(data_output_folder, filename_graph,'_', 'timing_row'),...
+    'timing_row', 'timing_row_coxandshi') ;
+end
+
+% if(length(timing_vec_lf) < 32)
+%     error('Missing timing row entries'); 
+% end
 
 %%
 display('Script complete');

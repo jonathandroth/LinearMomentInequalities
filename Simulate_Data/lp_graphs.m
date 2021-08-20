@@ -470,6 +470,7 @@ save( strcat(data_output_folder, filename_graph,'_', 'upper_and_lower_bound_size
 end
 
 %% Make row for table of runtimes
+if(exist('timing_vec_lf'))
 timing_row = [nanmean(timing_vec_lf), nanmean(timing_vec_conditional), ...
  nanmean(timing_vec_hybrid), nanmean(timing_vec_lfp)];
 
@@ -488,9 +489,6 @@ else
     'timing_row', 'timing_row_coxandshi') ;
 end
 
-% if(length(timing_vec_lf) < 32)
-%     error('Missing timing row entries'); 
-% end
-
+end
 %%
 display('Script complete');

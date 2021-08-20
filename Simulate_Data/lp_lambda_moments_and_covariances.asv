@@ -39,15 +39,17 @@ lp_create_moments_and_covariances
 
 
 %The create_moments_and_covariances script creates a vec called timing_vec_covariance_estimation
-% with the time to compute the conditional covariance for each ds. We add this to the
-% times
+% with the
+new timing vec for
+%each iteration (e.g. timing_vec_lf) that records the time to compute the
+%conditioanl covariance for each ds. We save these
 
-timing_vec_lf_lambda(:,i) = timing_vec_covariance_estimation; 
-timing_vec_lfp_lambda(:,i) = timing_vec_covariance_estimation;
-timing_vec_conditional_lambda(:,i) = timing_vec_covariance_estimation;
-timing_vec_hybrid_lambda(:,i) = timing_vec_covariance_estimation;
-timing_vec_cc_lambda(:,i) = timing_vec_covariance_estimation;
-timing_vec_rcc_lambda(:,i) = timing_vec_covariance_estimation;
+timing_vec_lf_lambda(:,i) = timing_vec_lf; 
+timing_vec_lfp_lambda(:,i) = timing_vec_lfp;
+timing_vec_conditional_lambda(:,i) = timing_vec_conditional;
+timing_vec_hybrid_lambda(:,i) = timing_vec_hybrid;
+timing_vec_cc_lambda(:,i) = timing_vec_cc;
+timing_vec_rcc_lambda(:,i) = timing_vec_rcc;
 
 
 

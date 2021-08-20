@@ -10,14 +10,8 @@
 
 %% Calculate the moments and conditional variances
 
-timing_vec_lf = zeros(numdatasets,1);
-timing_vec_lfp = zeros(numdatasets,1);
-timing_vec_conditional = zeros(numdatasets,1);
-timing_vec_hybrid = zeros(numdatasets,1);
-timing_vec_as = zeros(numdatasets,1);
-timing_vec_kms = zeros(numdatasets,1);
-timing_vec_rcc = zeros(numdatasets,1);
-timing_vec_cc = zeros(numdatasets,1);
+timing_vec_covariance_estimation = zeros(numdatasets,1);
+
 
 
 tic;
@@ -197,14 +191,7 @@ tic;
         
         
         %Add time for conditional variance to all the timers
-        timing_vec_lf(ds) = timing_vec_lf(ds) + runTimeCondVar;
-        timing_vec_lfp(ds) = timing_vec_lfp(ds) + runTimeCondVar;
-        timing_vec_conditional(ds) = timing_vec_conditional(ds) + runTimeCondVar;
-        timing_vec_hybrid(ds) = timing_vec_hybrid(ds) + runTimeCondVar;
-        timing_vec_as(ds) = timing_vec_as(ds) + runTimeCondVar;
-        timing_vec_kms(ds) = timing_vec_kms(ds) + runTimeCondVar;
-        timing_vec_rcc(ds) = timing_vec_rcc(ds) + runTimeCondVar;
-        timing_vec_cc(ds) = timing_vec_cc(ds) + runTimeCondVar;
+        timing_vec_covariance_estimation(ds) = runTimeCondVar;
 
         
   %y_T and x_T are constructed so that population moments = y_T - X_T * delta

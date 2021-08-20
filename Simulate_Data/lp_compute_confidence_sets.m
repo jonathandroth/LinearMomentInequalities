@@ -108,6 +108,19 @@ rejection_grid_rcc = NaN(numdatasets, num_beta0_gridpoints);
 rejection_grid_cc = NaN(numdatasets, num_beta0_gridpoints);
 
 
+%Initialize timing vecs with time from covariance matrix
+
+timing_vec_lf = timing_vec_covariance_estimation;
+timing_vec_lfp = timing_vec_covariance_estimation;
+timing_vec_conditional = timing_vec_covariance_estimation;
+timing_vec_hybrid = timing_vec_covariance_estimation;
+timing_vec_as = timing_vec_covariance_estimation;
+timing_vec_kms = timing_vec_covariance_estimation;
+timing_vec_rcc = timing_vec_covariance_estimation;
+timing_vec_cc = timing_vec_covariance_estimation;
+
+
+
 nummoments = size( y_T_cell{ds,1} , 1);
 Z_draws_interacted = randn(nummoments, 10000);
 
