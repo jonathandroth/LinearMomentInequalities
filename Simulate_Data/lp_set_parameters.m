@@ -73,3 +73,8 @@ end
 if( exist('dsoffset') == 0)
     dsoffset = 0;
 end
+
+if( exist('skip_AS_KMS') == 0)
+    skip_AS_KMS = 0;
+end
+

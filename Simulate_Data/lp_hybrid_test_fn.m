@@ -20,7 +20,7 @@
     %computationally more efficient to pass these draws here; users can also customize the 
     %number of draws by doing it outside
 
-function reject = lp_hybrid_test_fn( y_T, X_T, Sigma, alpha, gamma, varargin)
+function [reject, eta] = lp_hybrid_test_fn( y_T, X_T, Sigma, alpha, gamma, varargin)
 
 %% Compute the LF cutoff, if it's not given
 %Set c_gamma if additional argument is provided; otherwise, compute it

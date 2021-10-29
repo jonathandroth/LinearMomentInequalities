@@ -13,10 +13,9 @@ clf
 hold('on');
 
 pbaspect([1.2 1 1])
-l1 = plot(lambda_vec, mean(lf_test_original), 'Color', getrow( get(gca,'colororder'),1 ) )
-l2 = plot(lambda_vec, mean(lf_test_modified), 'Color', getrow( get(gca,'colororder'),2 ) )
-l3 = plot(lambda_vec , mean(conditional_test), 'Color', getrow( get(gca,'colororder'),4 ), 'LineStyle', ':')
-l4 = plot(lambda_vec , mean(hybrid_test), 'Color', getrow( get(gca,'colororder'),3 ), 'LineStyle', '-.' )
+l1 = plot(lambda_vec , mean(hybrid_test), 'Color', getrow( get(gca,'colororder'),1 ), 'LineStyle', '-' )
+l2 = plot(lambda_vec , mean(conditional_test), 'Color', getrow( get(gca,'colororder'),5 ), 'LineStyle', ':')
+l3 = plot(lambda_vec, mean(lf_test_modified), 'Color', getrow( get(gca,'colororder'),3 ), 'LineStyle', '-.')
 
  
 identified_set_max = max( lambda_vec( lambda_identified_set == 1) );
@@ -33,13 +32,13 @@ if(~isempty(identified_set_min) && identified_set_min ~= min(lambda_vec)  )
    l6 = plot( [identified_set_min; identified_set_min], [0;1], 'LineStyle', '--', 'Color',  'r');
 end
 
-legend( 'LFP','LF', 'Conditional', 'Hybrid', 'Identified Set Bound', 'Location',....
+legend( 'Hybrid', 'Conditional', 'LF', 'Identified Set Bound', 'Location',....
     'southoutside', 'Orientation', 'horizontal' );
 ylabel('Rejection Probability');
 %xlabel('Beta');
 %title('Rejection Probabilities for Beta');
 
-set(findall(gcf,'-property','FontSize'),'FontSize',32);
+set(findall(gcf,'-property','FontSize'),'FontSize',12);
 set(findall(gcf, 'Type', 'Line'),'LineWidth',4); %Linewidth for plot lines
 
 
@@ -49,15 +48,17 @@ export_fig(strcat(figures_output_dir,filename_graph,'.pdf'));
 clf
 display( strcat(figures_output_dir,filename_graph ) )
 
-%% Make plot for sCC and sRCC test 
+%% Make plot for sCC and sRCC test and LFP
 
 
 hold('on');
 
 pbaspect([1.4 1 1])
-l1 = plot(lambda_vec , mean(hybrid_test), 'Color', getrow( get(gca,'colororder'),3 ), 'LineStyle', '-.' )
-l2 = plot(lambda_vec , mean(cc_test), 'Color', getrow( get(gca,'colororder'),6 ), 'LineStyle', '-' )
-l3 = plot(lambda_vec , mean(rcc_test), 'Color', getrow( get(gca,'colororder'),7 ), 'LineStyle', ':' )
+l1 = plot(lambda_vec , mean(hybrid_test), 'Color', getrow( get(gca,'colororder'),1 ), 'LineStyle', '-' )
+l2 = plot(lambda_vec , mean(lf_test_original), 'Color', getrow( get(gca,'colororder'),3 ), 'LineStyle', '-.' )
+
+l3 = plot(lambda_vec , mean(cc_test), 'Color', getrow( get(gca,'colororder'),4 ), 'LineStyle', '-.' )
+l4 = plot(lambda_vec , mean(rcc_test), 'Color', getrow( get(gca,'colororder'),5 ), 'LineStyle', ':' )
  
 identified_set_max = max( lambda_vec( lambda_identified_set == 1) );
 identified_set_min = min( lambda_vec( lambda_identified_set == 1) );
@@ -73,7 +74,7 @@ if(~isempty(identified_set_min) && identified_set_min ~= min(lambda_vec)  )
    l6 = plot( [identified_set_min; identified_set_min], [0;1], 'LineStyle', '--', 'Color',  'r');
 end
 
-legend( 'Hybrid', 'sCC', 'sRCC', 'ID Set Bound', 'Location',....
+legend( 'Hybrid', 'LFP', 'sCC', 'sRCC', 'ID Set Bound', 'Location',....
     'southoutside', 'Orientation', 'horizontal' );
 ylabel('Rejection Probability');
 %xlabel('Beta');

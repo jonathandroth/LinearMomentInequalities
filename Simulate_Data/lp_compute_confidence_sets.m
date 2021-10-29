@@ -107,6 +107,7 @@ rejection_grid_hybrid = NaN(numdatasets, num_beta0_gridpoints);
 rejection_grid_rcc = NaN(numdatasets, num_beta0_gridpoints);
 rejection_grid_cc = NaN(numdatasets, num_beta0_gridpoints);
 
+etahat_grid = NaN(numdatasets, num_beta0_gridpoints);
 
 %Initialize timing vecs with time from covariance matrix
 
@@ -167,7 +168,7 @@ end
    
    
    %Do AS and KMS for specs with <9 parameters
-   if size(X_T,2) < 9
+   if (size(X_T,2) < 9) && (skip_AS_KMS == 0)
    try
        ticAS = tic;
        [as_ci,as_output] = projected_AS_or_KMS(y_T, X_T, 500, Sigma,[1;zeros(size(X_T,2)-1,1)], NaN, 'AS');
@@ -210,7 +211,7 @@ end
     hybrid_rejection_vec = NaN(num_beta0_gridpoints,1);
     rcc_rejection_vec = NaN(num_beta0_gridpoints,1);
     cc_rejection_vec = NaN(num_beta0_gridpoints,1);
-
+    etahat_vec = NaN(num_beta0_gridpoints,1);
     
     %Prior to looping through all of the value for l*theta, compute the
     %least-favorable critical values, since this doens't depend on the
@@ -238,7 +239,9 @@ end
         timing_vec_conditional(ds) = timing_vec_conditional(ds) + runTimeConditional;
         
         ticHybrid = tic;
-        hybrid_rejection_vec(count,1) = lp_hybrid_test_fn( y_T_tilde, X_T_tilde, Sigma, alpha, alpha/10, lf_simulated_draws);
+        [hybrid_reject, eta] = lp_hybrid_test_fn( y_T_tilde, X_T_tilde, Sigma, alpha, alpha/10, lf_simulated_draws);
+        hybrid_rejection_vec(count,1) = hybrid_reject;
+        etahat_vec(count,1) = eta;
         runTimeHybrid = toc(ticHybrid);
         timing_vec_hybrid(ds) =  timing_vec_hybrid(ds) + runTimeHybrid;
         %[T_CC, c_RCC, c_CC] = rcc_test_fn(sqrt(nummarkets)^(-1) * y_T_tilde, eye(size(y_T_tilde,1)), X_T_tilde, zeros(size(y_T_tilde,1),1) , Sigma, nummarkets, 0, alpha);
@@ -283,6 +286,8 @@ end
     rejection_grid_rcc(ds,:) = rcc_rejection_vec;
     rejection_grid_cc(ds,:) = cc_rejection_vec;
     
+    etahat_grid(ds,:) = etahat_vec;
+    
 end
 end
 %Create the confidence sets using the grid search
@@ -312,8 +317,11 @@ if(~ as_kms_only)
                    'rejection_grid_rcc', 'rejection_grid_cc', ...
                    'full_rejection_grid_rcc', 'full_rejection_grid_cc',...
                    'timing_vec_lf', 'timing_vec_lfp', 'timing_vec_conditional',...
-                   'timing_vec_hybrid', 'timing_vec_cc', 'timing_vec_rcc');
+                   'timing_vec_hybrid', 'timing_vec_cc', 'timing_vec_rcc',...
+                   'etahat_grid');
 end
+
+if (skip_AS_KMS == 0)
 
     ds_name_askms = strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp_askms');
     if(dsoffset ~= 0)
@@ -323,4 +331,4 @@ end
                          'timing_vec_as', 'timing_vec_kms');
 
     
-    
+end    
