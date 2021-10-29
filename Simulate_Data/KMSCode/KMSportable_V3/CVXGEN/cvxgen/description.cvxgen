@@ -1,0 +1,30 @@
+# Produced by CVXGEN, 2021-03-10 15:18:29 -0500.
+# CVXGEN is Copyright (C) 2006-2017 Jacob Mattingley, jem@cvxgen.com.
+# The code in this file is Copyright (C) 2006-2017 Jacob Mattingley.
+# CVXGEN, or solvers produced by CVXGEN, cannot be used for commercial
+# applications without prior written permission from Jacob Mattingley.
+
+# Filename: description.cvxgen.
+# Description: A description of the CVXGEN problem.
+
+dimensions
+  dim_p = 10
+  J1 = 110
+  J2 = 0
+  S = 0
+end
+
+parameters
+  A (J1 + 2*J2 + 2*dim_p + 2 + S, dim_p)
+  b (J1 + 2*J2 + 2*dim_p + 2 + S, 1)
+end
+
+variables
+  x ( dim_p , 1 )
+end
+
+minimize
+  0
+subject to
+  A*x<=b
+end
