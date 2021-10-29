@@ -16,9 +16,10 @@ if( isempty(getenv('SLURM_CPUS_PER_TASK')) )
        working_dir = '/Volumes/jonathanroth/Moment_Inequalities_Ariel/Code/Simulate_Data/';
    else
    %    working_dir = '/Users/jonathanroth/Google Drive/Research Projects/Moment_Inequalities_Ariel/Code/Simulate_Data';
-       working_dir = 'C:\Users\jorot\Dropbox\Moment_Inequalities_Ariel\Code\Simulate_Data';
+   %    working_dir = 'C:\Users\jorot\Dropbox\Moment_Inequalities_Ariel\Code\Simulate_Data';
+       working_dir = '/Users/jonathanroth/Dropbox/Moment_Inequalities_Ariel/Code/Simulate_Data';
    end
-   numdatasets = 2;
+   numdatasets = 5;
    onLaptop =1;
 
     
@@ -72,3 +73,8 @@ end
 if( exist('dsoffset') == 0)
     dsoffset = 0;
 end
+
+if( exist('skip_AS_KMS') == 0)
+    skip_AS_KMS = 0;
+end
+

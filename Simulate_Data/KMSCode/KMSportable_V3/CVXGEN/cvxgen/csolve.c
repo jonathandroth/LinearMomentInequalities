@@ -1,4 +1,4 @@
-/* Produced by CVXGEN, 2021-03-10 15:18:29 -0500.  */
+/* Produced by CVXGEN, 2021-08-10 14:54:42 -0400.  */
 /* CVXGEN is Copyright (C) 2006-2017 Jacob Mattingley, jem@cvxgen.com. */
 /* The code in this file is Copyright (C) 2006-2017 Jacob Mattingley. */
 /* CVXGEN, or solvers produced by CVXGEN, cannot be used for commercial */
@@ -74,8 +74,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   if (xm == NULL) {
     printf("could not find params.A.\n");
   } else {
-    if (!((mxGetM(xm) == 132) && (mxGetN(xm) == 10))) {
-      printf("A must be size (132,10), not (%d,%d).\n", mxGetM(xm), mxGetN(xm));
+    if (!((mxGetM(xm) == 60) && (mxGetN(xm) == 10))) {
+      printf("A must be size (60,10), not (%d,%d).\n", mxGetM(xm), mxGetN(xm));
       this_var_errors++;
     }
     if (mxIsComplex(xm)) {
@@ -93,7 +93,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     if (this_var_errors == 0) {
       dest = params.A;
       src = mxGetPr(xm);
-      for (i = 0; i < 1320; i++)
+      for (i = 0; i < 600; i++)
         *dest++ = *src++;
       valid_vars++;
     }
@@ -103,8 +103,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   if (xm == NULL) {
     printf("could not find params.b.\n");
   } else {
-    if (!((mxGetM(xm) == 132) && (mxGetN(xm) == 1))) {
-      printf("b must be size (132,1), not (%d,%d).\n", mxGetM(xm), mxGetN(xm));
+    if (!((mxGetM(xm) == 60) && (mxGetN(xm) == 1))) {
+      printf("b must be size (60,1), not (%d,%d).\n", mxGetM(xm), mxGetN(xm));
       this_var_errors++;
     }
     if (mxIsComplex(xm)) {
@@ -122,7 +122,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     if (this_var_errors == 0) {
       dest = params.b;
       src = mxGetPr(xm);
-      for (i = 0; i < 132; i++)
+      for (i = 0; i < 60; i++)
         *dest++ = *src++;
       valid_vars++;
     }
@@ -133,9 +133,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   }
   if (prepare_for_c) {
     printf("settings.prepare_for_c == 1. thus, outputting for C.\n");
-    for (i = 0; i < 1320; i++)
+    for (i = 0; i < 600; i++)
       printf("  params.A[%d] = %.6g;\n", i, params.A[i]);
-    for (i = 0; i < 132; i++)
+    for (i = 0; i < 60; i++)
       printf("  params.b[%d] = %.6g;\n", i, params.b[i]);
   }
   /* Perform the actual solve in here. */

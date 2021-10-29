@@ -20,3 +20,5 @@ make_size_table_lambda;
 use_zero_cutoff =1;
 make_excess_length_table_lambda
 make_size_table_lambda
+
+%make_timing_table_lambda

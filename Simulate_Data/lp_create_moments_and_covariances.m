@@ -10,6 +10,7 @@
 
 %% Calculate the moments and conditional variances
 
+timing_vec_covariance_estimation = zeros(numdatasets,1);
 
 
 
@@ -181,9 +182,17 @@ tic;
         %Remove any all zero columns
         A= A(:,any(A));
         
+        startTimeCondVar = tic;
         %Calculate the variance of Y conditional on A using the Abadie et
         %al matched pairs method
         Sigma_conditional = conditional_variance_fn(Y_wide, A, diagonal);
+        runTimeCondVar = toc(startTimeCondVar);
+        
+        
+        
+        %Add time for conditional variance to all the timers
+        timing_vec_covariance_estimation(ds) = runTimeCondVar;
+
         
   %y_T and x_T are constructed so that population moments = y_T - X_T * delta
     % WE construct these so that they are less than 0 in expectation (the

@@ -1,4 +1,5 @@
 
+clear 
 
 graphs_only = 1
 %remote_to_server = 1
@@ -31,3 +32,5 @@ make_size_table;
 use_zero_cutoff =1;
 make_excess_length_table;
 make_size_table
+
+%make_timing_table

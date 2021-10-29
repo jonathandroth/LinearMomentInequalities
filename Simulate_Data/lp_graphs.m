@@ -2,10 +2,27 @@
 
 %% Create graphs
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp'));
-load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp_askms'));
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds_zerocutoff'));
 load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds'));
 
+%If fewer than 9 parameters load as/kms
+if(num_F_groups_moments < 9)
+    load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp_askms'));
+    
+    if(isfile(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp_askms', '_ds', 100, '.mat')))  
+    %If interacted moments with the 3thetacs, combine the different
+    %results on the server
+    confidence_sets_using_as_combined = confidence_sets_using_as;
+    confidence_sets_using_kms_combined = confidence_sets_using_kms;
+    for(ds = [100 200 300 400]) 
+        load(strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp_askms', '_ds', ds));
+        confidence_sets_using_as_combined = [confidence_sets_using_as_combined; confidence_sets_using_as];
+        confidence_sets_using_kms_combined = [confidence_sets_using_kms_combined; confidence_sets_using_kms];
+    end    
+    confidence_sets_using_as = confidence_sets_using_as_combined;
+    confidence_sets_using_kms = confidence_sets_using_kms_combined;
+    end
+end
 
 %load(strcat( data_output_dir, dirname, 'Interacted_Moments/identified_set_bounds_zerocutoff'));
 %identified_set_bounds = identified_set_bounds_zerocutoff;
@@ -51,10 +68,10 @@ hold('on');
 
 %p = plot( repmat( l_theta_grid', 1, 2), [rejection_grid_c_alpha, rejection_grid_c_lp_alpha ]);
 
-l1 = plot(l_theta_grid', rejection_grid_c_alpha, 'Color', getrow( get(gca,'colororder'),1 ) )
-l2 = plot(l_theta_grid', rejection_grid_c_lp_alpha, 'Color', getrow( get(gca,'colororder'),2 ) )
-l3 = plot( beta0_grid , rejection_grid_conditional, 'Color', getrow( get(gca,'colororder'),4 ), 'LineStyle', ':')
-l4 = plot( beta0_grid , rejection_grid_hybrid, 'Color', getrow( get(gca,'colororder'),3 ), 'LineStyle', '-.' )
+l1 = plot( beta0_grid , rejection_grid_hybrid, 'Color', getrow( get(gca,'colororder'),1 ) , 'LineStyle', '-' )
+
+l2 = plot( beta0_grid , rejection_grid_conditional, 'Color', getrow( get(gca,'colororder'), 5 ) , 'LineStyle', ':')
+l3 = plot(l_theta_grid', rejection_grid_c_lp_alpha, 'Color', getrow( get(gca,'colororder'),3 ), 'LineStyle', '-.' ) 
 
 l5 = plot( [identified_set_bounds(1);identified_set_bounds(1)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
 l6 = plot( [identified_set_bounds(2);identified_set_bounds(2)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
@@ -65,7 +82,7 @@ l6 = plot( [identified_set_bounds(2);identified_set_bounds(2)] ,[0;1], 'LineStyl
 % l3.Color(4) = 0.7;
 % l4.Color(4) = 0.7;
 
-legend( 'LFP','LF', 'Conditional', 'Hybrid', 'Identified Set Boundary',  'Location',....
+legend('Hybrid','Conditional','LF', 'Identified Set Boundary',  'Location',....
     'southoutside', 'Orientation', 'horizontal' );
 ylabel('Rejection Probability');
 
@@ -115,20 +132,22 @@ clf
 %options = optimoptions('linprog', 'Display', 'final' );
 %linprog( 1, [1;-1], [2,-3],[],[],[],[], [],options )
 
-%% Create plot comparing sCC and rCC test of Cox & Shi to hybrid
+%% Create plot comparing sCC and rCC test of Cox & Shi to hybrid and LF
 
 hold('on');
 
 %p = plot( repmat( l_theta_grid', 1, 2), [rejection_grid_c_alpha, rejection_grid_c_lp_alpha ]);
 
-l1 = plot( beta0_grid , rejection_grid_hybrid, 'Color', getrow( get(gca,'colororder'),3 ), 'LineStyle', '-.' )
-l2 = plot( beta0_grid , rejection_grid_cc, 'Color', getrow( get(gca,'colororder'),6 ), 'LineStyle', '-' )
-l3 = plot( beta0_grid , rejection_grid_rcc, 'Color', getrow( get(gca,'colororder'),7 ), 'LineStyle', ':' )
+l1 = plot( beta0_grid , rejection_grid_hybrid, 'Color', getrow( get(gca,'colororder'),1 ), 'LineStyle', '-' )
+l2 = plot( beta0_grid , rejection_grid_c_alpha, 'Color', getrow( get(gca,'colororder'),3 ), 'LineStyle', '-.' )
+
+l3 = plot( beta0_grid , rejection_grid_cc, 'Color', getrow( get(gca,'colororder'),4), 'LineStyle', '-.' )
+l4 = plot( beta0_grid , rejection_grid_rcc, 'Color', getrow( get(gca,'colororder'),5 ), 'LineStyle', ':' )
 
 l4 = plot( [identified_set_bounds(1);identified_set_bounds(1)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
 l5 = plot( [identified_set_bounds(2);identified_set_bounds(2)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
 
-legend( 'Hybrid', 'sCC', 'sRCC', 'ID Set',  'Location',....
+legend( 'Hybrid', 'LFP', 'sCC', 'sRCC', 'ID Set',  'Location',....
     'southoutside', 'Orientation', 'horizontal' );
 ylabel('Rejection Probability');
 
@@ -182,9 +201,9 @@ if(num_F_groups_parameters < 9)
 
 %p = plot( repmat( l_theta_grid', 1, 2), [rejection_grid_c_alpha, rejection_grid_c_lp_alpha ]);
 
-l1 = plot( beta0_grid , rejection_grid_hybrid, 'Color', getrow( get(gca,'colororder'),3 ), 'LineStyle', '-.' )
-l2 = plot( beta0_grid , rejection_grid_as, 'Color', getrow( get(gca,'colororder'),6 ), 'LineStyle', '-' )
-l3 = plot( beta0_grid , rejection_grid_kms, 'Color', getrow( get(gca,'colororder'),7 ), 'LineStyle', ':' )
+l1 = plot( beta0_grid , rejection_grid_hybrid, 'Color', getrow( get(gca,'colororder'),1 ), 'LineStyle', '-' )
+l2 = plot( beta0_grid , rejection_grid_as, 'Color', getrow( get(gca,'colororder'),4 ), 'LineStyle', '-.' )
+l3 = plot( beta0_grid , rejection_grid_kms, 'Color', getrow( get(gca,'colororder'),5 ), 'LineStyle', ':' )
 
 l4 = plot( [identified_set_bounds(1);identified_set_bounds(1)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
 l5 = plot( [identified_set_bounds(2);identified_set_bounds(2)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
@@ -238,29 +257,107 @@ clf
 
 end
 
+
+%% Create plot comparing hybrid  to sCC, rCC, LFP, AS, KMS
+
+hold('on');
+
+%p = plot( repmat( l_theta_grid', 1, 2), [rejection_grid_c_alpha, rejection_grid_c_lp_alpha ]);
+
+
+l1 = plot( beta0_grid , rejection_grid_hybrid, 'Color', getrow( get(gca,'colororder'),1 ), 'LineStyle', '-' )
+l2 = plot( beta0_grid , rejection_grid_c_alpha, 'Color', getrow( get(gca,'colororder'),3 ), 'LineStyle', '-.' )
+
+l3 = plot( beta0_grid , rejection_grid_cc, 'Color', getrow( get(gca,'colororder'),4), 'LineStyle', '-' )
+l4 = plot( beta0_grid , rejection_grid_rcc, 'Color', getrow( get(gca,'colororder'),5 ), 'LineStyle', ':' )
+
+if(num_F_groups_parameters < 9)    
+   l5 = plot( beta0_grid , rejection_grid_as, 'Color', getrow( get(gca,'colororder'),6 ), 'LineStyle', '-' )
+   l6 = plot( beta0_grid , rejection_grid_kms, 'Color', getrow( get(gca,'colororder'),7 ), 'LineStyle', ':' )
+ 
+end
+
+l7 = plot( [identified_set_bounds(1);identified_set_bounds(1)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
+l8 = plot( [identified_set_bounds(2);identified_set_bounds(2)] ,[0;1], 'LineStyle', '--', 'Color',  'r');
+
+
+if(num_F_groups_parameters < 9)
+legend( 'Hybrid', 'LFP', 'sCC', 'sRCC', 'AS', 'KMS' ,'ID Set', 'Location',...
+    'southoutside', 'Orientation', 'horizontal' );
+else
+legend( 'Hybrid', 'LFP', 'sCC', 'sRCC', 'ID Set',  'Location',...
+    'southoutside', 'Orientation', 'horizontal' );
+end
+ylabel('Rejection Probability');
+
+%set(gcf,'PaperUnits','inches','PaperPosition',[0 0 3 2.5]);  
+
+% %If no xlabel specified, do 'l * theta*
+% if( exist('xlabel_graph') == 0)
+%     xlabel_graph = 'l * theta';    
+% end
+% 
+% xlabel(xlabel_graph);
+
+
+if( exist('xlim_graph') ==1)
+    %If manual bounds are specified for the x-axis limit, impose these
+    xlim( xlim_graph )    
+    
+    %Impose tick width if specified; otherwise 5
+    if(exist('xtick_width'))
+        set(gca,'XTick',[xlim_graph(1):xtick_width:xlim_graph(2)])
+    end
+
+end
+
+    
+%Create a break in the x-axis if specified
+    if(exist('xsplit_graph'))
+        breakxaxis(xsplit_graph)
+    end
+
+    
+
+
+%If filename not specified, assume it's means
+if( exist('filename_graph') ==0)
+       filename_graph =  'Mean_Weight_Rejection_Probabilities';
+end
+
+set(findall(gcf,'-property','FontSize'),'FontSize',14);
+
+set(findall(gcf, 'Type', 'Line'),'LineWidth',3); %Linewidth for plot lines
+
+export_fig(strcat(figures_output_dir,filename_graph, '_compare_to_all_combined','.pdf'));
+
+clf
+
+
+
 %% Create rows for table that shows where we achieve various power thresholds
 
 [lb_row_05,ub_row_05] = ub_and_lb_row_for_table( beta0_grid, l_theta_grid,...
-                                                     rejection_grid_c_alpha,...
                                                      rejection_grid_c_lp_alpha,...
                                                      rejection_grid_conditional,...
                                                      rejection_grid_hybrid,...
+                                                     rejection_grid_c_alpha,...
                                                      identified_set_bounds,...
                                                      0.05);
                                                  
  [lb_row_50,ub_row_50] = ub_and_lb_row_for_table( beta0_grid, l_theta_grid,...
-                                                     rejection_grid_c_alpha,...
                                                      rejection_grid_c_lp_alpha,...
                                                      rejection_grid_conditional,...
                                                      rejection_grid_hybrid,...
+                                                     rejection_grid_c_alpha,...
                                                      identified_set_bounds,...
                                                      0.50);
                                                  
 [lb_row_95,ub_row_95] = ub_and_lb_row_for_table( beta0_grid, l_theta_grid,...
-                                                     rejection_grid_c_alpha,...
                                                      rejection_grid_c_lp_alpha,...
                                                      rejection_grid_conditional,...
                                                      rejection_grid_hybrid,...
+                                                     rejection_grid_c_alpha,...
                                                      identified_set_bounds,...
                                                      0.95);
 data_output_folder = strcat( data_output_dir, dirname, 'Interacted_Moments/');
@@ -304,10 +401,10 @@ excess_lengths_cc =  sum( gridWeightsMat .* (1 - full_rejection_grid_cc ), 2) - 
 excess_lengths_rcc =  sum( gridWeightsMat .* (1 - full_rejection_grid_rcc ), 2) - identified_set_length;
 
 
-row_mean = cellfun( @(x) mean(x), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
-row_05 = cellfun( @(x) quantile(x,.05), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
-row_50 = cellfun( @(x) quantile(x,.50), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
-row_95 = cellfun( @(x) quantile(x,.95), {excess_lengths_lf, excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid});
+row_mean = cellfun( @(x) mean(x), {excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid, excess_lengths_lf});
+row_05 = cellfun( @(x) quantile(x,.05), {excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid, excess_lengths_lf});
+row_50 = cellfun( @(x) quantile(x,.50), {excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid, excess_lengths_lf});
+row_95 = cellfun( @(x) quantile(x,.95), {excess_lengths_lfn, excess_lengths_conditional, excess_lengths_hybrid, excess_lengths_lf});
 
 
 row_mean_coxandshi = cellfun( @(x) mean(x), {excess_lengths_cc, excess_lengths_rcc});
@@ -361,24 +458,29 @@ save( strcat(data_output_folder, filename_graph,'_', 'rows_for_excess_length_tab
     'row_05_zerocutoff_coxandshi', 'row_50_zerocutoff_coxandshi', 'row_95_zerocutoff_coxandshi', 'row_mean_zerocutoff_coxandshi') ;                                              
 end
 %% Extract size at the upper and lower bound
-upper_bound_index = find(beta0_grid == identified_set_bounds(2) );
-lower_bound_index = find(beta0_grid == identified_set_bounds(1) );
+
+upper_bound_index = max( find(beta0_grid <= identified_set_bounds(2)) );
+lower_bound_index = min( find(beta0_grid >= identified_set_bounds(1)) );
+
 
 id_set_indices = find(identified_set_bounds(1) <= beta0_grid & beta0_grid <= identified_set_bounds(2) );
 
-upper_bound_sizes = cellfun( @(x) x(upper_bound_index), {rejection_grid_c_alpha,...
+upper_bound_sizes = cellfun( @(x) x(upper_bound_index), {...
                                                      rejection_grid_c_lp_alpha,...
                                                      rejection_grid_conditional,...
-                                                     rejection_grid_hybrid,});
-lower_bound_sizes = cellfun( @(x) x(lower_bound_index), {rejection_grid_c_alpha,...
+                                                     rejection_grid_hybrid,...
+                                                     rejection_grid_c_alpha});
+lower_bound_sizes = cellfun( @(x) x(lower_bound_index), {...
                                                      rejection_grid_c_lp_alpha,...
                                                      rejection_grid_conditional,...
-                                                     rejection_grid_hybrid});
+                                                     rejection_grid_hybrid,...
+                                                     rejection_grid_c_alpha});
                                                  
-max_size_in_id_set = cellfun( @(x) max( x(id_set_indices)), {rejection_grid_c_alpha,...
+max_size_in_id_set = cellfun( @(x) max( x(id_set_indices)), {...
                                                      rejection_grid_c_lp_alpha,...
                                                      rejection_grid_conditional,...
-                                                     rejection_grid_hybrid});
+                                                     rejection_grid_hybrid,...
+                                                     rejection_grid_c_alpha});
                                                  
                                                  
 max_size_in_id_set_coxandshi = cellfun( @(x) max( x(id_set_indices)), ...
@@ -401,24 +503,28 @@ save( strcat(data_output_folder, filename_graph,'_', 'upper_and_lower_bound_size
     'upper_bound_sizes', 'lower_bound_sizes', 'max_size_in_id_set', 'max_size_in_id_set_coxandshi') ;                                              
 end
 %% Extract size at the upper and lower bound using zerocutoff
-upper_bound_index_zerocutoff = find(beta0_grid == identified_set_bounds_zerocutoff(2) );
-lower_bound_index_zerocutoff = find(beta0_grid == identified_set_bounds_zerocutoff(1) );
+upper_bound_index_zerocutoff = max( find(beta0_grid <= identified_set_bounds_zerocutoff(2)) );
+lower_bound_index_zerocutoff = min( find(beta0_grid >= identified_set_bounds_zerocutoff(1)) );
+
 id_set_indices_zerocutoff = find(identified_set_bounds_zerocutoff(1) <= beta0_grid & beta0_grid <= identified_set_bounds_zerocutoff(2) );
 
 
-upper_bound_sizes_zerocutoff = cellfun( @(x) x(upper_bound_index_zerocutoff), {rejection_grid_c_alpha,...
+upper_bound_sizes_zerocutoff = cellfun( @(x) x(upper_bound_index_zerocutoff), {...
                                                      rejection_grid_c_lp_alpha,...
                                                      rejection_grid_conditional,...
-                                                     rejection_grid_hybrid,});
-lower_bound_sizes_zerocutoff = cellfun( @(x) x(lower_bound_index_zerocutoff), {rejection_grid_c_alpha,...
+                                                     rejection_grid_hybrid,...
+                                                     rejection_grid_c_alpha});
+lower_bound_sizes_zerocutoff = cellfun( @(x) x(lower_bound_index_zerocutoff), {...
                                                      rejection_grid_c_lp_alpha,...
                                                      rejection_grid_conditional,...
-                                                     rejection_grid_hybrid});
+                                                     rejection_grid_hybrid,...
+                                                     rejection_grid_c_alpha});
                                                  
-max_size_in_id_set_zerocutoff = cellfun( @(x) max( x(id_set_indices_zerocutoff)), {rejection_grid_c_alpha,...
+max_size_in_id_set_zerocutoff = cellfun( @(x) max( x(id_set_indices_zerocutoff)), {...
                                                      rejection_grid_c_lp_alpha,...
                                                      rejection_grid_conditional,...
-                                                     rejection_grid_hybrid});
+                                                     rejection_grid_hybrid,...
+                                                     rejection_grid_c_alpha});
                                                  
                                                  
 max_size_in_id_set_zerocutoff_coxandshi = cellfun( @(x) max( x(id_set_indices_zerocutoff)), ...
@@ -443,5 +549,26 @@ save( strcat(data_output_folder, filename_graph,'_', 'upper_and_lower_bound_size
     'max_size_in_id_set_zerocutoff_coxandshi') ;                                              
 end
 
+%% Make row for table of runtimes
+if(exist('timing_vec_lf'))
+timing_row = [nanmean(timing_vec_lf), nanmean(timing_vec_conditional), ...
+ nanmean(timing_vec_hybrid), nanmean(timing_vec_lfp)];
+
+timing_row_coxandshi = [nanmean(timing_vec_cc), nanmean(timing_vec_rcc)];
+
+if(num_F_groups_parameters < 9)
+timing_row_asandkms = [nanmean(timing_vec_as), nanmean(timing_vec_kms)];
+end
+
+
+if(num_F_groups_parameters < 9)
+   save( strcat(data_output_folder, filename_graph,'_', 'timing_row'),...
+    'timing_row', 'timing_row_coxandshi', 'timing_row_asandkms') ;                                              
+else
+    save( strcat(data_output_folder, filename_graph,'_', 'timing_row'),...
+    'timing_row', 'timing_row_coxandshi') ;
+end
+
+end
 %%
 display('Script complete');

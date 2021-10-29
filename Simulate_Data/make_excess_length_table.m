@@ -162,6 +162,11 @@ fprintf(fid,clean_latex([mat_50(1:4,:),mat_50_asandkms]));
 fclose(fid);
 
 fid = fopen(strcat('../../Output/',...
+                    filename_graph,'_excess_length_table','50',suffix, '_asandkms_only', '.tex') ,'wt');
+fprintf(fid,clean_latex(mat_50_asandkms));
+fclose(fid);
+
+fid = fopen(strcat('../../Output/',...
                     filename_graph,'_excess_length_table','95',suffix, '_asandkms', '.tex') ,'wt');
 fprintf(fid,clean_latex(mat_95_asandkms));
 fclose(fid);
@@ -171,5 +176,14 @@ fid = fopen(strcat('../../Output/',...
 fprintf(fid,clean_latex(mat_mean_asandkms));
 fclose(fid);
 
+
+%Make table combining AS,KMS, and our procedures, with NAs for the missing
+%parts
+horcat_with_nans = @(A,B) [A, [B; NaN(size(A,1) - size(B,1), size(B,2) ) ] ];
+mat_50_combined = horcat_with_nans( [mat_50, mat_50_coxandshi], mat_50_asandkms );
+fid = fopen(strcat('../../Output/',...
+                    filename_graph,'_excess_length_table','50',suffix, '_allcombined', '.tex') ,'wt');
+fprintf(fid,clean_latex(mat_50_combined));
+fclose(fid);
 
 end

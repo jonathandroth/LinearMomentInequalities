@@ -12,8 +12,8 @@
 %        x  10 x 1
 %
 % and parameters
-%        A 132 x 10
-%        b 132 x 1
+%        A  60 x 10
+%        b  60 x 1
 %
 % Note:
 %   - Check status.converged, which will be 1 if optimization succeeded.
@@ -24,7 +24,7 @@
 %
 % Specify params.A, ..., params.b, then run
 %   [vars, status] = csolve(params, settings)
-% Produced by CVXGEN, 2021-03-10 15:18:29 -0500.
+% Produced by CVXGEN, 2021-08-10 14:54:42 -0400.
 % CVXGEN is Copyright (C) 2006-2017 Jacob Mattingley, jem@cvxgen.com.
 % The code in this file is Copyright (C) 2006-2017 Jacob Mattingley.
 % CVXGEN, or solvers produced by CVXGEN, cannot be used for commercial

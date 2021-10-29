@@ -16,8 +16,10 @@ else
 end
 
 txt = regexprep(txt,'\.(\d\d)\d(\d)*\$','\.$1\$'); %convert to two decimal places
-txt = regexprep(txt,'\.00\$','\$'); %convert two 0's after decimal to nothing
+txt = regexprep(txt,'([1-9])\.00\$','$1\$'); %convert two 0's after decimal to nothing, unless 0.0
+txt = regexprep(txt,'([1-9]0)\.00\$','$1\$'); %this fixes numbers like 10.00 to 10
 txt = regexprep(txt,'\\','\\\\'); %double backslashes
+txt = regexprep(txt, 'NaN', ' '); %NaNs to blanks
 txt = strcat(txt,'\\\\');%add double backslash at the end
 
 end

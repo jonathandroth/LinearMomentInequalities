@@ -107,6 +107,20 @@ rejection_grid_hybrid = NaN(numdatasets, num_beta0_gridpoints);
 rejection_grid_rcc = NaN(numdatasets, num_beta0_gridpoints);
 rejection_grid_cc = NaN(numdatasets, num_beta0_gridpoints);
 
+etahat_grid = NaN(numdatasets, num_beta0_gridpoints);
+
+%Initialize timing vecs with time from covariance matrix
+
+timing_vec_lf = timing_vec_covariance_estimation;
+timing_vec_lfp = timing_vec_covariance_estimation;
+timing_vec_conditional = timing_vec_covariance_estimation;
+timing_vec_hybrid = timing_vec_covariance_estimation;
+timing_vec_as = timing_vec_covariance_estimation;
+timing_vec_kms = timing_vec_covariance_estimation;
+timing_vec_rcc = timing_vec_covariance_estimation;
+timing_vec_cc = timing_vec_covariance_estimation;
+
+
 
 nummoments = size( y_T_cell{ds,1} , 1);
 Z_draws_interacted = randn(nummoments, 10000);
@@ -128,14 +142,21 @@ ds
    
 if(~ as_kms_only)
    %Do the LF (aka LFP) test and store the resulting confidence set
+   
+   ticLFP = tic;
    c_alpha = c_lf(Sigma, alpha, Z_draws_interacted); 
    confidence_sets_using_c_alpha(ds,:) = cs_linear_delta_lp_fn(y_T,X_T,l,c_alpha)';
-   
-   %Do the modified least favorable test (aka LF) and store the resulting confidence
+   runTimeLFP = toc(ticLFP)
+   timing_vec_lfp(ds) = timing_vec_lfp(ds) + runTimeLFP;
+
+
+      %Do the modified least favorable test (aka LF) and store the resulting confidence
    %set
+   ticLF = tic;
    c_lp_alpha = c_lf_lp(X_T,Z_draws_interacted(:,1:numsims_lp),Sigma,alpha);
    confidence_sets_using_c_lp_alpha(ds,:) = cs_linear_delta_lp_fn(y_T,X_T,l,c_lp_alpha)';
-      
+   runTimeLF = toc(ticLF);
+   timing_vec_lf(ds) = timing_vec_lf(ds) + runTimeLF;
 end
 
    %For the KMS/AMS and cond'l/hybrid, 
@@ -147,28 +168,37 @@ end
    
    
    %Do AS and KMS for specs with <9 parameters
-   if size(X_T,2) < 9
+   if (size(X_T,2) < 9) && (skip_AS_KMS == 0)
    try
+       ticAS = tic;
        [as_ci,as_output] = projected_AS_or_KMS(y_T, X_T, 500, Sigma,[1;zeros(size(X_T,2)-1,1)], NaN, 'AS');
+       runTimeAS = toc(ticAS);
+       timing_vec_as(ds) = timing_vec_as(ds) + runTimeAS;
        
        %If have a convergence error for either bound, set to NaN
        if (as_output.flagL_EAM ~= 1) || (as_output.flagU_EAM ~= 1)
            as_ci = [NaN, NaN];
+           timing_vec_as(ds) = NaN;
        end
        confidence_sets_using_as(ds,:) = as_ci;
    catch
+       timing_vec_as(ds) = NaN;
    end
    
    try
-   
+       ticKMS = tic;
        [kms_ci,kms_output] = projected_AS_or_KMS(y_T, X_T, 500, Sigma,[1;zeros(size(X_T,2)-1,1)], NaN, 'KMS');
+       runTimeKMS = toc(ticKMS);
+       timing_vec_kms(ds) = timing_vec_kms(ds) + runTimeKMS;
        
        %If have a convergence error for either bound, set to NaN
        if (kms_output.flagL_EAM ~= 1) || (kms_output.flagU_EAM ~= 1)
            kms_ci = [NaN, NaN];
+           timing_vec_kms(ds) = NaN;
        end
        confidence_sets_using_kms(ds,:) = kms_ci;
    catch
+       timing_vec_kms(ds) = NaN;
    end
    
    end
@@ -181,14 +211,19 @@ end
     hybrid_rejection_vec = NaN(num_beta0_gridpoints,1);
     rcc_rejection_vec = NaN(num_beta0_gridpoints,1);
     cc_rejection_vec = NaN(num_beta0_gridpoints,1);
-
+    etahat_vec = NaN(num_beta0_gridpoints,1);
     
     %Prior to looping through all of the value for l*theta, compute the
     %least-favorable critical values, since this doens't depend on the
     %value of l*theta. These will be inputted to the hybrid method
+    ticLFForHybrid = tic;
+    
     X_T_tilde = X_T(:,2:end);
     [~, lf_simulated_draws] = c_lf_lp(X_T_tilde,Z_draws_interacted(:,1:numsims_lp),Sigma,alpha);
    
+    runTimeLFForHybrid = toc(ticLFForHybrid);
+    timing_vec_hybrid(ds) = timing_vec_hybrid(ds) + runTimeLFForHybrid;
+    
     %Loop over grid for beta_0 = l*theta values
     %For each beta_0, create y_Tilde = y_T - X_t[:,1] * b_0, x_Tilde =
     %X_T[:,2:]; and run the conditional/hybrid approaches for inference on
@@ -198,10 +233,17 @@ end
     
         y_T_tilde = y_T - X_T(:,1) * beta0;
         
-        
+        ticConditional = tic;
         conditional_rejection_vec(count,1) = lp_conditional_test_fn( y_T_tilde, X_T_tilde, Sigma, alpha);
-        hybrid_rejection_vec(count,1) = lp_hybrid_test_fn( y_T_tilde, X_T_tilde, Sigma, alpha, alpha/10, lf_simulated_draws);
+        runTimeConditional = toc(ticConditional);
+        timing_vec_conditional(ds) = timing_vec_conditional(ds) + runTimeConditional;
         
+        ticHybrid = tic;
+        [hybrid_reject, eta] = lp_hybrid_test_fn( y_T_tilde, X_T_tilde, Sigma, alpha, alpha/10, lf_simulated_draws);
+        hybrid_rejection_vec(count,1) = hybrid_reject;
+        etahat_vec(count,1) = eta;
+        runTimeHybrid = toc(ticHybrid);
+        timing_vec_hybrid(ds) =  timing_vec_hybrid(ds) + runTimeHybrid;
         %[T_CC, c_RCC, c_CC] = rcc_test_fn(sqrt(nummarkets)^(-1) * y_T_tilde, eye(size(y_T_tilde,1)), X_T_tilde, zeros(size(y_T_tilde,1),1) , Sigma, nummarkets, 0, alpha);
 
         %If fewer than 10 params or fewer than 100 moments, do RCC test
@@ -209,18 +251,30 @@ end
             %possible refinement
         if size(X_T,2) < 10 || size(X_T,1) < 100
             try
-            [T_RCC,cv_RCC,cv_CC,~,~, dof_n] = func_subRCC(X_T_tilde, -y_T_tilde, Sigma, alpha);
+            [T_RCC,cv_RCC,cv_CC,~,~, dof_n, toc_RCC, toc_CC] = func_subRCC(X_T_tilde, -y_T_tilde, Sigma, alpha);
             cc_rejection_vec(count,1) = (dof_n > 0) * (T_RCC > cv_CC);
             rcc_rejection_vec(count,1) = (dof_n > 0) * (T_RCC > cv_RCC);
+            
+            timing_vec_cc(ds) = timing_vec_cc(ds) + toc_CC;
+            timing_vec_rcc(ds) = timing_vec_rcc(ds) + toc_RCC;
+            
             catch
-            [T_CC,cv_CC, dof_n] = func_subCC(X_T_tilde, -y_T_tilde, Sigma, alpha);
+            [T_CC,cv_CC, dof_n, toc_CC] = func_subCC(X_T_tilde, -y_T_tilde, Sigma, alpha);
             cc_rejection_vec(count,1) = (dof_n > 0) * (T_CC > cv_CC);
             rcc_rejection_vec(count,1) = ((dof_n > 0) * (T_CC > cv_CC)) | ( (dof_n ==1) & (T_CC > chi2inv(1-2*alpha,dof_n)) ); %set RCC to 1 if dof_n == 1 and T_CC is above the 1-2*alpha cv    
+            
+            timing_vec_cc(ds) = timing_vec_cc(ds) + toc_CC;
+            timing_vec_rcc(ds) = timing_vec_rcc(ds) + toc_CC;
+            
             end
         else
-            [T_CC,cv_CC, dof_n] = func_subCC(X_T_tilde, -y_T_tilde, Sigma, alpha);
+            [T_CC,cv_CC, dof_n, toc_CC] = func_subCC(X_T_tilde, -y_T_tilde, Sigma, alpha);
             cc_rejection_vec(count,1) = (dof_n > 0) * (T_CC > cv_CC);
             rcc_rejection_vec(count,1) = ((dof_n > 0) * (T_CC > cv_CC)) | ( (dof_n ==1) & (T_CC > chi2inv(1-2*alpha,dof_n)) ); %set RCC to 1 if dof_n == 1 and T_CC is above the 1-2*alpha cv
+            
+            timing_vec_cc(ds) = timing_vec_cc(ds) + toc_CC;
+            timing_vec_rcc(ds) = timing_vec_rcc(ds) + toc_CC;
+
         end
         
         count = count +1;
@@ -231,6 +285,8 @@ end
     
     rejection_grid_rcc(ds,:) = rcc_rejection_vec;
     rejection_grid_cc(ds,:) = cc_rejection_vec;
+    
+    etahat_grid(ds,:) = etahat_vec;
     
 end
 end
@@ -259,14 +315,20 @@ if(~ as_kms_only)
                    'rejection_grid_hybrid', 'rejection_grid_conditional','beta0_grid' ,...
                    'full_rejection_grid_conditional','full_rejection_grid_hybrid',...
                    'rejection_grid_rcc', 'rejection_grid_cc', ...
-                   'full_rejection_grid_rcc', 'full_rejection_grid_cc');
+                   'full_rejection_grid_rcc', 'full_rejection_grid_cc',...
+                   'timing_vec_lf', 'timing_vec_lfp', 'timing_vec_conditional',...
+                   'timing_vec_hybrid', 'timing_vec_cc', 'timing_vec_rcc',...
+                   'etahat_grid');
 end
+
+if (skip_AS_KMS == 0)
 
     ds_name_askms = strcat( data_output_dir, dirname, 'Interacted_Moments/confidence_sets_lp_askms');
     if(dsoffset ~= 0)
-        ds_name_askms = strcat(ds_name_askms,'_ds',dsoffset);
+        ds_name_askms = strcat(ds_name_askms,'_ds',string(dsoffset));
     end
-    save( ds_name_askms, 'confidence_sets_using_as', 'confidence_sets_using_kms');
+    save( ds_name_askms, 'confidence_sets_using_as', 'confidence_sets_using_kms',...
+                         'timing_vec_as', 'timing_vec_kms');
 
     
-    
+end    
