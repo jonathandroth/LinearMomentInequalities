@@ -3,6 +3,9 @@ use_basic_moments = 1;
 % Toggle doing only AS/KMS
 %as_kms_only = 1;
 
+%Toggle skipping AS/KMS
+skip_AS_KMS = 1;
+
 %specify whether to combine the moments for theta_g, or to have separate
 %ones for each firm
 combine_theta_g_moments = 1;
