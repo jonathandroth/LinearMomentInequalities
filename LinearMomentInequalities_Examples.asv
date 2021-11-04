@@ -6,7 +6,7 @@ Sigma = eye(length(y));
 Z_draws = randn(1000, length(y))';
 alpha = 0.05; 
 
-c_lf_lp(X,Z_draws, Sigma, alpha)
+c_lf = c_lf_lp(X,Z_draws, Sigma, alpha)
 
 %XX add something about studentiziation here
 
@@ -19,4 +19,4 @@ lp_hybrid_test_fn(y,X,Sigma,alpha, alpha/10)
 %%hybrid XX 
 
 
-%% If you want a CI for a co
+% If you want a CI for a component of delta, you can use this function XX
