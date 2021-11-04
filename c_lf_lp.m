@@ -19,8 +19,7 @@
 
 function [c_lf_lp, eta_vec] = c_lf_lp(X_T, Z_draws, Sigma, alpha)
 
-%Note: x_T and Sigma are assumed to be rescaled so that Sigma has diagnol
-%of 1
+
 Sigma_sqrt = Sigma^(1/2);
 eps_draws = Sigma_sqrt * Z_draws;
 
@@ -29,7 +28,7 @@ eta_vec = NaN(numsims,1);
 for s = 1:numsims
     
     y_T_s = eps_draws(:,s);
-    eta_vec(s,1) = test_delta_lp_fn(y_T_s, X_T);
+    eta_vec(s,1) = test_delta_lp_fn(y_T_s, X_T, Sigma);
 end
 
 

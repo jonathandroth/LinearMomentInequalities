@@ -1,4 +1,15 @@
 function [reject, eta] = lp_conditional_test_fn( y_T, X_T, Sigma, alpha)
+
+%Check if Sigma has 1s on the diagnol. If not, renormalize. (Original code
+%assumes Sigma is a correlation matrix)
+if( max(abs(diag(Sigma)-1)) > 10^-6 )
+    Sigma_invsqrt = diag( diag( Sigma^(-1/2) ) );
+    [reject, eta] = lp_conditional_test_fn(Sigma_invsqrt * y_T, ...
+                                           Sigma_invsqrt * X_T, ...
+                                           Sigma_invsqrt * Sigma * Sigma_invsqrt',...
+                                           alpha );
+    return;
+end
 %Store number of parameters and moments
 M = size(Sigma,1);
 k = size(X_T, 2);
@@ -13,7 +24,7 @@ k = size(X_T, 2);
 
 
 %Compute eta, and the argmin delta
-[eta, delta, lambda,error_flag] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','dual-simplex','TolFun', 10^-8, 'Display', 'off', 'MaxIter', 100000));
+[eta, delta, lambda,error_flag] = test_delta_lp_fn( y_T, X_T, Sigma, optimoptions('linprog','Algorithm','dual-simplex','TolFun', 10^-8, 'Display', 'off', 'MaxIter', 100000));
 
 if(error_flag > 0)
     reject = 0;

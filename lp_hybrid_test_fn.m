@@ -22,6 +22,30 @@
 
 function [reject, eta] = lp_hybrid_test_fn( y_T, X_T, Sigma, alpha, gamma, varargin)
 
+%Check if Sigma has 1s on the diagnol. If not, renormalize. (Original code
+%assumes Sigma is a correlation matrix)
+if( max(abs(diag(Sigma)-1)) > 10^-6 )
+    Sigma_invsqrt = diag( diag( Sigma^(-1/2) ) );
+    
+    if(isempty(varargin))
+        [reject, eta] = lp_hybrid_test_fn(Sigma_invsqrt * y_T, ...
+                                               Sigma_invsqrt * X_T, ...
+                                               Sigma_invsqrt * Sigma * Sigma_invsqrt',...
+                                               alpha, gamma);
+        return;
+
+    else
+        [reject, eta] = lp_hybrid_test_fn(Sigma_invsqrt * y_T, ...
+            Sigma_invsqrt * X_T, ...
+            Sigma_invsqrt * Sigma * Sigma_invsqrt',...
+            alpha, gamma, varargin{1});
+        return;
+    end     
+        
+end
+
+
+
 %% Compute the LF cutoff, if it's not given
 %Set c_gamma if additional argument is provided; otherwise, compute it
 if( isempty(varargin) == 0)
@@ -40,7 +64,7 @@ M = size(Sigma,1);
 k = size(X_T, 2);
 
 %Compute eta, and the argmin delta
-[eta, delta, lambda,error_flag] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','dual-simplex','TolFun', 10^-8, 'Display', 'off', 'MaxIter', 100000));
+[eta, delta, lambda,error_flag] = test_delta_lp_fn( y_T, X_T, Sigma, optimoptions('linprog','Algorithm','dual-simplex','TolFun', 10^-8, 'Display', 'off', 'MaxIter', 100000));
 
 if(error_flag > 0)
     reject = 0;

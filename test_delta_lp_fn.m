@@ -16,13 +16,13 @@
 % delta-star = the value of delta at the optimum
 % lambda = the lagrange multipliers at the optimum
 
-function [eta_star, delta_star, lambda, error_flag] = test_delta_lp_fn( y_T, X_T, varargin)
+function [eta_star, delta_star, lambda, error_flag] = test_delta_lp_fn( y_T, X_T, Sigma, varargin)
 
 
 %Run the linear program
 
 % min_{eta , delta} eta 
-% s.t. Y_T -X_T delta <= repmat(eta
+% s.t. Y_T -X_T delta <= eta * sqrt(diag(Sigma)) 
 
 %To do this, need to put into the form
 
@@ -31,15 +31,14 @@ function [eta_star, delta_star, lambda, error_flag] = test_delta_lp_fn( y_T, X_T
 
 error_flag =0;
 
+sigma = sqrt(diag(Sigma));
+
 k_delta = size(X_T,2);
 
 f = [1; zeros(k_delta, 1) ];
 
-%A_eta = [ ones( size(X_T,1) , 1) , zeros(size(X_T,1) , k_delta) ];
-%A_delta = X_T * [zeros(k_delta,1), eye(k_delta)] ;
-% A = - (A_eta + A_delta);
 
-A = - [ones( size(X_T,1) , 1), X_T]; %This is equivalent to the three lines above
+A = - [sigma, X_T]; %This is equivalent to the three lines above
 
 
 b = - y_T;
