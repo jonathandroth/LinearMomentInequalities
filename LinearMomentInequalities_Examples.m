@@ -14,3 +14,9 @@ eta = test_delta_lp_fn(y,X)
 
 lp_conditional_test_fn(y,X,Sigma,alpha)
 lp_hybrid_test_fn(y,X,Sigma,alpha, alpha/10)
+
+%%If you're using both LF / Hybrid at the same time, can use draws in
+%%hybrid XX 
+
+
+% If you want a CI for a component of delta, you can use this function XX
