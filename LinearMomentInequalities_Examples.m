@@ -19,7 +19,7 @@ lp_hybrid_test_fn(y,X,Sigma,alpha, alpha/10, draws)
 %%hybrid XX 
 
 % If you want a CI for a component of delta, you can use this function XX
-cs_linear_delta_lp_fn(y,X,1,c_lf) 
+cs_linear_delta_lp_fn(y,X,Sigma,1,c_lf) 
 
 
 %If you want hybrid for a linear parameter, then can pass draws
