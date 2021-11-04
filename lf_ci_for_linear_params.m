@@ -11,12 +11,12 @@
 %It returns:
 % cs: which is a vector of the upper and lower bounds of the CS: [ub, lb] 
 
-function [cs, slack_lb, slack_ub] = cs_linear_delta_lp_fn( y_T, X_T, Sigma, l, c_alpha) 
+function [cs, slack_lb, slack_ub] = lf_ci_for_linear_params( y_T, X_T, Sigma, l, lf_cv) 
 
 sigma = sqrt(diag(Sigma));
 
 A = -X_T;
-b = c_alpha * sigma - y_T;
+b = lf_cv * sigma - y_T;
 
 [delta_lb,lb] = linprog(l , A, b, [], [], [], [],  optimoptions('linprog','TolFun', 10^(-8), 'Display','off')) ; 
 [delta_ub,ub] = linprog(-l, A, b, [], [], [], [],  optimoptions('linprog','TolFun', 10^(-8), 'Display','off'));
