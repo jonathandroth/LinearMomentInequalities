@@ -56,7 +56,7 @@ fullrank = rank(X_TB) == min( size(X_TB) );
 
 
 if( (~fullrank) || degenerate)
-    warning('Using dual approach');
+    warning('Using bisection approach for vlo/vup');
     %Calculate vlo and vup using the bisection approach that conditions on
     %having a gamma_tilde - a vertex of the dual (note that since matlab
     %implements the dual-simplex method, lambda is guaranteed to be such a

@@ -3,9 +3,9 @@
 %The moments are assumed to be of the form y_T - X_T(lambda) * delta <= 0
 
 %This function uses a hybrid approach to test whether lambda is in the
-%identified set, where the LF approach is applied with size gamma, and then
+%identified set, where the LF approach is applied with size kappa, and then
 %the conditional linear programming appraoch is applied with size
-% 1 - (1-gamma)(1-alpha)
+% 1 - (1-kappa)(1-alpha)
 
 %Its arguments are:
 
@@ -13,14 +13,14 @@
 %X_T : used in definition of moments; see above
 %Sigma: conditional variance of y_T | X_T. Assumed to be normalized to have
     %diagonal of ones
-%gamma: signficance for LF test
+%kappa: signficance for LF test
 % eta_vec (optional): the draws used when calculating the least favorable
 % critical values. If not supplied, this is simulated inside the function using 1000 draws. 
     %If, however, the LF critical values are being calculated elsewhere, it may be
     %computationally more efficient to pass these draws here; users can also customize the 
     %number of draws by doing it outside
 
-function [reject, eta] = hybrid_test_fn( y_T, X_T, Sigma, alpha, gamma, varargin)
+function [reject, eta] = hybrid_test_fn( y_T, X_T, Sigma, alpha, kappa, varargin)
 
 %Check if Sigma has 1s on the diagnol. If not, renormalize. (Original code
 %assumes Sigma is a correlation matrix)
@@ -31,14 +31,14 @@ if( max(abs(diag(Sigma)-1)) > 10^-6 )
         [reject, eta] = hybrid_test_fn(Sigma_invsqrt * y_T, ...
                                                Sigma_invsqrt * X_T, ...
                                                Sigma_invsqrt * Sigma * Sigma_invsqrt',...
-                                               alpha, gamma);
+                                               alpha, kappa);
         return;
 
     else
         [reject, eta] = hybrid_test_fn(Sigma_invsqrt * y_T, ...
             Sigma_invsqrt * X_T, ...
             Sigma_invsqrt * Sigma * Sigma_invsqrt',...
-            alpha, gamma, varargin{1});
+            alpha, kappa, varargin{1});
         return;
     end     
         
@@ -47,15 +47,15 @@ end
 
 
 %% Compute the LF cutoff, if it's not given
-%Set c_gamma if additional argument is provided; otherwise, compute it
+%Set c_kappa if additional argument is provided; otherwise, compute it
 if( isempty(varargin) == 0)
     eta_vec = varargin{1};
-    c_gamma = quantile( eta_vec, 1-alpha);
+    c_kappa = quantile( eta_vec, 1-alpha);
 else
     rng(0);
     numsims_lp = 1000;
     Z_draws = randn( size(y_T,1) , numsims_lp);
-    c_gamma = lf_critical_value_fn(X_T,Z_draws,Sigma,gamma);
+    c_kappa = lf_critical_value_fn(X_T,Z_draws,Sigma,kappa);
 end
 
 %% Run the LP to calculate eta
@@ -75,7 +75,7 @@ end
 
 %% Compare eta to the LF cutoff
 %Reject if eta is greater than the LF cutoff and return
-if(eta > c_gamma)
+if(eta > c_kappa)
     reject = 1;
     return;
 end
@@ -105,16 +105,16 @@ fullrank = rank(X_TB) == min( size(X_TB) );
 
 
 if(~fullrank || degenerate)
-    
+     warning('Using bisection approach for vlo/vup');
     %Calculate vlo and vup using the bisection approach that conditions on
-    %having a gamma_tilde - a vertex of the dual (note that since matlab
+    %having a kappa_tilde - a vertex of the dual (note that since matlab
     %implements the dual-simplex method, lambda is guaranteed to be such a
     %gamme_tilde
-    [vlo_dual,vup_dual,eta_dual,gamma_tilde] = lp_dual_fn( y_T, X_T, eta,lambda, Sigma);
+    [vlo_dual,vup_dual,eta_dual,kappa_tilde] = lp_dual_fn( y_T, X_T, eta,lambda, Sigma);
 
-    vup_dual = min([vup_dual, c_gamma]); %this conditions on having not rejected the LF test 
+    vup_dual = min([vup_dual, c_kappa]); %this conditions on having not rejected the LF test 
     
-    sigma_B_dual = sqrt( gamma_tilde' * Sigma * gamma_tilde);
+    sigma_B_dual = sqrt( kappa_tilde' * Sigma * kappa_tilde);
     max_stat = eta_dual ./ sigma_B_dual;
     zlo_dual = vlo_dual ./ sigma_B_dual;
     zup_dual = vup_dual ./ sigma_B_dual;
@@ -130,7 +130,7 @@ if(~fullrank || degenerate)
         return;
     else
         pval = Truncated_normal_p_value_by_simulation(max_stat,zlo_dual,zup_dual);
-        alpha_tilde = (alpha - gamma) / (1 - gamma);
+        alpha_tilde = (alpha - kappa) / (1 - kappa);
         reject = pval < alpha_tilde;
     return;
     end
@@ -159,21 +159,21 @@ S_Bc = eye(M);
 S_Bc = S_Bc(Bc_index, :);
 
 
-Gamma_B  = [i_Bc , X_TBc] * [i_B , X_TB]^(-1) * S_B - S_Bc;
+kappa_B  = [i_Bc , X_TBc] * [i_B , X_TB]^(-1) * S_B - S_Bc;
 
 e1 = [1 ; zeros(size_B - 1 ,1) ];
 v_B = ( e1' * [i_B , X_TB]^(-1) * S_B )';
 
-Gamma_B_tilde = [Gamma_B; -v_B'];
-u = [ zeros( size( Gamma_B, 1), 1) ; -c_gamma];
+kappa_B_tilde = [kappa_B; -v_B'];
+u = [ zeros( size( kappa_B, 1), 1) ; -c_kappa];
 
 sigma2_B = v_B' * Sigma * v_B;
 sigma_B = sqrt(sigma2_B);
 
-rho = Gamma_B_tilde * Sigma * v_B / sigma2_B;
+rho = kappa_B_tilde * Sigma * v_B / sigma2_B;
 
 
-maximand_or_minimand = (u -Gamma_B_tilde * y_T )./ rho + v_B' * y_T;
+maximand_or_minimand = (u -kappa_B_tilde * y_T )./ rho + v_B' * y_T;
 
 if( sum(rho >0) > 0 )
     v_lo = max( maximand_or_minimand( rho >0) );
@@ -201,7 +201,7 @@ if( ~ (z_lo <= max_stat && max_stat <= z_up) )
 
 else
     pval = Truncated_normal_p_value_by_simulation(max_stat,z_lo,z_up);
-    alpha_tilde = (alpha - gamma) / (1 - gamma);
+    alpha_tilde = (alpha - kappa) / (1 - kappa);
     reject = pval < alpha_tilde;
 
 end
