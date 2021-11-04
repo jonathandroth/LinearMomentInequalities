@@ -12,7 +12,7 @@ alpha = 0.05;
 
 eta = etahat_fn(y,X,Sigma)
 
-lp_conditional_test_fn(y,X,Sigma,alpha)
+conditional_test_fn(y,X,Sigma,alpha)
 lp_hybrid_test_fn(y,X,Sigma,alpha, alpha/10, draws)
 
 %%If you're using both LF / Hybrid at the same time, can use draws in
