@@ -16,7 +16,7 @@
 % delta-star = the value of delta at the optimum
 % lambda = the lagrange multipliers at the optimum
 
-function [eta_star, delta_star, lambda, error_flag] = test_delta_lp_fn( y_T, X_T, Sigma, varargin)
+function [eta, delta, lambda, error_flag] = test_delta_lp_fn( y_T, X_T, Sigma, varargin)
 
 
 %Run the linear program
@@ -50,9 +50,9 @@ else
     options = optimoptions('linprog','Algorithm','interior-point', 'MaxIter', 20000,'Display', 'off');
 end
 
-[delta_star,eta_star,flag,~,lambda] = linprog( f, A, b ,[],[],[],[],[], options);
+[delta,eta,flag,~,lambda] = linprog( f, A, b ,[],[],[],[],[], options);
 
-delta_star = delta_star(2:end); %Remove eta, which is the first element
+delta = delta(2:end); %Remove eta, which is the first element
 
 
 if(isstruct(lambda) )
@@ -62,13 +62,13 @@ end
 
 %Deal with infinite case
 if(flag == -3)
-    eta_star = Inf;
+    eta = Inf;
     error_flag = 2;
     warning('Warning: linear program diverged. Setting eta to inf');
     return;
 %Deal with other errors in LP
 elseif( flag <= 0)
-    eta_star = Inf;
+    eta = Inf;
     warning(strcat('Warning: error linear program (flag ', num2str(flag),'). Setting eta to inf'));
     error_flag = 1;
     return;
