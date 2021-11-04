@@ -1,0 +1,15 @@
+y = [1;1;0];
+X = [1;-1;0];
+
+Sigma = eye(length(y));
+
+Z_draws = randn(1000, length(y))';
+alpha = 0.05; 
+
+c_lf_lp(X,Z_draws, Sigma, alpha)
+
+%XX add something about studentiziation here
+
+eta = test_delta_lp_fn(y,X)
+
+lp_conditional_test_fn(y,X,Sigma,alpha)
