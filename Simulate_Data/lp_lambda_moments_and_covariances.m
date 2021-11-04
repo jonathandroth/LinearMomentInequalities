@@ -15,6 +15,7 @@ lf_test_modified = NaN(size(conditional_test));
 cc_test = NaN(size(conditional_test));
 rcc_test = NaN(size(conditional_test));
 
+etahat_grid = NaN(numdatasets, size(lambda_vec,1));
 
 timing_vec_lf_lambda = zeros(size(conditional_test));
 timing_vec_lfp_lambda = zeros(size(conditional_test));
@@ -73,6 +74,9 @@ runTimeLFCV = toc(ticLFCV);
 ticTestStat = tic;
 eta = test_delta_lp_fn( y_T, X_T);
 runTimeTestStat = toc(ticTestStat); 
+
+
+etahat_grid(ds,i) = eta;
 
 lf_test_original(ds,i) = eta > c_alpha;
 lf_test_modified(ds,i) = eta > c_lp_alpha;
@@ -139,4 +143,4 @@ end
         'hybrid_test', 'lambda_vec', 'cc_test', 'rcc_test',...
         'timing_vec_lf_lambda', 'timing_vec_lfp_lambda',...
         'timing_vec_conditional_lambda', 'timing_vec_hybrid_lambda',...
-        'timing_vec_cc_lambda', 'timing_vec_rcc_lambda');
+        'timing_vec_cc_lambda', 'timing_vec_rcc_lambda','etahat_grid');
