@@ -16,7 +16,7 @@
 % delta-star = the value of delta at the optimum
 % lambda = the lagrange multipliers at the optimum
 
-function [eta, delta, lambda, error_flag] = test_delta_lp_fn( y_T, X_T, Sigma, varargin)
+function [eta, delta, lambda, error_flag] = etahat_fn( y_T, X_T, Sigma, varargin)
 
 
 %Run the linear program

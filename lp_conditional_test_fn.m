@@ -15,7 +15,7 @@ M = size(Sigma,1);
 k = size(X_T, 2);
 %Compute eta, and the argmin delta
 
-%[eta, delta, lambda] = test_delta_lp_fn( y_T, X_T, optimoptions('linprog','Algorithm','interior-point'));
+%[eta, delta, lambda] = etahat_fn( y_T, X_T, optimoptions('linprog','Algorithm','interior-point'));
 
 
 %tol = 10^(-6);
@@ -24,7 +24,7 @@ k = size(X_T, 2);
 
 
 %Compute eta, and the argmin delta
-[eta, delta, lambda,error_flag] = test_delta_lp_fn( y_T, X_T, Sigma, optimoptions('linprog','Algorithm','dual-simplex','TolFun', 10^-8, 'Display', 'off', 'MaxIter', 100000));
+[eta, delta, lambda,error_flag] = etahat_fn( y_T, X_T, Sigma, optimoptions('linprog','Algorithm','dual-simplex','TolFun', 10^-8, 'Display', 'off', 'MaxIter', 100000));
 
 if(error_flag > 0)
     reject = 0;

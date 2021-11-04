@@ -28,7 +28,7 @@ eta_vec = NaN(numsims,1);
 for s = 1:numsims
     
     y_T_s = eps_draws(:,s);
-    eta_vec(s,1) = test_delta_lp_fn(y_T_s, X_T, Sigma);
+    eta_vec(s,1) = etahat_fn(y_T_s, X_T, Sigma);
 end
 
 

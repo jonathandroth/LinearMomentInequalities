@@ -10,7 +10,7 @@ alpha = 0.05;
 
 %XX add something about studentiziation here
 
-eta = test_delta_lp_fn(y,X,Sigma)
+eta = etahat_fn(y,X,Sigma)
 
 lp_conditional_test_fn(y,X,Sigma,alpha)
 lp_hybrid_test_fn(y,X,Sigma,alpha, alpha/10, draws)
