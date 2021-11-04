@@ -17,7 +17,7 @@
 
 
 
-function [lf_critical_value_fn, eta_vec] = lf_critical_value_fn(X_T, Z_draws, Sigma, alpha)
+function [lf_critical_value_fn, eta_vec] = lf_critical_value_fn(X, Z_draws, Sigma, alpha)
 
 
 Sigma_sqrt = Sigma^(1/2);
@@ -28,7 +28,7 @@ eta_vec = NaN(numsims,1);
 for s = 1:numsims
     
     y_T_s = eps_draws(:,s);
-    eta_vec(s,1) = etahat_fn(y_T_s, X_T, Sigma);
+    eta_vec(s,1) = etahat_fn(y_T_s, X, Sigma);
 end
 
 

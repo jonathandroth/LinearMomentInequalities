@@ -20,7 +20,7 @@
     %computationally more efficient to pass these draws here; users can also customize the 
     %number of draws by doing it outside
 
-function [reject, eta] = hybrid_test_fn( y_T, X_T, Sigma, alpha, kappa, varargin)
+function [reject, eta] = hybrid_test_fn( y, X, Sigma, alpha, kappa, varargin)
 
 %Check if Sigma has 1s on the diagnol. If not, renormalize. (Original code
 %assumes Sigma is a correlation matrix)
@@ -28,15 +28,15 @@ if( max(abs(diag(Sigma)-1)) > 10^-6 )
     Sigma_invsqrt = diag( diag( Sigma^(-1/2) ) );
     
     if(isempty(varargin))
-        [reject, eta] = hybrid_test_fn(Sigma_invsqrt * y_T, ...
-                                               Sigma_invsqrt * X_T, ...
+        [reject, eta] = hybrid_test_fn(Sigma_invsqrt * y, ...
+                                               Sigma_invsqrt * X, ...
                                                Sigma_invsqrt * Sigma * Sigma_invsqrt',...
                                                alpha, kappa);
         return;
 
     else
-        [reject, eta] = hybrid_test_fn(Sigma_invsqrt * y_T, ...
-            Sigma_invsqrt * X_T, ...
+        [reject, eta] = hybrid_test_fn(Sigma_invsqrt * y, ...
+            Sigma_invsqrt * X, ...
             Sigma_invsqrt * Sigma * Sigma_invsqrt',...
             alpha, kappa, varargin{1});
         return;
@@ -54,17 +54,17 @@ if( isempty(varargin) == 0)
 else
     rng(0);
     numsims_lp = 1000;
-    Z_draws = randn( size(y_T,1) , numsims_lp);
-    c_kappa = lf_critical_value_fn(X_T,Z_draws,Sigma,kappa);
+    Z_draws = randn( size(y,1) , numsims_lp);
+    c_kappa = lf_critical_value_fn(X,Z_draws,Sigma,kappa);
 end
 
 %% Run the LP to calculate eta
 %Store number of parameters and moments
 M = size(Sigma,1);
-k = size(X_T, 2);
+k = size(X, 2);
 
 %Compute eta, and the argmin delta
-[eta, delta, lambda,error_flag] = etahat_fn( y_T, X_T, Sigma, optimoptions('linprog','Algorithm','dual-simplex','TolFun', 10^-8, 'Display', 'off', 'MaxIter', 100000));
+[eta, delta, lambda,error_flag] = etahat_fn( y, X, Sigma, optimoptions('linprog','Algorithm','dual-simplex','TolFun', 10^-8, 'Display', 'off', 'MaxIter', 100000));
 
 if(error_flag > 0)
     reject = 0;
@@ -99,7 +99,7 @@ degenerate = sum( lambda>tol_lambda ) ~= (k+1) ;
  Bc_index = B_index == 0;
  
 %Check whether X_T,B has full rank
-X_TB = X_T(B_index,:);
+X_TB = X(B_index,:);
 fullrank = rank(X_TB) == min( size(X_TB) );
 
 
@@ -110,7 +110,7 @@ if(~fullrank || degenerate)
     %having a kappa_tilde - a vertex of the dual (note that since matlab
     %implements the dual-simplex method, lambda is guaranteed to be such a
     %gamme_tilde
-    [vlo_dual,vup_dual,eta_dual,kappa_tilde] = lp_dual_fn( y_T, X_T, eta,lambda, Sigma);
+    [vlo_dual,vup_dual,eta_dual,kappa_tilde] = lp_dual_fn( y, X, eta,lambda, Sigma);
 
     vup_dual = min([vup_dual, c_kappa]); %this conditions on having not rejected the LF test 
     
@@ -149,8 +149,8 @@ size_Bc = sum(B_index == 0);
 i_B = ones(size_B,1);
 i_Bc = ones(size_Bc,1);
 
-X_TB = X_T(B_index,:);
-X_TBc = X_T(Bc_index,:);
+X_TB = X(B_index,:);
+X_TBc = X(Bc_index,:);
 
 S_B = eye(M);
 S_B = S_B(B_index, :);
@@ -173,7 +173,7 @@ sigma_B = sqrt(sigma2_B);
 rho = kappa_B_tilde * Sigma * v_B / sigma2_B;
 
 
-maximand_or_minimand = (u -kappa_B_tilde * y_T )./ rho + v_B' * y_T;
+maximand_or_minimand = (u -kappa_B_tilde * y )./ rho + v_B' * y;
 
 if( sum(rho >0) > 0 )
     v_lo = max( maximand_or_minimand( rho >0) );
