@@ -6,7 +6,7 @@ Sigma = eye(length(y));
 Z_draws = randn(1000, length(y))';
 alpha = 0.05; 
 
-[c_lf, draws] = c_lf_lp(X,Z_draws, Sigma, alpha);
+[c_lf, draws] = lf_critical_value_fn(X,Z_draws, Sigma, alpha);
 
 %XX add something about studentiziation here
 

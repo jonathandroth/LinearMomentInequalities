@@ -55,7 +55,7 @@ else
     rng(0);
     numsims_lp = 1000;
     Z_draws = randn( size(y_T,1) , numsims_lp);
-    c_gamma = c_lf_lp(X_T,Z_draws,Sigma,gamma);
+    c_gamma = lf_critical_value_fn(X_T,Z_draws,Sigma,gamma);
 end
 
 %% Run the LP to calculate eta

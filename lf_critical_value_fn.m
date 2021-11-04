@@ -17,7 +17,7 @@
 
 
 
-function [c_lf_lp, eta_vec] = c_lf_lp(X_T, Z_draws, Sigma, alpha)
+function [lf_critical_value_fn, eta_vec] = lf_critical_value_fn(X_T, Z_draws, Sigma, alpha)
 
 
 Sigma_sqrt = Sigma^(1/2);
@@ -32,6 +32,6 @@ for s = 1:numsims
 end
 
 
-c_lf_lp = quantile( eta_vec, 1-alpha);
+lf_critical_value_fn = quantile( eta_vec, 1-alpha);
 
 end
