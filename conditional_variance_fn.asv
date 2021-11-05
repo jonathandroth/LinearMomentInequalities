@@ -9,7 +9,12 @@ function conditional_variance = conditional_variance_fn(Y, X)
 % Z: an N x M matrix where each row i correspoinds with the M-dimensional
 % vector Z_i for unit
 %Outputs:
-% conditonal_variance: An estimate of E[ Var(Y_i | Z_i) ]
+% conditonal_variance: An estimate of E[ Var(Y
+%Notes
+% If y and X are sample averages, Sigma should be E[ Var(Y|X) ] /N
+% If Sigma is E[ Var(Y|X) ], then y and X should be averages scaled by sqrt(N)
+% Sigma used here should be the same as the sigma used for lf_cv
+
 
 
     T = size(Y,1);

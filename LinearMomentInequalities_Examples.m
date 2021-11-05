@@ -18,7 +18,7 @@
 % Given a matrix Y where each row corresponds with a realization of Y_i,
 % and a matrix Z where each row corresponds with Z_i, one can estimate the
 % Sigma using the provided conditional_variance_function, which implements
-% the matching method of Abadie Imbens and Zhang (2014) 
+% the matching method of Abadie Imbens and Zhang (2014); we provide an example below 
 
 % Below, we illustrate how the tests can be used for a given value of Y_i, X_i, and Sigma.
 % Note that if Y_i or X_i depends on beta0, then Sigma must be calculated
@@ -28,6 +28,7 @@
 % Y(beta0) = Y_i + beta0*X_beta, in which case computation shortcuts are
 % available.
 
+%% Examples of running the LF, Conditional, and Hybrid Tests
 
 %Example values of y,X, and Sigma
 y = [1;1;0];
@@ -67,6 +68,7 @@ reject_hybrid = hybrid_test_fn(y,X,Sigma,alpha, alpha/10, draws)
 %each candidate values of beta0. Then the values of beta0 that are not
 %rejected can be collected to form a confidence set
 
+%% Examples where the target parameter enters linearly 
 
 %If the target parameter enters the moments linearly, there are substantial
 %computational savings. First, Sigma need only be calculated once. Second,
@@ -120,3 +122,20 @@ end
 %Confidence set is points where the test doesn't reject
 conditional_CS = beta0_grid( conditional_test_grid == 0) 
 hybrid_CS = beta0_grid( hybrid_test_grid == 0) 
+
+
+
+%% Estimating the conditional variance
+% The conditional variance can be estimated using the method of Abadie et
+% al (2014), implemented in the conditional_variance_fn function
+% The function takes a matrix Y with each row corresponding with Y_i and a
+% matrix Z with each row corresponding with Z_i
+
+%Generate Y and Z for example
+N = 10000;
+M = 5; %dim(Z)
+K = 3; %dim(Y)
+Z = randn(N,M);
+Y = randn(N,K) + Z * ones(M,K); 
+
+conditional_variance_fn(Y,Z)
