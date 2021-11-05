@@ -1,11 +1,15 @@
+function index_vec = closest_neighbor_indices( Z_mat , Sigma)
+% A function for finding the indices of nearest neighbors given a matrix Z
+% and covariance matrix Sigma, where distance is in the Mahalanobis
+% distance
 %Inputs
 %Z_mat: a matrix (nxk), the rows of which represent vectors to be compared
 %Sigma: a square k x k covariance matrix
-
 %Outputs
 % index_vec: the indices indicating the row that is closest to row i in
 % terms of normalized distance
-function index_vec = closest_neighbor_indices2( Z_mat , Sigma)
+
+
 
 %Compute Mahalanobis distance btwn the vectors in Z 
 distanceMat = squareform( pdist( Z_mat, 'mahalanobis', Sigma) );

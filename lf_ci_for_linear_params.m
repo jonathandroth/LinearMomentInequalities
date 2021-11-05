@@ -1,15 +1,3 @@
-%This function provides a confidence set for a linear combination of the
-%elements of the delta vectors for moments of the form Y_T - X_T delta >= 0
-
-%It takes as inputs:
-
-%y_T, x_T: data for the moments
-% l: a CS is provided for the linear combination l' * delta
-% c_alpha: the critical value for the moments
-
-
-%It returns:
-% cs: which is a vector of the upper and lower bounds of the CS: [ub, lb] 
 
 function [cs, slack_lb, slack_ub] = lf_ci_for_linear_params( y, X, Sigma, l, lf_cv) 
 

@@ -1,7 +1,6 @@
 %This function computes vlo and vup for the dual linear program for the
 %conditional values
 
-%Inputs: see "Conditioning via the Dual" note for notation
 function [vlo, vup] = vlo_vup_dual_fn(eta,s_T,gamma_tilde, Sigma, W_T)
 
 tol_c = 10^(-6);

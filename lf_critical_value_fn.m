@@ -1,6 +1,6 @@
 
 function [lf_critical_value, eta_vec] = lf_critical_value_fn(X, Z_draws, Sigma, alpha)
-%% Computing the least-favorable critical value from Andrews, Roth and Pakes for testing moments of the form E[Y_i - X_i delta | Z_i] <= 0
+%% Compute the least-favorable critical value from Andrews, Roth and Pakes for testing moments of the form E[Y_i - X_i delta | Z_i] <= 0
 %Inputs:
 % X: the (scaled) sample average of X_i (a k x m vector)
 % Z_draws: a matrix of standard normal draws of dimension k x S, where S is
