@@ -1,8 +1,9 @@
 % This script provides examples of how to use the functions for the moment
 % inequality tests in Andrews, Roth, and Pakes
 % We assume that the parameters satisfy E[ Y_i(beta_0) - X_i \delta | Z] >= 0,
-% where beta_0 is the target parameter and \delta is a nuisance parameter,
+% where beta_0 is the target parameter, \delta is a nuisance parameter,
 % and X_i is non-random conditional on Z
+
 % The code takes as input y (the average of the Y_i, scaled by sqrt(N)), X (the average of the
 % X_i, scaled by sqrt(N)), and Sigma (an estimate of the conditional variance E[ Var(Y_i|Z_i)
 % ]
@@ -68,9 +69,9 @@ reject_hybrid = hybrid_test_fn(y,X,Sigma,alpha, alpha/10, draws)
 %using test inversion. We provide an example below where we are interested
 %in the first component of delta
 
-%For the sake of the example, add another column to X so that we are
-%interested in the first component of delta
-X = [[1;-1;0] , [0;0;1]];
+%For the sake of the example, add another column to X so that delta has two dimension.
+% Suppose we are interested in the first component of delta
+X = [[1;-1;0] , [0;0;0]];
 
 l = [1;0]; %target parameter is l'delta
 
@@ -107,7 +108,10 @@ for s = 1:length(beta0_grid)
    beta0 = beta0_grid(s);
    y_s = y - X_l * beta0;
    
-   conditional_test_grid(s) = conditional_test_fn(y,Xtilde,Sigma,alpha);
-   hybrid_test_grid(s) = hybrid_test_fn(y,Xtilde,Sigma,alpha,alpha/10,draws);
+   conditional_test_grid(s) = conditional_test_fn(y_s,Xtilde,Sigma,alpha);
+   hybrid_test_grid(s) = hybrid_test_fn(y_s,Xtilde,Sigma,alpha,alpha/10,draws);
 end
 
+%Confidence set is points where the test doesn't reject
+conditional_CS = beta0_grid( conditional_test_grid == 0) 
+hybrid_CS = beta0_grid( hybrid_test_grid == 0) 
