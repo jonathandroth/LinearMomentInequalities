@@ -32,6 +32,14 @@ if(error_flag > 0)
     return;
 end
 
+
+%Check if eta<0. If so, don't reject
+if(eta <0)
+    reject =0;
+    return;
+end    
+
+
 %%The following block checks for conditions under which the primal
 %%%and dual solutions are equal to one another. If these conditions don't hold, we go to the dual
  

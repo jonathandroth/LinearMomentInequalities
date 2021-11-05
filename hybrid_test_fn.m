@@ -44,20 +44,6 @@ if( max(abs(diag(Sigma)-1)) > 10^-6 )
         
 end
 
-
-
-%% Compute the LF cutoff, if it's not given
-%Set c_kappa if additional argument is provided; otherwise, compute it
-if( isempty(varargin) == 0)
-    eta_vec = varargin{1};
-    c_kappa = quantile( eta_vec, 1-alpha);
-else
-    rng(0);
-    numsims_lp = 1000;
-    Z_draws = randn( size(y,1) , numsims_lp);
-    c_kappa = lf_critical_value_fn(X,Z_draws,Sigma,kappa);
-end
-
 %% Run the LP to calculate eta
 %Store number of parameters and moments
 M = size(Sigma,1);
@@ -71,6 +57,26 @@ if(error_flag > 0)
     warning('LP for eta did not converge properly. Not rejecting');
     return;
 end
+
+
+%Check if eta<0. If so, don't reject
+if(eta <0)
+    reject =0;
+    return;
+end    
+
+%% Compute the LF cutoff, if it's not given
+%Set c_kappa if additional argument is provided; otherwise, compute it
+if( isempty(varargin) == 0)
+    eta_vec = varargin{1};
+    c_kappa = quantile( eta_vec, 1-alpha);
+else
+    rng(0);
+    numsims_lp = 1000;
+    Z_draws = randn( size(y,1) , numsims_lp);
+    c_kappa = lf_critical_value_fn(X,Z_draws,Sigma,kappa);
+end
+
 
 
 %% Compare eta to the LF cutoff
