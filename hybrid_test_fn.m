@@ -1,26 +1,22 @@
-%This function implements a "hybrid" test for a non-linear parameter using linear programming
-
-%The moments are assumed to be of the form y_T - X_T(lambda) * delta <= 0
-
-%This function uses a hybrid approach to test whether lambda is in the
-%identified set, where the LF approach is applied with size kappa, and then
-%the conditional linear programming appraoch is applied with size
-% 1 - (1-kappa)(1-alpha)
-
-%Its arguments are:
-
-%y_T : used in definition of moments; see above 
-%X_T : used in definition of moments; see above
-%Sigma: conditional variance of y_T | X_T. Assumed to be normalized to have
-    %diagonal of ones
-%kappa: signficance for LF test
-% eta_vec (optional): the draws used when calculating the least favorable
-% critical values. If not supplied, this is simulated inside the function using 1000 draws. 
-    %If, however, the LF critical values are being calculated elsewhere, it may be
-    %computationally more efficient to pass these draws here; users can also customize the 
-    %number of draws by doing it outside
 
 function [reject, eta] = hybrid_test_fn( y, X, Sigma, alpha, kappa, varargin)
+%% Computing the hybrid test from Andrews, Roth and Pakes for testing moments of the form E[Y_i - X_i delta | Z_i] <= 0
+%Inputs:
+% y: the (scaled) sample average of Y_i (a k x 1 vector)
+% X: the (scaled) sample average of X_i (a k x m vector)
+% Sigma: the (scaled) estimate of E[ Var(Y_i|Z_i) ] 
+% alpha: the size of the test (e.g. 0.05 for 5% significance)
+% kappa: the size of the first-stage LF test; we recommend alpha/10
+% eta_vec (optional): provide the eta_vec output from the
+% lf_critical_value_fn to increase speed of the hybrid test
+%Outputs:
+% reject: does the test reject
+% eta: the test statistic
+%Notes:
+% If y and X are sample averages, Sigma should be E[ Var(Y|X) ] /N
+% If Sigma is E[ Var(Y|X) ], then y and X should be averages scaled by sqrt(N)
+
+
 
 %Check if Sigma has 1s on the diagnol. If not, renormalize. (Original code
 %assumes Sigma is a correlation matrix)

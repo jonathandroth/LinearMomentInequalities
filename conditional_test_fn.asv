@@ -1,18 +1,12 @@
 function [reject, eta] = conditional_test_fn( y, X, Sigma, alpha)
 
-%% Compute the conditional test from Andrews, Roth and Pakes for testing moments of the form E[Y_i - X_i delta | Z_i] <= 0
+%% This if a function for computing the conditional test from Andrews, Roth and Pakes for testing moments of the form E[Y_i - X_i delta | Z_i] <= 0
+
 %Inputs
 % y: the (scaled) sample average of Y_i (a k x 1 vector)
 % X: the (scaled) sample average of X_i (a k x m vector)
 % Sigma: the (scaled) estimate of E[ Var(Y_i|Z_i) ] 
-% alpha: the size of the test (e.g. 0.05 for 5% significance)
-%Outputs:
-% reject: does the test reject
-% eta: the test statistic
-%Notes
-% If y and X are sample averages, Sigma should be E[ Var(Y|X) ] /N
-% If Sigma is E[ Var(Y|X) ], then y and X should be averages scaled by sqrt(N)
-
+% alpha: the size of the test (e.g. 0.05 for 5^
 
 %Check if Sigma has 1s on the diagnol. If not, renormalize. (Original code
 %assumes Sigma is a correlation matrix)

@@ -1,24 +1,19 @@
-%This function computes the (modified) least favorable critical values for
-%the linear programming approach
 
-%It takes as input
-
-%X_T: the matrix of derivatives, i.e. true moments are of hte form Y_T -
-%  X_T * delta
-
-%Z_draws: a matrix of standard normal draws
-
-%Sigma: a covariance matrix
-
-%alpha: significance level
-
-%Note Sigma and X_T are assumed to have been normalized so that Sigma has
-%diagonal of ones
-
-
-
-function [lf_critical_value_fn, eta_vec] = lf_critical_value_fn(X, Z_draws, Sigma, alpha)
-
+function [lf_critical_value, eta_vec] = lf_critical_value_fn(X, Z_draws, Sigma, alpha)
+%% Computing the least-favorable critical value from Andrews, Roth and Pakes for testing moments of the form E[Y_i - X_i delta | Z_i] <= 0
+%Inputs:
+% X: the (scaled) sample average of X_i (a k x m vector)
+% Z_draws: a matrix of standard normal draws of dimension k x S, where S is
+% the number of simulations for the CV (we recommend 1000). This can be
+% drawn once for all tests used for computational stability.
+% Sigma: the (scaled) estimate of E[ Var(Y_i|Z_i) ]. (Should be the same as
+% Sigma used for calculating the test statistic in the function etahat_fn)
+% alpha: the size of the test (e.g. 0.05 for 5% significance)
+%Outputs:
+% lf_critical_value: the critical value of the test
+% eta_vec: the simulated values of eta. The CV is the 1-alpha quantile of
+% this vector. This vector can be used as input to the hybrid test for
+% computational efficiency
 
 Sigma_sqrt = Sigma^(1/2);
 eps_draws = Sigma_sqrt * Z_draws;
@@ -32,6 +27,6 @@ for s = 1:numsims
 end
 
 
-lf_critical_value_fn = quantile( eta_vec, 1-alpha);
+lf_critical_value = quantile( eta_vec, 1-alpha);
 
 end
